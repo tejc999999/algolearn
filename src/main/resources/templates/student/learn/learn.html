@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Editor</title>
+  <style type="text/css" media="screen">
+    body {
+        overflow: hidden;
+    }
+
+	.ace_editor {
+		border: 1px solid lightgray;
+		margin: auto;
+		height: 200px;
+		width: 80%;
+	}
+
+  </style>
+</head>
+<body>
+<div>
+  <form th:action="@{/student/learn/editorsetting}"
+    th:object="${studentLearnForm}" method="post">
+
+    <select name="theme">
+      <option th:each="item : ${themeList}" th:value="${item}"
+        th:text="${item}"> - theme - </option>
+    </select>
+    <select name="mode">
+      <option th:each="item : ${modeList}" th:value="${item}"
+        th:text="${item}"> - mode - </option>
+    </select>
+    <input type="submit" th:value="設定" />     
+  </form>
+</div>
+<div>
+<p th:text="${activeTheme}"></p>
+<p th:text="${activeMode}"></p>
+</div>
+<pre id="editor">
+/* ここにプログラムを書いてください。 */
+</pre>
+<script src="../../../static/js/src-noconflict/ace.js" th:src="@{/js/src-noconflict/ace.js}" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/xcode");
+    editor.session.setMode("ace/mode/c_cpp");
+</script>
+
+</body>
+</html>
