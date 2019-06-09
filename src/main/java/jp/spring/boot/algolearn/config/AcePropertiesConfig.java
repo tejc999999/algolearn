@@ -36,9 +36,8 @@ public class AcePropertiesConfig {
 	 * 
 	 * @return プロパティ
 	 */
-	@Bean
-	  public AceProperties parameterProperties() {
-
-		    return new AceProperties(themeList, modeList);
-	  }
+    @Bean
+    public AceProperties aceProperties() {
+        return new AceProperties(themeList, modeList);
+    }
 }
