@@ -1,8 +1,8 @@
 ---
 applications:
- - name: algoLearn
+ - name: algolearn
 #   random-route: true
-   host: typingscoreweb-tejc999999
-   path: target/algoLearn-0.0.1-SNAPSHOT.jar
+   host: algolearn-tejc888888
+   path: target/algolearn-0.0.1-SNAPSHOT.jar
    memory: 256M
    instances: 1
