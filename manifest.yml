@@ -1,6 +1,6 @@
 ---
 applications:
- - name: typingscore
+ - name: algoLearn
 #   random-route: true
    host: typingscoreweb-tejc999999
    path: target/algoLearn-0.0.1-SNAPSHOT.jar
