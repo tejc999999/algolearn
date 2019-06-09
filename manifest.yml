@@ -1,6 +1,7 @@
 ---
 applications:
  - name: algolearn
+   buildpack: https://github.com/cloudfoundry/java-buildpack.git
 #   random-route: true
    host: algolearn-tejc888888
    path: target/algolearn-0.0.1-SNAPSHOT.jar
