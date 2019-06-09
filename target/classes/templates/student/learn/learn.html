@@ -35,18 +35,30 @@
     <input type="submit" th:value="設定" />     
   </form>
 </div>
-<div>
-<p th:text="${activeTheme}"></p>
-<p th:text="${activeMode}"></p>
-</div>
 <pre id="editor">
 /* ここにプログラムを書いてください。 */
 </pre>
 <script src="../../../static/js/src-noconflict/ace.js" th:src="@{/js/src-noconflict/ace.js}" type="text/javascript" charset="utf-8"></script>
-<script>
-    var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/xcode");
-    editor.session.setMode("ace/mode/c_cpp");
+<script th:inline="javascript">
+/*<![CDATA[*/
+   var editor = ace.edit("editor");
+   var theme = /*[[${activeTheme}]]*/ 'xcode';
+   var mode = /*[[${activeMode}]]*/ 'c_cpp';
+
+   if(theme == null) {
+   	theme = "x_code";
+   }
+   theme = "ace/theme/" + theme;
+   
+   if(mode == null) {
+   	mode = "c_cpp";
+   }
+   mode = "ace/mode/" + mode;
+   editor.setTheme(theme);
+   editor.session.setMode(mode);
+//    editor.setTheme("ace/theme/xcode");
+//    editor.session.setMode("ace/mode/c_cpp");
+/*]]>*/
 </script>
 
 </body>
