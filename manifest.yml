@@ -1,9 +1,11 @@
 ---
 applications:
  - name: algolearn
-   buildpack: https://github.com/cloudfoundry/java-buildpack.git
+#   buildpack: https://github.com/cloudfoundry/java-buildpack.git
+   buildpack: liberty-for-java
 #   random-route: true
    host: algolearn-tejc888888
    path: target/algolearn-0.0.1-SNAPSHOT.jar
+# 最低603MB程度必要？
    memory: 256M
    instances: 1
