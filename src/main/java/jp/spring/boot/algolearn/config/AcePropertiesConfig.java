@@ -15,7 +15,6 @@ import org.springframework.context.annotation.PropertySource;
  */
 @Configuration
 @PropertySource(value = {"classpath:ace.properties"})
-//@ConfigurationProperties(prefix = "spring.security.login")
 public class AcePropertiesConfig {
 
 	/**

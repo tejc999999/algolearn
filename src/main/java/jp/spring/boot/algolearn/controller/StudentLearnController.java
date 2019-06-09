@@ -30,6 +30,8 @@ public class StudentLearnController {
 	 */
 	@Autowired
 	AceProperties aceProperties;
+//	@Autowired
+//	AcePropertiesBean acePropertiesBean;
 	
 	/**
 	 * 学習ページ表示
@@ -41,6 +43,8 @@ public class StudentLearnController {
 		
 		List<String> themeList = aceProperties.getThemeList();
 		List<String> modeList = aceProperties.getModeList();
+//		List<String> themeList = acePropertiesBean.getThemeList();
+//		List<String> modeList = acePropertiesBean.getModeList();
 		
         model.addAttribute("themeList",themeList);
         model.addAttribute("modeList",modeList);
