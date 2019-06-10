@@ -20,6 +20,7 @@
   </style>
 </head>
 <body>
+<!--
 <div>
   <form th:action="@{/student/learn/editorsetting}"
     th:object="${studentLearnForm}" method="post">
@@ -35,31 +36,18 @@
     <input type="submit" th:value="設定" />     
   </form>
 </div>
+-->
+<div id="controlPanel">
+<form name="form1">
+	font-size:<input type="number" name="text1" value="12" maxlength="5" onChange="changeFontSize(this)">px
+	theme:<select id="sel1" onChange="changeTheme()"></select>
+</form>
+</div>
+
 <pre id="editor">
 /* ここにプログラムを書いてください。 */
 </pre>
 <script th:src="@{/webjars/ace/1.3.3/src-noconflict/ace.js}" type="text/javascript" charset="utf-8"></script>
-<script th:inline="javascript">
-/*<![CDATA[*/
-   var editor = ace.edit("editor");
-   var theme = /*[[${activeTheme}]]*/ 'xcode';
-   var mode = /*[[${activeMode}]]*/ 'c_cpp';
-
-   if(theme == null) {
-   	theme = "x_code";
-   }
-   theme = "ace/theme/" + theme;
-   
-   if(mode == null) {
-   	mode = "c_cpp";
-   }
-   mode = "ace/mode/" + mode;
-   editor.setTheme(theme);
-   editor.session.setMode(mode);
-//    editor.setTheme("ace/theme/xcode");
-//    editor.session.setMode("ace/mode/c_cpp");
-/*]]>*/
-</script>
-
+<script src="../../../static/js/studentlearn-editor.js" th:src="@{/js/studentlearn-editor.js}"></script>
 </body>
 </html>
