@@ -54,7 +54,11 @@
 <p th:text="${code}"></p>
 </div>
 <pre id="editor">
-/* ここにプログラムを書いてください。 */
+public class Test {
+    public static void main(String[] args) {
+        System.out.println("TEST");
+    }
+}
 </pre>
 <script th:src="@{/webjars/ace/1.3.3/src-noconflict/ace.js}" type="text/javascript" charset="utf-8"></script>
 <script src="../../../static/js/studentlearn-editor.js" th:src="@{/js/studentlearn-editor.js}"></script>
