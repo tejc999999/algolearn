@@ -43,10 +43,29 @@
 	theme:<select id="sel1" onChange="changeTheme()"></select>
 </form>
 </div>
+<div>
+  <form th:action="@{/student/learn/execute}"
+    th:object="${studentLearnForm}" method="post" id="studentLearnForm">
+    <input type="hidden" name="code" id="code" />
+    <input type="button" th:value="実行" onClick="setCode()"/> 
+    </form>
+</div>
+<div>
+<p th:text="${code}"></p>
+</div>
 <pre id="editor">
 /* ここにプログラムを書いてください。 */
 </pre>
 <script th:src="@{/webjars/ace/1.3.3/src-noconflict/ace.js}" type="text/javascript" charset="utf-8"></script>
 <script src="../../../static/js/studentlearn-editor.js" th:src="@{/js/studentlearn-editor.js}"></script>
+<script>
+function setCode() {
+	var editor = ace.edit("editor");
+	document.getElementById("code").value = editor.getValue();
+    var form = document.getElementById('studentLearnForm'); 
+    form.submit();
+}
+
+</script>
 </body>
 </html>

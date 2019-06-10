@@ -14,12 +14,7 @@ import lombok.NoArgsConstructor;
 public class StudentLearnForm {
 
 	/**
-	 *  開発エディタテーマ
+	 *  プログラムコード
 	 */
-	private String theme;
-	
-	/**
-	 * 開発エディタモード
-	 */
-	private String mode;
+	private String code;
 }
