@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="layout :: common_layout(title = '教員用問題登録画面', scripts = ~{::script}, links = ~{::link})">
+ </head>
+<body>
+
+<div th:replace="layout :: header"></div>
+
+■問題登録ページ
+<div class="container-fluid no-gutters pb-5">
+
+  <div class="form-row">
+    <div class="form-group col-md-12">
+      <label for="title" class="col-form-label">問題名</label>
+      <input type="text" class="form-control" id="title" value="問題名を書いてください"/>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-12">
+    <label for="description" class="col-form-label">説明文</label>
+      <textarea class="form-control" id="description">問題の説明文を書いてください</textarea>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-10">
+      <label for="description" class="col-form-label">入力値の説明文</label>
+      <input type="text" class="form-control" id="description_inputType[0]" value="説明文を書いてください"/>
+    </div>
+    <div class="form-group col-md-2">
+      <label for="addbtn" class="col-form-label">入力値個数</label>
+      <input type="button" value="＋" class="add pluralBtn" id="addbtn">
+      <input type="button" value="－" class="del pluralBtn">
+    </div>
+  </div>
+    
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      <label for="outputType[0]" class="col-form-label">出力値の説明文</label>
+      <input type="text" class="form-control" id="outputDescription" value="説明文を書いてください"/>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="title" class="col-form-label">解答　入力値（公開）</label>
+      <input type="text" class="form-control" id="inputResultPublic" value=""/>
+    </div>
+    <div class="form-group col-md-6">
+      <label for="title" class="col-form-label">解答　出力値（公開）</label>
+      <input type="text" class="form-control" id="outputResultPublic" value=""/>
+    </div>
+  </div>
+  
+    <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="title" class="col-form-label">解答　入力値（秘匿）</label>
+      <input type="text" class="form-control" id="inputResultPrivate" value=""/>
+    </div>
+    <div class="form-group col-md-6">
+      <label for="title" class="col-form-label">解答　出力値（秘匿）</label>
+      <input type="text" class="form-control" id="outputResultPrivate" value=""/>
+    </div>
+  </div>
+
+  <fieldset class="form-group">
+  <div class="form-row">
+    <!-- /* form-cechk-inlineによってmarginが発生するためグリッドレイアウトが崩れる。m-0で対処 */ -->
+    <legend class="col-form-label ">保存先</legend>
+    <div class="form-group form-check-inline form-check col-md-9 m-0">
+      <label for="public" class="form-check-label mr-2">公開</label>
+      <input type="radio" class="form-check-input mr-2" name="publicTaskFlg" id="public" value="true" checked>
+      <label for="private" class="form-check-label mr-2">個人</label>
+      <input type="radio" class="form-check-input" name="publicTaskFlg" id="private" value="false">
+    </div>
+
+    <div class="col-md-3">
+      <input type="submit" class="btn btn-info btn-block" th:value="作成">
+    </div>
+  </div>
+  </fieldset>
+ </div>
+ 
+ <div th:replace="layout :: footer"></div>
+
+<script type="text/javascript">
+$(document).on("click", ".add", function() {
+    $(this).parent().clone(true).insertAfter($(this).parent());
+});
+$(document).on("click", ".del", function() {
+    var target = $(this).parent();
+    // 引数なしに対応
+    alert(target.parent().children().length );
+    if (target.parent().children().length > 8) {
+        target.remove();
+    }
+});
+</script>
+
+<script>
+function textEnable(element) {
+	if(element.value == "code") {
+		document.getElementById('code_' + element.name).value="";
+		document.getElementById('import_' + element.name).value="/*import文を記入*/";
+		document.getElementById('code_' + element.name).disabled = false;
+		document.getElementById('import_' + element.name).disabled = false;
+	} else {
+		document.getElementById('code_' + element.name).disabled = true;
+		document.getElementById('import_' + element.name).disabled = true;
+	}
+}
+</script>
+ 
+</body>
+</html>
