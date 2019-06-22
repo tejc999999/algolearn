@@ -7,11 +7,11 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-
   <!-- /* 各画面専用のCSSを定義 */ -->
-  <th:block th:replace="${links}" />
+  <!-- /* ${変数}について?で存在条件分岐をかけて、:以降のelse部分に_(処理なしトークン)を記述 */ -->
+  <th:block th:replace="${links} ?: _"/>
   <!-- /* 各画面専用のjavascriptを定義 */ -->
-  <th:block th:replace="${scripts}" />
+  <th:block th:replace="${scripts} ?: _" />
 
   <!-- /* 共通CSS */ -->
   <link href="../../../css/pagebase.css" th:href="@{/css/pagebase.css}" rel="stylesheet"></link>
@@ -34,9 +34,9 @@
 <!-- /* ナビゲーションバー */ -->
 <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
   <!-- /* サブコンポーネント */ -->
-  <div class="container">
+<!-- <div class="container">-->
     <!-- /* ブランド */ -->
-    <a class="navbar-brand" href="#">アルゴ学習サイト</a>
+    <a class="navbar-brand" th:href="@{'/login' }">アルゴ学習サイト</a>
     <!-- /* 切替ボタン */ -->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content"
        aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,29 +44,32 @@
     </button>
     
     <!-- /* ナビゲーション */ -->
-    <div class="collapse navbar-collapse" id="navbar-content">
+    <div class="collapse navbar-collapse justify-content-around" id="navbar-content">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link" href="#">項目１<span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="#">問題<span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">項目２</a>
+          <a class="nav-link" href="#">課題</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">項目３</a>
+          <a class="nav-link" href="#">コース</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">項目４</a>
+          <a class="nav-link" href="#">クラス</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">設定</a>
         </li>
       </ul>
   
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a href="#" class="nav-link btn btn-info">ログアウト</a>
+          <a class="nav-link btn btn-info" th:href="@{'/login' }">ログアウト</a>
         </li>
       </ul>
     </div>
-  </div>
+<!--   </div> -->
 </nav>
 </header>
 

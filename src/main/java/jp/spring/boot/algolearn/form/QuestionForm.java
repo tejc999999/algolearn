@@ -19,7 +19,7 @@ public class QuestionForm {
 	/**
 	 * 問題ID
 	 */
-	private String code;
+	private String id;
 	
 	/**
 	 * タイトル
@@ -37,17 +37,7 @@ public class QuestionForm {
 	private int inputNum;
 	
 	/**
-	 * 入力値説明文
-	 */
-	private List<String> inputDescriptionList;
-
-	/**
-	 * 出力値説明文
-	 */
-	private String outputDescription;
-	
-	/**
 	 * 問題公開フラグ
 	 */
-	private boolean publicTaskFlg;
+	private boolean publicFlg;
 }

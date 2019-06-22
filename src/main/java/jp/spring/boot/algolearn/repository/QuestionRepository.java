@@ -12,8 +12,6 @@ import jp.spring.boot.algolearn.bean.QuestionBean;
  * @author tejc999999
  *
  */
-public interface QuestionRepository  extends JpaRepository<QuestionBean, String> {
-
-
+public interface QuestionRepository  extends JpaRepository<QuestionBean, Integer> {
 
 }

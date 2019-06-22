@@ -1,10 +1,13 @@
 package jp.spring.boot.algolearn.controller;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 
@@ -86,10 +89,21 @@ public class StudentController {
         	PrgLanguagePropertiesDetail prgLanguagePropertiesDetail = prgLanguageProperties.getMap().get(PrgLanguage.JAVA.toString());
         	
             try {
-                FileWriter fw = new FileWriter(prgLanguagePropertiesDetail.getWorkFolderPath() + java.io.File.separator + prgLanguagePropertiesDetail.getFileName());
-                fw.write(code);
-                fw.close();
-                
+            	BufferedReader reader = new BufferedReader(new StringReader(code));
+
+            	// ファイル書き込み処理を文字コード指定に変更
+            	// close処理を正しくする
+           	    FileOutputStream fos =  new FileOutputStream(prgLanguagePropertiesDetail.getWorkFolderPath() + java.io.File.separator + prgLanguagePropertiesDetail.getFileName());
+           	    OutputStreamWriter  osw = new OutputStreamWriter(fos, serverProperties.getCharacterCode());
+            	String line2 = null;
+                while ((line2 = reader.readLine()) != null) {
+                	osw.write(line2 + "\n");
+                }
+                osw.close();
+//                FileWriter fw = new FileWriter(prgLanguagePropertiesDetail.getWorkFolderPath() + java.io.File.separator + prgLanguagePropertiesDetail.getFileName());
+//                fw.write(code);
+//                fw.close();
+            	
                 Process p = Runtime.getRuntime().exec("\"" + prgLanguagePropertiesDetail.getBuildCmdPath() + "\" \"" + prgLanguagePropertiesDetail.getWorkFolderPath() + java.io.File.separator + prgLanguagePropertiesDetail.getFileName() + "\"");
                 InputStream is = p.getInputStream();
                 InputStream es = p.getErrorStream();

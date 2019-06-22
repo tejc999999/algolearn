@@ -3,6 +3,8 @@
 # Hibernateの自動データベース初期化機能：spring.jpa.hibernate.ddl-auto
 # DBベンダ名称？：spring.datasource.platform
 # SＱＬファイルに日本語を使う：spring.datasource.sql-script-encoding=UTF-8
+# JDBCデータソースurlの後方に?useUnicode=true&characterEncoding=utf8を付与することでUnicode(文字)を使ってUTF-8(符号化)を指定しないと文字化ける
+
 
 spring:
   jpa:
@@ -10,7 +12,7 @@ spring:
       ddl-auto: none
   datasource:
     initialization-mode: always
-    url: jdbc:mysql://localhost/algolearn
+    url: jdbc:mysql://localhost/algolearn?useUnicode=true&characterEncoding=utf8
     username: algolearnadmin
     password: algolearnpass
     driverClassName: com.mysql.jdbc.Driver
@@ -34,7 +36,7 @@ prglanguage:
     executeCmdPath:
     workFolderPath:
 server:
-  charactercode: shift_jis
+  charactercode: utf-8
 
 #  jpa:
 #    properties:
