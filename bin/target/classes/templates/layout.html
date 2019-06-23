@@ -1,0 +1,82 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<!--引数の title, links は fragment expressions */-->
+<head th:fragment="common_layout(title, scripts, links)">
+
+  <title th:text="${title==null}? 'アルゴ学習サイト' : ${title}">アルゴ学習サイト</title>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- /* 各画面専用のCSSを定義 */ -->
+  <!-- /* ${変数}について?で存在条件分岐をかけて、:以降のelse部分に_(処理なしトークン)を記述 */ -->
+  <th:block th:replace="${links} ?: _"/>
+  <!-- /* 各画面専用のjavascriptを定義 */ -->
+  <th:block th:replace="${scripts} ?: _" />
+
+  <!-- /* 共通CSS */ -->
+  <link href="../../../css/pagebase.css" th:href="@{/css/pagebase.css}" rel="stylesheet"></link>
+
+  <!--/* bootstrap関連 */-->
+  <link rel="stylesheet"
+    href="http://maxcdn.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css"
+    th:href="@{/webjars/bootstrap/4.3.0/css/bootstrap.min.css}" />
+  <script th:src="@{/webjars/jquery/3.4.0/jquery.slim.min.js}" type="text/javascript" charset="utf-8"></script>
+  <script th:src="@{/webjars/bootstrap/4.3.0/js/bootstrap.bundle.min.js}" type="text/javascript" charset="utf-8"></script>
+  <!-- /* TODO:fabicon追加 */ -->
+<!--   <link rel="shortcut icon" th:href="@{/images/favicon.ico}"> -->
+  <!-- /* TODO:不明 */ -->
+<!--   <script type="text/javascript" th:src="@{/js/ie10-viewport-bug-workaround.js}"></script> -->
+
+</head>
+
+<!-- /* ヘッダー */ -->
+<header th:fragment="header">
+<!-- /* ナビゲーションバー */ -->
+<nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+  <!-- /* サブコンポーネント */ -->
+<!-- <div class="container">-->
+    <!-- /* ブランド */ -->
+    <a class="navbar-brand" th:href="@{'/login' }">アルゴ学習サイト</a>
+    <!-- /* 切替ボタン */ -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content"
+       aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <!-- /* ナビゲーション */ -->
+    <div class="collapse navbar-collapse justify-content-around" id="navbar-content">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">問題<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">課題</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">コース</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">クラス</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">設定</a>
+        </li>
+      </ul>
+  
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link btn btn-info" th:href="@{'/login' }">ログアウト</a>
+        </li>
+      </ul>
+    </div>
+<!--   </div> -->
+</nav>
+</header>
+
+<!-- /* フッター */ -->
+<footer th:fragment="footer">
+  <div class="fixed-bottom bg-dark">
+    <span class="text-light">固定フッター</span>
+  </div>
+</footer>
+</html>

@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="layout :: common_layout(title = '教員用学生一覧画面', scripts = ~{::script}, links = ~{::link})">
+ </head>
+<body>
+
+<div th:replace="layout :: header"></div>
+
+<h2>■学生一覧</h2>
+<div class="table-responsive-md">
+	<table class="table table-hover table-striped container">
+		<thead class="thead-dark">
+          	<tr class="row">
+				<th class="col-md-4 text-nowrap" scope="col" th:text="ユーザーID">ユーザーID</th>
+				<th class="col-md-6 text-nowrap" scope="col" th:text="名前">名前</th>
+				<th class="col-md-1" scope="col"></th>
+				<th class="col-md-1" scope="col"></th>
+			</tr>
+		</thead>
+		<tbody>
+		<tr class="row" th:each="student : ${students}">
+			<td class="col-md-4" th:text="${student.userId}">ユーザーID</td>
+			<td class="col-md-6" th:text="${student.name}">名前</td>
+			<td class="col-md-1">
+				<form th:action="@{/teacher/student/edit}" method="post">
+					<input type="submit" name="form" th:value="編集" />
+					<input type="hidden" name="userId" th:value="${student.userId}" />
+				</form>
+			</td>
+			<td class="col-md-1">
+				<form th:action="@{/teacher/student/delete}" method="post">
+					<input type="submit" name="form" th:value="削除" />
+					<input type="hidden" name="userId" th:value="${student.userId}" />
+				</form>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</div>
+<div th:replace="layout :: footer"></div>
+  
+</body>
+</html>

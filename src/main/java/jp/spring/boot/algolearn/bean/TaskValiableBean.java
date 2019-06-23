@@ -1,8 +1,5 @@
 package jp.spring.boot.algolearn.bean;
 
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import lombok.Data;
 
 /**

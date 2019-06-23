@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="layout :: common_layout(title = 'ログイン画面', scripts = ~{::script}, links = ~{::link})">
+ </head>
+<body>
+
+<div th:replace="layout :: header"></div>
+
+■ログイン画面設置予定ページ
+<br>
+<a th:href="@{'/student/learn' }">・学生用：学習ページ</a>
+<br>
+<a th:href="@{'/teacher/question/add' }">・教員用：問題登録ページ</a>
+<br>
+<a th:href="@{'/teacher/question/' }">・教員用：問題一覧ページ</a>
+<br>
+ <div th:replace="layout :: footer"></div>
+  
+</body>
+</html>

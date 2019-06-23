@@ -48,7 +48,7 @@ public class LearnForm {
 	 */
 	private String codeCheck;
 	/**
-	 * 課題情報
+	 * 問題情報
 	 */
 	private QuestionForm questionForm;
 

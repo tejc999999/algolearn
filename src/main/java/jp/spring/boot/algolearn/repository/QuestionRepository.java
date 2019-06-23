@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import jp.spring.boot.algolearn.bean.QuestionBean;
 
 /**
- * 課題用リポジトリ
+ * 問題用リポジトリ(question repository)
  * 
  * @author tejc999999
  *

@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<!-- /* th:replaceの::は「置換ファイルの配置パス::fragmentの設定値(受け渡す値)」 */ -->
+<head th:replace="layout :: common_layout(title = '生徒用学習画面', scripts = ~{::script}, links = ~{::link})">
+
+  <link href="../../css/learn.css" th:href="@{/css/learn.css}" rel="stylesheet"></link>
+
+  <script th:src="@{/webjars/ace/1.3.3/src-noconflict/ace.js}" type="text/javascript" charset="utf-8"></script>
+
+  <script src="../../../static/js/studentlearn-editor.js" th:src="@{/js/learn-editor.js}"></script>
+
+ </head>
+<body onload="init()">
+
+<div th:replace="layout :: header"></div>
+<div class="container-fluid">
+  <div class="row">
+    <form name="form1">
+      font-size:<input type="number" name="text1" value="12" maxlength="5" onChange="changeFontSize(this)">px
+      theme:<select id="sel1" onChange="changeTheme()"></select>
+    </form>
+  </div>
+  <div class="row no-gutters border">
+    <div class="col-lg-6 border">
+      <div class="border">課題１</div>
+      <div class="alert alert-danger text-center" role="alert">エラー</div>
+      <div class="border">入力値１は足し合わせる数値<br>
+入力値２は足し合わせる数値</div>
+      <div class="border">出力値は足し合わせた結果
+      </div>
+    </div>
+    <!-- editor -->
+    <div id="editor" class="col-lg-6">
+    </div>
+    <div class="col-lg-12 border">
+      <div>
+        <form th:action="@{/student/learn}"
+          th:object="${learnForm}" method="post" id="learnForm">
+          <input type="hidden" name="code" id="code" />
+          <input type="hidden" name="programmingLanguage" value="JAVA"/>
+          <input type="button" class="btn btn-info btn-block" th:value="実行" onClick="setCode()"/> 
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="row no-gutters">
+    <div id="editor_output" class="col-lg-12">
+    </div>
+   </div>
+</div>
+<div th:replace="layout :: footer"></div>
+<!-- thyemeleaf:data -->
+<script th:inline="javascript">
+function init() {
+	
+	learnCreateEditor();
+	
+/*<![CDATA[*/
+  var code = /*[[${code}]]*/ "dummy";
+/*]]>*/
+  var editor = ace.edit("editor");
+  editor.setValue(code, 1);
+  /*<![CDATA[*/
+  var result = /*[[${result}]]*/ "dummy";
+/*]]>*/
+  var editor_output = ace.edit("editor_output");
+  if(result) {
+    editor_output.setValue(result, 1);
+  }
+}
+</script>
+</body>
+</html>

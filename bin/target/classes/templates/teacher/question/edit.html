@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="layout :: common_layout(title = '教員用問題編集画面', scripts = ~{::script}, links = ~{::link})">
+ </head>
+<body>
+
+<div th:replace="layout :: header"></div>
+
+<h2>■問題編集ページ</h2>
+<div class="container-fluid no-gutters pb-5">
+		<form th:action="@{/teacher/question/editprocess}" th:object="${questionForm}" method="post">
+  <div class="form-row">
+    <div class="form-group col-md-12">
+      <label for="title" class="col-form-label">問題名</label>
+      <input type="text" class="form-control" name="title" th:value="*{title}" placeholder="問題の名前" aria-label="問題の名前" />
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-12">
+    <label for="description" class="col-form-label">説明文</label>
+      <textarea class="form-control" name="description" th:text="*{description}" placeholder="問題の説明文" aria-label="問題の説明文"></textarea>
+    </div>
+ </div>
+
+ <div class="form-row">
+    <div class="form-group col-md-6">
+        <label for="inputNum" class="col-form-label">入力値の数</label>
+        <input type="number" class="form-control" name="inputNum" th:value="*{inputNum}"   min="0"  />
+    </div>
+    <div class="form-group col-md-6">
+        <label for="publicFlg" class="col-form-label">保存先</label>
+<!-- 	    <div class="col-md-4"> -->
+            <select class="form-control" name="publicFlg">
+		        <option value="true" th:selected="*{publicFlg}">公開</option>
+		        <option value="false" th:selected="*{!publicFlg}">個人</option>
+		    </select>
+<!-- 			</div> -->
+	</div>
+ </div>
+  
+ <div class="form-row">
+    <div class="col-md-12">
+      <input type="submit" class="btn btn-info btn-block" th:value="保存">
+    </div>
+  </div>
+  <input type="hidden" name="id" th:value="*{id}"  />
+  </form>
+</div>
+ 
+<div th:replace="layout :: footer"></div>
+  
+</body>
+</html>

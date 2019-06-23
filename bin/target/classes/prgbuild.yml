@@ -1,0 +1,45 @@
+#available-payment-channels-list:
+#  xyz: "123"
+#  channelconfigurations:
+#    -
+#      name: "Company X"
+#      companyBankAccount: "1000200030004000"
+#    -
+#      name: "Company Y"
+#      companyBankAccount: "1000200030004000"
+
+build: 
+  prglanguage: 
+    java: 
+      build: F:\dev\AdoptOpenJDK\jdk-8.0.202.08\bin
+      execute: F:\dev\AdoptOpenJDK\jdk-8.0.202.08\bin
+      workfolder: D:\algolearn\java
+    ccpp: 
+      build: 
+      execute: 
+      workfolder: D:\algolearn\c_cpp
+    python: 
+      build: 
+      execute: 
+      workfolder: D:\algolearn\python
+
+
+# java
+# java-javac-command-path
+#algo.learn.build.setting.java.command.exe=C:\\Program\ Files\\AdoptOpenJDK\\jdk-8.0.202.08\\bin
+#algo.learn.build.setting.java.command.exe=F:\\dev\\AdoptOpenJDK\\jdk-8.0.202.08\\bin
+# java-java-command-path
+#algo.learn.build.setting.java.command.build=C:\\Program\ Files\\AdoptOpenJDK\\jdk-8.0.202.08\\bin
+#algo.learn.build.setting.java.command.build=F:\\dev\\AdoptOpenJDK\\jdk-8.0.202.08\\bin
+# java-working-folder-path
+#algo.learn.build.setting.java.work.folder=D:\\algolearn\\java
+## c_cpp
+# c_cpp-compiler-path
+#algo.learn.build.setting.c.command.build=
+# c_cpp-working-folder-path
+#algo.learn.build.setting.c.work.folder=D:\\algolearn\\c_cpp
+## python
+# python-command-path
+#algo.learn.build.setting.python.command.exe=
+# python-working-folder-path
+#algo.learn.build.setting.python.work.folder=D:\\algolearn\\python

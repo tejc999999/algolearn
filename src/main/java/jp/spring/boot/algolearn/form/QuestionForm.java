@@ -1,13 +1,11 @@
 package jp.spring.boot.algolearn.form;
 
-import java.util.List;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
  * 
- * 教員用問題Form
+ * 先生用問題Form
  * 
  * @author tejc999999
  *

@@ -1,0 +1,19 @@
+# 本番環境（MariaDB）で事前に実行しておくべきSQL
+# (SQL that should be executed in advance in the production environment (MariaDB))
+CREATE DATABASE algolearn character set 'utf8';
+GRANT ALL PRIVILEGES ON algolearn.* TO 'algolearnadmin'@'localhost' IDENTIFIED BY 'algolearnpass';
+CREATE TABLE m_role(id CHAR(3), name VARCHAR(40), PRIMARY KEY(id)) CHARACTER SET 'utf8';
+CREATE TABLE t_question(id INT AUTO_INCREMENT, title VARCHAR(100), description VARCHAR(1000), input_num TINYINT DEFAULT 0 NOT NULL, public_flg TINYINT(1) NOT NULL, PRIMARY KEY(id)) CHARACTER SET 'utf8';
+CREATE TABLE t_user(user_id VARCHAR(20), password VARCHAR(10), name VARCHAR(100), role_id CHAR(3), PRIMARY KEY(user_id), FOREIGN KEY(role_id) REFERENCES m_role(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
+INSERT INTO m_role(id, name) VALUES('001', '管理者');
+INSERT INTO m_role(id, name) VALUES('002', '先生');
+INSERT INTO m_role(id, name) VALUES('003', '学生');
+
+# 一旦退避、テスト用
+DROP TABLE IF EXISTS t_question;
+CREATE TABLE t_question(id INT AUTO_INCREMENT, title VARCHAR(100), description VARCHAR(1000), input_num TINYINT DEFAULT 0, public_flg TINYINT(1) NOT NULL, primary key(id)) character set 'utf8';
+INSERT INTO t_question(id, title, description, input_num, public_flg) VALUES(1, '足し算問題', '与えられた２つの数値を足し合わせた結果を返す', 2, TRUE);
+INSERT INTO t_user(user_id, password, name, role_id) VALUES('testadmin1', 'password', 'テスト用管理者１', '001');
+INSERT INTO t_user(user_id, password, name, role_id) VALUES('testteacher1', 'password', 'テスト用先生１', '002');
+INSERT INTO t_user(user_id, password, name, role_id) VALUES('teststudent1', 'password', 'テスト用学生１', '003');
+

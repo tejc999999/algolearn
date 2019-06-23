@@ -1,0 +1,78 @@
+# スキーマ作成の出力：org.hibernate.SQL
+# JPAベースのアプリでは以下無効にしないとshema.sqlが動かない？
+# Hibernateの自動データベース初期化機能：spring.jpa.hibernate.ddl-auto
+# DBベンダ名称？：spring.datasource.platform
+# SＱＬファイルに日本語を使う：spring.datasource.sql-script-encoding=UTF-8
+# JDBCデータソースurlの後方に?useUnicode=true&characterEncoding=utf8を付与することでUnicode(文字)を使ってUTF-8(符号化)を指定しないと文字化ける
+
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  datasource:
+    initialization-mode: always
+    url: jdbc:mysql://localhost/algolearn?useUnicode=true&characterEncoding=utf8
+    username: algolearnadmin
+    password: algolearnpass
+    driverClassName: com.mysql.jdbc.Driver
+prglanguage: 
+  java: 
+    fileName: Test.java
+    buildFileName: Test
+    buildCmdPath: F:\\dev\\AdoptOpenJDK\\jdk-8.0.202.08\\bin\\javac
+    executeCmdPath: F:\\dev\\AdoptOpenJDK\\jdk-8.0.202.08\\bin\\java
+    workFolderPath: F:\\workfolder
+  ccpp: 
+    fileName: 
+    buildFileName: 
+    buildCmdPath: 
+    executeCmdPath:
+    workFolderPath:
+  python: 
+    fileName: 
+    buildFileName: 
+    buildCmdPath:
+    executeCmdPath:
+    workFolderPath:
+server:
+  charactercode: utf-8
+
+#  jpa:
+#    properties:
+#      hibernate:
+#        dialect:
+#          supportsSequences: false
+#        id:
+#          new_generator_mappings: false
+
+#datasource:
+#  base:
+#    driver: org.h2.Driver
+#    username: algolearnadmin
+#    password: algolearnpass
+#    url: jdbc:h2:./h2db/algolearn
+#  list:
+#  - name: mariadb
+#    driver: org.mariadb.jdbc.Driver
+#    username: algolearnadmin
+#    password: algolearnpass
+#    url: jdbc:mysql://localhost/algolearn
+
+# CREATE DATABASE algolearn character set 'utf8';
+# CREATE TABLE t_task(id char(6),title varchar(100), primary key(id)) character set 'utf8';
+# GRANT ALL PRIVILEGES ON algolearn.* TO 'algolearnadmin'@'localhost' IDENTIFIED BY 'algolearnpass';
+
+
+# h2database setting
+#database.h2.name=h2
+#database.h2.username=algolearnadmin
+#database.h2.password=algolearnpass
+#database.h2.url=jdbc:h2:./h2db/algolearn
+#database.h2.driver=org.h2.Driver
+# mariadb setting
+#database.mariadb.name=mariadb
+#database.mariadb.username=algolearnadmin
+#database.mariadb.password=algolearnpass
+#database.mariadb.url=jdbc:mariadb://localhost:3306/algolearn
+#database.mariadb.driver=org.mariadb.jdbc.Driver

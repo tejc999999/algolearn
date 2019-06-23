@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="layout :: common_layout(title = '教員用問題登録画面', scripts = ~{::script}, links = ~{::link})">
+ </head>
+<body>
+
+<div th:replace="layout :: header"></div>
+
+<h2>■学生編集</h2>
+<div class="container-fluid no-gutters pb-5">
+    <form th:action="@{/teacher/student/add}" th:object="${studentForm}" method="post">
+    <div class="form-row">
+        <div class="form-group col-md-12">
+          <label for="userId" class="col-form-label">ユーザーID</label>
+          <input type="text" class="form-control" name="userId"  th:value="*{userId}" aria-label="ユーザーID" />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <label for="password" class="col-form-label">パスワード</label>
+                <input type="password" class="form-control" name="password" th:value="*{password}" aria-label="パスワード" />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <label for="name" class="col-form-label">名前</label>
+            <input type="text" class="form-control" name="name"  th:value="*{name}" aria-label="名前" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-12">
+            <input type="submit" class="btn btn-info btn-block" th:value="作成">
+        </div>
+    </div>
+    <input type="hidden" th:value="*{roleId}" />
+    </form>
+</div>
+ 
+<div th:replace="layout :: footer"></div>
+  
+</body>
+</html>

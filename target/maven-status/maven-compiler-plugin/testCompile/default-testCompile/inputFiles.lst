@@ -1,3 +1,5 @@
-F:\dev\workspace_sts\algolearn_20190611\src\test\java\jp\spring\boot\algolearn\controller\StudentControllerTest.java
-F:\dev\workspace_sts\algolearn_20190611\src\test\java\jp\spring\boot\algolearn\controller\TeacherQuestionControllerTest.java
-F:\dev\workspace_sts\algolearn_20190611\src\test\java\jp\spring\boot\algolearn\AlgoLearnApplicationTest.java
+F:\dev\workspace_sts\algolearn_20190622\src\test\java\jp\spring\boot\algolearn\controller\teacher\TaskControllerTest.java
+F:\dev\workspace_sts\algolearn_20190622\src\test\java\jp\spring\boot\algolearn\controller\teacher\QuestionControllerTest.java
+F:\dev\workspace_sts\algolearn_20190622\src\test\java\jp\spring\boot\algolearn\controller\LoginControllerTest.java
+F:\dev\workspace_sts\algolearn_20190622\src\test\java\jp\spring\boot\algolearn\AlgoLearnApplicationTest.java
+F:\dev\workspace_sts\algolearn_20190622\src\test\java\jp\spring\boot\algolearn\controller\student\LearnControllerTest.java
