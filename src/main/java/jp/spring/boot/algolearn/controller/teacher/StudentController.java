@@ -95,7 +95,6 @@ public class StudentController {
 		opt.ifPresent(bean -> {
 			StudentForm form = new StudentForm();
 			BeanUtils.copyProperties(bean, form);
-			form.setUserId(String.valueOf(bean.getUserId()));
 			
 			model.addAttribute("studentForm", form);
 		});
@@ -109,13 +108,12 @@ public class StudentController {
 	 * @return 学生一覧ページリダイレクト(student list page redirect)
 	 */
 	@PostMapping(path="editprocess")
-	public String editProcess(QuestionForm form, Model model) {
+	public String editProcess(StudentForm form, Model model) {
 		
-//		QuestionBean bean = new QuestionBean();
-//		BeanUtils.copyProperties(form, bean);
-//		bean.setId(Integer.parseInt(form.getId()));
-//
-//		questionRepository.save(bean);
+		UserBean bean = new UserBean();
+		BeanUtils.copyProperties(form, bean);
+
+		userRepository.save(bean);
 		
 		return "redirect:/teacher/student";
 	}
@@ -129,7 +127,7 @@ public class StudentController {
 	public String delete(@RequestParam String userId, Model model) {
 		
 		UserBean bean = new UserBean();
-		bean.setUserId(userId);
+		bean.setId(userId);
 		
 		userRepository.delete(bean);
 		

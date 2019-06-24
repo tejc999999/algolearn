@@ -61,8 +61,14 @@
         <li class="nav-item">
           <a class="nav-link" href="#">コース</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">クラス</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="classDrowpDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          クラス
+          </a>
+          <div class="dropdown-menu" aria-labelledby="classDrowpDown">
+              <a class="dropdown-item" th:href="@{'/teacher/class/add'}">クラス登録</a>
+              <a class="dropdown-item" th:href="@{'/teacher/class'}">クラス一覧</a>
+          </div>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="questionDrowpDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

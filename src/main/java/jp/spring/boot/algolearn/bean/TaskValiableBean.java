@@ -1,5 +1,14 @@
 package jp.spring.boot.algolearn.bean;
 
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.Table;
+
+import jp.spring.boot.algolearn.bean.embedded.TaskValiableId;
 import lombok.Data;
 
 /**
@@ -9,34 +18,18 @@ import lombok.Data;
  *
  */
 @Data
-//@Table(name = "t_task_valiable")
+@Entity
+@Table(name = "t_task_valiable")
 public class TaskValiableBean {
 
-	/**
-	 * 識別ID
-	 */
-//	@Id
-	private String id;
-
-	/**
-	 * データ型
-	 */
-	private String dataType;
-
-	/**
-	 * 値
-	 */
-	private String parametor;
+	@EmbeddedId
+	TaskValiableId taskValiableId;
 	
-	/**
-	 * 課題：外部参照
-	 */
-	private QuestionBean taskBean;
-
-	/**
-	 * 入力値フラグ
-	 * falseの場合は出力値
-	 */
-	private boolean inputFlg;
-
+	@Column(name="date_type")
+	String dataType;
+	
+	@ManyToOne
+    @JoinColumn(name = "task_id", referencedColumnName = "id", insertable = false, updatable = false)
+//    @MapsId("taskId")
+	TaskBean taskBean;
 }
