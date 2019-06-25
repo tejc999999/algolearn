@@ -22,6 +22,15 @@
     th:href="@{/webjars/bootstrap/4.3.0/css/bootstrap.min.css}" />
   <script th:src="@{/webjars/jquery/3.4.0/jquery.slim.min.js}" type="text/javascript" charset="utf-8"></script>
   <script th:src="@{/webjars/bootstrap/4.3.0/js/bootstrap.bundle.min.js}" type="text/javascript" charset="utf-8"></script>
+<script>
+$(document).ready(function () {
+	$('.dropdown-hoverable').hover(function(){
+	    $(this).children('.dropdown-toggle').click();
+	}, function(){
+	    $(this).children('.dropdown-toggle').click();
+	});
+});
+</script>
   <!-- /* TODO:fabicon追加 */ -->
 <!--   <link rel="shortcut icon" th:href="@{/images/favicon.ico}"> -->
   <!-- /* TODO:不明 */ -->
@@ -44,9 +53,9 @@
     </button>
     
     <!-- /* ナビゲーション */ -->
-    <div class="collapse navbar-collapse justify-content-around" id="navbar-content">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item dropdown">
+    <div class="collapse navbar-collapse justify-content-around" id="navbar-content" ontouchstart="">
+      <ul class="navbar-nav mr-auto ">
+        <li class="nav-item dropdown dropdown-hoverable">
           <a class="nav-link dropdown-toggle" href="#" id="questionDrowpDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           問題
           </a>
@@ -61,7 +70,7 @@
         <li class="nav-item">
           <a class="nav-link" href="#">コース</a>
         </li>
-        <li class="nav-item dropdown">
+        <li class="nav-item dropdown dropdown-hoverable">
           <a class="nav-link dropdown-toggle" href="#" id="classDrowpDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           クラス
           </a>
@@ -70,11 +79,11 @@
               <a class="dropdown-item" th:href="@{'/teacher/class'}">クラス一覧</a>
           </div>
         </li>
-        <li class="nav-item dropdown">
+        <li class="nav-item dropdown dmenu dropdown-hoverable">
           <a class="nav-link dropdown-toggle" href="#" id="questionDrowpDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           学生
           </a>
-          <div class="dropdown-menu" aria-labelledby="questionDrowpDown">
+          <div class="dropdown-menu sm-menu" aria-labelledby="questionDrowpDown">
               <a class="dropdown-item" th:href="@{'/teacher/student/add'}">学生登録</a>
               <a class="dropdown-item" th:href="@{'/teacher/student'}">学生一覧</a>
           </div>
@@ -88,7 +97,10 @@
     </div>
 <!--   </div> -->
 </nav>
+
 </header>
+
+
 
 <!-- /* フッター */ -->
 <footer th:fragment="footer">
