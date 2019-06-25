@@ -8,13 +8,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * 問題Bean(question Bean)
@@ -22,10 +25,12 @@ import lombok.NoArgsConstructor;
  * @author tejc999999
  *
  */
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Data
+@ToString(exclude = "taskBeans")
+@EqualsAndHashCode(exclude = "taskBeans")
 @Table(name = "t_question")
 public class QuestionBean {
 	
@@ -64,5 +69,5 @@ public class QuestionBean {
 	
 	@OneToMany(mappedBy="questionBean", cascade= {CascadeType.ALL})
 //    @MapsId("questionBean")
-	List<TaskBean> taskBeans;
+	private List<TaskBean> taskBeans;
 }

@@ -5,7 +5,6 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
 
 import jp.spring.boot.algolearn.bean.embedded.TaskValiableId;
@@ -23,13 +22,13 @@ import lombok.Data;
 public class TaskValiableBean {
 
 	@EmbeddedId
-	TaskValiableId taskValiableId;
+	private TaskValiableId taskValiableId;
 	
 	@Column(name="date_type")
-	String dataType;
+	private String dataType;
 	
 	@ManyToOne
     @JoinColumn(name = "task_id", referencedColumnName = "id", insertable = false, updatable = false)
 //    @MapsId("taskId")
-	TaskBean taskBean;
+	private TaskBean taskBean;
 }

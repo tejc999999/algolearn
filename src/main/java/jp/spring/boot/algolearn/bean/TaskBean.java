@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -24,32 +23,32 @@ public class TaskBean {
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
-	int id;
+	private int id;
 	
 	@Column(name="language_id")
-	String languageId;
+	private String languageId;
 	
 	@Column(name="title")
-	String title;
+	private String title;
 	
 	@Column(name="description")
-	String description;
+	private String description;
 	
 	@Column(name="question_id")
-	int questionId;
+	private int questionId;
 	
-	String selfMadeCheckCode;
+	private String selfMadeCheckCode;
 	
 	@OneToMany(mappedBy="taskBean", cascade= {CascadeType.ALL})
 //    @MapsId("taskBean")
-	List<TaskValiableBean> taskValiableBeans;
+	private List<TaskValiableBean> taskValiableBeans;
 
 	@OneToMany(mappedBy="taskBean", cascade= {CascadeType.ALL})
 //    @MapsId("taskBean")
-	List<TaskValiableAnswerBean> taskValiableAnswerBeans;
+	private List<TaskValiableAnswerBean> taskValiableAnswerBeans;
 	
 	@ManyToOne
     @JoinColumn(name = "question_id", referencedColumnName = "id", insertable = false, updatable = false)
 //    @MapsId("questionId")
-	QuestionBean questionBean;
+	private QuestionBean questionBean;
 }

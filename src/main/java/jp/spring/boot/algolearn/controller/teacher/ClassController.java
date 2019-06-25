@@ -2,9 +2,11 @@ package jp.spring.boot.algolearn.controller.teacher;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jp.spring.boot.algolearn.EmployeeRepository;
 import jp.spring.boot.algolearn.bean.ClassBean;
 import jp.spring.boot.algolearn.bean.UserBean;
 import jp.spring.boot.algolearn.form.ClassForm;
@@ -39,9 +40,6 @@ public class ClassController {
 	@Autowired
 	ClassRepository classRepository;
 
-	@Autowired
-	EmployeeRepository employeeRepository;
-	
 	@Autowired
 	UserRepository userRepository;
 
@@ -103,13 +101,13 @@ public class ClassController {
 		bean.setName(form.getName());
 
 		if(form.getUserCheckedList() != null) {
-			List<UserBean> list = new ArrayList<>();
+			Set<UserBean> set = new HashSet<>();
 			for(String userId : form.getUserCheckedList()) {
 				UserBean userBean = new UserBean();
 				userBean.setId(userId);
-				list.add(userBean);
+				set.add(userBean);
 			}
-			bean.setUserBeans(list);
+			bean.setUserBeans(set);
 		}
 		classRepository.save(bean);
 				
@@ -139,8 +137,8 @@ public class ClassController {
 		opt.ifPresent(bean -> {
 			form.setId(String.valueOf(bean.getId()));
 			form.setName(bean.getName());
-			List<UserBean> userList = bean.getUserBeans();
-			for(UserBean userBean : userList) {
+			Set<UserBean> userSet = bean.getUserBeans();
+			for(UserBean userBean : userSet) {
 				list.add(String.valueOf(userBean.getId()));
 			}
 		});
@@ -163,13 +161,13 @@ public class ClassController {
 		bean.setName(form.getName());
 		
 		if(form.getUserCheckedList() != null) {
-		List<UserBean> list = new ArrayList<>();
+		Set<UserBean> set = new HashSet<>();
 			for(String userId : form.getUserCheckedList()) {
 				UserBean userBean = new UserBean();
 				userBean.setId(userId);
-				list.add(userBean);
+				set.add(userBean);
 			}
-			bean.setUserBeans(list);
+			bean.setUserBeans(set);
 		}
 		classRepository.save(bean);
 

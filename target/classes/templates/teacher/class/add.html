@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
-<head th:replace="layout :: common_layout(title = '教員用問題登録画面', scripts = ~{::script}, links = ~{::link})">
+<head th:replace="layout :: common_layout(title = 'クラス登録画面', scripts = ~{::script}, links = ~{::link})">
  </head>
 <body>
 
@@ -21,16 +21,18 @@
       <input type="submit" class="btn btn-info btn-block" th:value="作成">
     </div>
   </div>
+  <div class="form-row">
     <div class="form-group col-md-12">
       <div class="form-group">
       <label class="col-form-label">所属ユーザ</label>
          <div class="checkbox" th:each="item : ${userCheckItems}">
           <label>
-            <input type="checkbox" name="userChecks" th:value="${item.value}" th:text="${item.key}" th:field="*{userChecks}" />
+            <input type="checkbox" name="userChecks" th:value="${item.key}" th:text="${item.value}" th:field="*{userChecks}" />
           </label>
         </div>
       </div>
     </div>
+   </div>
   </form>
 </div>
  

@@ -1,7 +1,6 @@
 package jp.spring.boot.algolearn.bean;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,13 +14,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * クラスBean(class Bean)
@@ -29,10 +30,12 @@ import lombok.NoArgsConstructor;
  * @author tejc999999
  *
  */
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Data
+@ToString(exclude = "userBeans")
+@EqualsAndHashCode(exclude = "userBeans")
 @Table(name = "t_class")
 public class ClassBean {
 	
@@ -64,6 +67,5 @@ public class ClassBean {
 			joinColumns = {@JoinColumn(name = "class_id")},
 			inverseJoinColumns = {@JoinColumn(name = "user_id")}
 			)
-	private List<UserBean> userBeans = new ArrayList<>();
-
+	Set<UserBean> userBeans;
 }

@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="layout :: common_layout(title = 'コース一覧画面', scripts = ~{::script}, links = ~{::link})">
+ </head>
+<body>
+
+<div th:replace="layout :: header"></div>
+
+<h2>■コース一覧</h2>
+<div class="able-responsive-md container">
+	<table class="table table-hover table-striped">
+		<thead class="thead-dark">
+          	<tr class="row">
+				<th class="col-md-10 text-nowrap" scope="col" th:text="タイトル">コース名</th>
+				<th class="col-md-1" scope="col"></th>
+				<th class="col-md-1" scope="col"></th>
+			</tr>
+		</thead>
+		<tbody>
+		<tr class="row" th:each="course : ${courses}">
+			<td class="col-md-10" th:text="${course.name}">コース名</td>
+			<td class="col-md-1">
+				<form th:action="@{/teacher/course/edit}" method="post">
+					<input type="submit" name="form" th:value="編集" />
+					<input type="hidden" name="id" th:value="${course.id}" />
+				</form>
+			</td>
+			<td class="col-md-1">
+				<form th:action="@{/teacher/course/delete}" method="post">
+					<input type="submit" name="form" th:value="削除" />
+					<input type="hidden" name="id" th:value="${course.id}" />
+				</form>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</div>
+<div th:replace="layout :: footer"></div>
+  
+</body>
+</html>

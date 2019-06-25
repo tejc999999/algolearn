@@ -1,25 +1,21 @@
 package jp.spring.boot.algolearn.bean;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * ユーザーBean(user Bean)
@@ -28,6 +24,8 @@ import lombok.NoArgsConstructor;
  *
  */
 @Data
+@ToString(exclude = {"classBeans", "courseBeans"})
+@EqualsAndHashCode(exclude = {"classBeans", "courseBeans"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -63,5 +61,12 @@ public class UserBean {
 	 * ユーザー所属クラス：相互参照オブジェクト(user belonging class：cross reference object)
 	 */
 	@ManyToMany(mappedBy = "userBeans", fetch=FetchType.EAGER)
-	private List<ClassBean> classBeans = new ArrayList<>();
+	private Set<ClassBean> classBeans;
+	
+	/**
+	 * ユーザー所属コース：相互参照オブジェクト(user belonging course：cross reference object)
+	 */
+	@ManyToMany(mappedBy = "userBeans", fetch=FetchType.EAGER)
+	private Set<CourseBean> courseBeans;
+
 }

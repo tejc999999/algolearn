@@ -1,7 +1,5 @@
 package jp.spring.boot.algolearn.datasource;
 
-import org.springframework.util.Assert;
-
 import lombok.Data;
 
 @Data

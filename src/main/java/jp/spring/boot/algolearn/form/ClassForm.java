@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 
- * 先生用問題Form
+ * 先生用クラスForm
  * 
  * @author tejc999999
  *
@@ -27,7 +27,7 @@ public class ClassForm {
 	private String name;
 	
 	/**
-	 * チェックボックス用所属ユーザID
+	 * チェックボックス入力情報（所属ユーザID）用
 	 */
 	private String[] userChecks;
 	

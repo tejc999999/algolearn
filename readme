@@ -6,6 +6,8 @@ GRANT ALL PRIVILEGES ON algolearn.* TO 'algolearnadmin'@'localhost' IDENTIFIED B
 DROP TABLE IF EXISTS t_language;
 DROP TABLE IF EXISTS t_user_class;
 DROP TABLE IF EXISTS t_class;
+DROP TABLE IF EXISTS t_user_course;
+DROP TABLE IF EXISTS t_course;
 DROP TABLE IF EXISTS t_user;
 DROP TABLE IF EXISTS m_role;
 DROP TABLE IF EXISTS t_task_valiable;
@@ -21,6 +23,8 @@ CREATE TABLE t_task_valiable(task_id INT NOT NULL, val_number TINYINT NOT NULL, 
 CREATE TABLE t_task_valiable_answer(task_id INT NOT NULL, val_number TINYINT NOT NULL, parametor VARCHAR(200), public_flg TINYINT(1), PRIMARY KEY(task_id, val_number), FOREIGN KEY(task_id) REFERENCES t_task(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
 CREATE TABLE t_class(id INT AUTO_INCREMENT, name VARCHAR(200), PRIMARY KEY(id)) CHARACTER SET 'utf8';
 CREATE TABLE t_user_class(user_id VARCHAR(20), class_id INT, PRIMARY KEY(user_id, class_id), FOREIGN KEY(user_id) REFERENCES t_user(id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(class_id) REFERENCES t_class(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
+CREATE TABLE t_course(id INT AUTO_INCREMENT, name VARCHAR(200), PRIMARY KEY(id)) CHARACTER SET 'utf8';
+CREATE TABLE t_user_course(user_id VARCHAR(20), course_id INT, PRIMARY KEY(user_id, course_id), FOREIGN KEY(user_id) REFERENCES t_user(id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(course_id) REFERENCES t_course(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
 INSERT INTO m_role(id, name) VALUES('001', '管理者');
 INSERT INTO m_role(id, name) VALUES('002', '先生');
 INSERT INTO m_role(id, name) VALUES('003', '学生');
@@ -31,10 +35,14 @@ INSERT INTO t_question(id, title, description, input_num, public_flg) VALUES(1, 
 INSERT INTO t_user(id, password, name, role_id) VALUES('testadmin1', 'password', 'テスト用管理者１', '001');
 INSERT INTO t_user(id, password, name, role_id) VALUES('testteacher1', 'password', 'テスト用先生１', '002');
 INSERT INTO t_user(id, password, name, role_id) VALUES('teststudent1', 'password', 'テスト用学生１', '003');
+INSERT INTO t_user(id, password, name, role_id) VALUES('teststudent2', 'password', 'テスト用学生２', '003');
 INSERT INTO t_class(name) VALUES('クラスＡ');
 INSERT INTO t_class(name) VALUES('クラスＢ');
 INSERT INTO t_user_class(user_id, class_id) VALUES('teststudent1', 1);
 INSERT INTO t_user_class(user_id, class_id) VALUES('teststudent1', 2);
+INSERT INTO t_course(id, name) VALUES(1, 'テストコース');
+INSERT INTO t_user_course(user_id, course_id) VALUES('teststudent1', 1);
+INSERT INTO t_user_course(user_id, course_id) VALUES('teststudent2', 1);
 
 # 一旦退避、テスト用
 DROP TABLE IF EXISTS t_question;
