@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jp.spring.boot.algolearn.bean.QuestionBean;
-import jp.spring.boot.algolearn.config.PrgLanguage;
-import jp.spring.boot.algolearn.form.ClassForm;
 import jp.spring.boot.algolearn.form.QuestionForm;
 import jp.spring.boot.algolearn.repository.QuestionRepository;
 

@@ -19,7 +19,7 @@ public class StudentForm {
 	/**
 	 * ユーザID(user id)
 	 */
-	String userId;
+	String id;
 
 	/**
 	 * パスワード(password)

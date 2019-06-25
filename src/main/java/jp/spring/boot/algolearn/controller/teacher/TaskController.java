@@ -1,10 +1,5 @@
 package jp.spring.boot.algolearn.controller.teacher;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,13 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jp.spring.boot.algolearn.bean.QuestionBean;
-import jp.spring.boot.algolearn.bean.UserBean;
-import jp.spring.boot.algolearn.config.RoleCode;
-import jp.spring.boot.algolearn.form.QuestionForm;
 import jp.spring.boot.algolearn.form.StudentForm;
 import jp.spring.boot.algolearn.repository.TaskRepository;
-import jp.spring.boot.algolearn.repository.UserRepository;
 
 /**
  * 先生用課題Contollerクラス（teacher task Controller Class）
@@ -90,7 +80,7 @@ public class TaskController {
 	 * @return 学生編集ページビュー(edit student page view)
 	 */
 	@PostMapping(path="edit")
-	public String edit(@RequestParam String userId, Model model) {
+	public String edit(@RequestParam String id, Model model) {
 
 //		Optional<UserBean> opt = userRepository.findById(userId);
 //		opt.ifPresent(bean -> {

@@ -1,29 +1,7 @@
 package jp.spring.boot.algolearn.controller.admin;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import jp.spring.boot.algolearn.bean.QuestionBean;
-import jp.spring.boot.algolearn.config.PrgLanguage;
-import jp.spring.boot.algolearn.datasource.DynamicRoutingDataSourceResolver;
-import jp.spring.boot.algolearn.datasource.SchemaContextHolder;
-import jp.spring.boot.algolearn.datasource.SchemaType;
-import jp.spring.boot.algolearn.form.LearnForm;
-import jp.spring.boot.algolearn.repository.QuestionRepository;
 
 @Controller
 @RequestMapping("/admin")

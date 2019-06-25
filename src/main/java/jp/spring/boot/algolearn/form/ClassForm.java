@@ -1,7 +1,6 @@
 package jp.spring.boot.algolearn.form;
 
 import java.util.List;
-import java.util.Map;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,11 +25,6 @@ public class ClassForm {
 	 * クラス名
 	 */
 	private String name;
-	
-	/**
-	 * クラス所属ユーザID
-	 */
-	private Map<String, String> users;
 	
 	/**
 	 * チェックボックス用所属ユーザID

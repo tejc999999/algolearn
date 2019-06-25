@@ -20,18 +20,18 @@
 		</thead>
 		<tbody>
 		<tr class="row" th:each="student : ${students}">
-			<td class="col-md-4" th:text="${student.userId}">ユーザーID</td>
+			<td class="col-md-4" th:text="${student.id}">ユーザーID</td>
 			<td class="col-md-6" th:text="${student.name}">名前</td>
 			<td class="col-md-1">
 				<form th:action="@{/teacher/student/edit}" method="post">
 					<input type="submit" name="form" th:value="編集" />
-					<input type="hidden" name="userId" th:value="${student.userId}" />
+					<input type="hidden" name="id" th:value="${student.id}" />
 				</form>
 			</td>
 			<td class="col-md-1">
 				<form th:action="@{/teacher/student/delete}" method="post">
 					<input type="submit" name="form" th:value="削除" />
-					<input type="hidden" name="userId" th:value="${student.userId}" />
+					<input type="hidden" name="id" th:value="${student.id}" />
 				</form>
 			</td>
 		</tr>

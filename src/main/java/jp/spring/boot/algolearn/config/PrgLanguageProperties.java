@@ -1,6 +1,5 @@
 package jp.spring.boot.algolearn.config;
 
-import java.util.List;
 import java.util.Map;
 
 import lombok.Data;

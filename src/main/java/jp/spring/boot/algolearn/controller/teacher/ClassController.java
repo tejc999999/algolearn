@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jp.spring.boot.algolearn.Employee;
 import jp.spring.boot.algolearn.EmployeeRepository;
-import jp.spring.boot.algolearn.Project;
 import jp.spring.boot.algolearn.bean.ClassBean;
-import jp.spring.boot.algolearn.bean.QuestionBean;
 import jp.spring.boot.algolearn.bean.UserBean;
-import jp.spring.boot.algolearn.config.PrgLanguage;
 import jp.spring.boot.algolearn.form.ClassForm;
-import jp.spring.boot.algolearn.form.QuestionForm;
 import jp.spring.boot.algolearn.repository.ClassRepository;
-import jp.spring.boot.algolearn.repository.QuestionRepository;
 import jp.spring.boot.algolearn.repository.UserRepository;
 
 import org.springframework.validation.BindingResult;
@@ -90,7 +83,7 @@ public class ClassController {
 		Map<String, String> userMap = new HashMap<>();
 		List<UserBean> userBeanList = userRepository.findAll();
 		for(UserBean bean : userBeanList) {
-			userMap.put(bean.getName(), bean.getId());
+			userMap.put(bean.getId(), bean.getName());
 		}
 		
 		model.addAttribute("userCheckItems", userMap);
@@ -135,7 +128,7 @@ public class ClassController {
 		Map<String, String> userMap = new HashMap<>();
 		List<UserBean> userBeanList = userRepository.findAll();
 		for(UserBean bean : userBeanList) {
-			userMap.put(bean.getName(), bean.getId());
+			userMap.put(bean.getId(), bean.getName());
 		}
 		model.addAttribute("userCheckItems", userMap);
 

@@ -59,13 +59,13 @@ public class StudentControllerTest {
 
 	public static final Operation INSERT_DATA1 = 
 		Operations.insertInto("t_user")
-			.columns("user_id", "password", "name", "role_id")
+			.columns("id", "password", "name", "role_id")
 			.values("userid01", "password", "テストユーザー１", RoleCode.ROLE_STUDENT.getString())
 			.build();
 
 	public static final Operation INSERT_DATA2 = 
 			Operations.insertInto("t_user")
-				.columns("user_id", "password", "name", "role_id")
+				.columns("id", "password", "name", "role_id")
 				.values("userid02", "password", "テストユーザー２", RoleCode.ROLE_STUDENT.getString())
 				.build();
 	
@@ -109,12 +109,12 @@ public class StudentControllerTest {
     	List<StudentForm> list = (List) result.getModelAndView().getModel().get("students");
     	
     	StudentForm form1 = new StudentForm();
-    	form1.setUserId("userid01");
+    	form1.setId("userid01");
     	form1.setPassword("password");
     	form1.setName("テストユーザー１");
     	
     	StudentForm form2 = new StudentForm();
-    	form2.setUserId("userid02");
+    	form2.setId("userid02");
     	form2.setPassword("password");
     	form2.setName("テストユーザー２");
     	
@@ -133,7 +133,7 @@ public class StudentControllerTest {
     public void 先生用学生登録処理() throws Exception {
   	  
     	StudentForm form = new StudentForm();
-    	form.setUserId("userid01");
+    	form.setId("userid01");
     	form.setPassword("password");
     	form.setName("テストユーザー１");
     	
@@ -146,7 +146,7 @@ public class StudentControllerTest {
         // ifPresentOrElseの実装はJDK9からの様子
 		opt.ifPresent(bean -> {
 
-	    		assertEquals(bean.getId(), form.getUserId());
+	    		assertEquals(bean.getId(), form.getId());
 	    		assertEquals(bean.getPassword(),form.getPassword());
 	    		assertEquals(bean.getName(), form.getName());
 	    		assertEquals(bean.getRoleId(), RoleCode.ROLE_STUDENT.getString());
@@ -163,14 +163,14 @@ public class StudentControllerTest {
         dbSetup.launch();
     	
     	MvcResult result = mockMvc.perform(post("/teacher/student/edit")
-    			.param("userId", "userid01"))
+    			.param("id", "userid01"))
             .andExpect(status().isOk())
             .andExpect(view().name("teacher/student/edit"))
             .andReturn();
 
     	StudentForm resultForm = (StudentForm) result.getModelAndView().getModel().get("studentForm");
     	
-    	assertEquals(resultForm.getUserId(), "userid01");
+    	assertEquals(resultForm.getId(), "userid01");
     	assertEquals(resultForm.getPassword(),"password");
     	assertEquals(resultForm.getName(),"テストユーザー１");
     	assertEquals(resultForm.getRoleId(), RoleCode.ROLE_STUDENT.getString());
@@ -185,7 +185,7 @@ public class StudentControllerTest {
         dbSetup.launch();
     	
     	StudentForm form = new StudentForm();
-    	form.setUserId("userid01");
+    	form.setId("userid01");
     	form.setName("テストユーザー１－２");
     	form.setPassword("password2");
     	
@@ -215,7 +215,7 @@ public class StudentControllerTest {
         dbSetup.launch();
     	
     	mockMvc.perform(post("/teacher/student/delete")
-        		.param("userId", "userid01"))
+        		.param("id", "userid01"))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/teacher/student"));
 

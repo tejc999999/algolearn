@@ -58,7 +58,7 @@ public class ClassBean {
 	// CascadeType.PERSIST:新規にエンティティを永続化コンテキストに登録
 	// CascadeType.REFRESH:エンティティをDBの内容で更新
 	// CascadeType.REMOVE:永続化コンテキストからエンティティを削除
-	@ManyToMany(cascade = {CascadeType.REFRESH})
+	@ManyToMany(cascade = {CascadeType.REFRESH}, fetch=FetchType.EAGER)
 	@JoinTable(
 			name = "t_user_class",
 			joinColumns = {@JoinColumn(name = "class_id")},

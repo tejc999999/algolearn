@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jp.spring.boot.algolearn.bean.QuestionBean;
 import jp.spring.boot.algolearn.bean.UserBean;
-import jp.spring.boot.algolearn.config.RoleCode;
-import jp.spring.boot.algolearn.form.QuestionForm;
 import jp.spring.boot.algolearn.form.StudentForm;
 import jp.spring.boot.algolearn.repository.UserRepository;
 
@@ -89,9 +86,9 @@ public class StudentController {
 	 * @return 学生編集ページビュー(edit student page view)
 	 */
 	@PostMapping(path="edit")
-	public String edit(@RequestParam String userId, Model model) {
+	public String edit(@RequestParam String id, Model model) {
 
-		Optional<UserBean> opt = userRepository.findById(userId);
+		Optional<UserBean> opt = userRepository.findById(id);
 		opt.ifPresent(bean -> {
 			StudentForm form = new StudentForm();
 			BeanUtils.copyProperties(bean, form);
@@ -124,10 +121,10 @@ public class StudentController {
 	 * @return 学生一覧ページリダイレクト(redirect student list page)
 	 */
 	@PostMapping(path="delete")
-	public String delete(@RequestParam String userId, Model model) {
+	public String delete(@RequestParam String id, Model model) {
 		
 		UserBean bean = new UserBean();
-		bean.setId(userId);
+		bean.setId(id);
 		
 		userRepository.delete(bean);
 		

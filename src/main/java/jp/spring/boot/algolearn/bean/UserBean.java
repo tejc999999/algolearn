@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -61,6 +62,6 @@ public class UserBean {
 	/**
 	 * ユーザー所属クラス：相互参照オブジェクト(user belonging class：cross reference object)
 	 */
-	@ManyToMany(mappedBy = "userBeans")
+	@ManyToMany(mappedBy = "userBeans", fetch=FetchType.EAGER)
 	private List<ClassBean> classBeans = new ArrayList<>();
 }
