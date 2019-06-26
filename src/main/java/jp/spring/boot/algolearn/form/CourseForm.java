@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 
- * 先生用コースForm
+ * 先生用コースForm(course form for teacher)
  * 
  * @author tejc999999
  *
@@ -17,27 +17,22 @@ import lombok.NoArgsConstructor;
 public class CourseForm {
 
 	/**
-	 * コースID
+	 * コースID(course id)
 	 */
 	private String id;
 	
 	/**
-	 * コース名
+	 * コース名(course name)
 	 */
 	private String name;
 
 	/**
-	 * チェックボックス入力情報（所属クラスID）用
-	 */
-	private String[] classChecks;
+     * 所属クラスIDリスト(affiliated class list)
+     */
+    private List<String> classCheckedList;
 
 	/**
-	 * チェックボックス入力情報（所属ユーザID）用
-	 */
-	private String[] userChecks;
-	
-	/**
-	 * 既存所属ユーザID
+	 * 所属ユーザIDリスト(affiliated user list)
 	 */
 	private List<String> userCheckedList;
 }

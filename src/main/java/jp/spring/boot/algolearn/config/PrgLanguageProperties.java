@@ -5,7 +5,7 @@ import java.util.Map;
 import lombok.Data;
 
 /**
- * サーバー設定関連プロパティファイル設定値
+ * サーバー設定関連プロパティファイル設定値(Server settings related property file settings)
  * 
  * @author tejc999999
  *
@@ -16,9 +16,9 @@ public class PrgLanguageProperties {
 	private Map<String, PrgLanguagePropertiesDetail> map;
 
     /**
-     * コンストラクタ
+     * コンストラクタ(Constructor)
      * 
-     * @param プログラミング言語設定マップ
+     * @param プログラミング言語設定マップ(Programming language setting map)
      */
     public PrgLanguageProperties(Map<String, PrgLanguagePropertiesDetail> map) {
     	this.map = map;

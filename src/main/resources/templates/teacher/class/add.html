@@ -27,7 +27,7 @@
       <label class="col-form-label">所属ユーザ</label>
          <div class="checkbox" th:each="item : ${userCheckItems}">
           <label>
-            <input type="checkbox" name="userChecks" th:value="${item.key}" th:text="${item.value}" th:field="*{userChecks}" />
+            <input type="checkbox" name="userCheckedList" th:value="${item.key}" th:text="${item.value}" th:field="*{userCheckedList}" />
           </label>
         </div>
       </div>

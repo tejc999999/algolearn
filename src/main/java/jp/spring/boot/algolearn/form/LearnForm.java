@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 学生用学習Form.
+ * 学生用学習Form(learn form for student)
  * 
  * @author tejc999999
  *
@@ -29,26 +29,27 @@ public class LearnForm {
 //	public static String PL_CODE_PYTHON = "python";
 	
 	/**
-	 * プログラミング言語種別
+	 * プログラミング言語種別(programing language type)
 	 */
 	private String programmingLanguage;
 
 	/**
-	 *  プログラムコード
+	 *  プログラムコード(program code)
 	 */
 	private String code;
 	
 	/**
-	 * プログラムコード（冒頭）
+	 * プログラムコード（冒頭）(program code(beginning))
 	 */
 	private String codeHead;
 
 	/**
-	 * プログラムコード（チェック用）
+	 * プログラムコード（チェック用）(program code for check)
 	 */
 	private String codeCheck;
+
 	/**
-	 * 問題情報
+	 * 問題情報(question information)
 	 */
 	private QuestionForm questionForm;
 

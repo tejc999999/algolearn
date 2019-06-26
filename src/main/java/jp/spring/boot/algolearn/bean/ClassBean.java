@@ -64,8 +64,9 @@ public class ClassBean {
 	@ManyToMany(cascade = {CascadeType.REFRESH}, fetch=FetchType.EAGER)
 	@JoinTable(
 			name = "t_user_class",
-			joinColumns = {@JoinColumn(name = "class_id")},
-			inverseJoinColumns = {@JoinColumn(name = "user_id")}
+			joinColumns = {@JoinColumn(name = "class_id", referencedColumnName="id")},
+			inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName="id")}
 			)
 	Set<UserBean> userBeans;
+
 }

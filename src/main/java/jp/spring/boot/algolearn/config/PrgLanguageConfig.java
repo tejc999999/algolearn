@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * サーバー関連設定ファイル読み込み
+ * サーバー関連設定ファイル読み込み(Load server related configuration file)
  * 
  * @author tejc999999
  *
@@ -18,99 +18,99 @@ import org.springframework.context.annotation.Configuration;
 public class PrgLanguageConfig {
 
 	/**
-	 * Java ビルドコマンドパス
+	 * Java ビルドコマンドパス(java build command path)
 	 */
 	@Value("${prglanguage.java.buildCmdPath}")
     private String javaBuildCmdPath;
 
 	/**
-	 * Java 実行コマンドパス
+	 * Java 実行コマンドパス(java execute command path)
 	 */
 	@Value("${prglanguage.java.executeCmdPath}")
     private String javaExecuteCmdPath;
 
 	/**
-	 * Java 作業フォルダパス
+	 * Java 作業フォルダパス(java work folder path)
 	 */
 	@Value("${prglanguage.java.workFolderPath}")
     private String javaWorkFolderPath;
 
 	/**
-	 * Java ファイル名
+	 * Java ファイル名(java file name)
 	 */
 	@Value("${prglanguage.java.fileName}")
     private String javaFileName;
 
 	/**
-	 * Java ビルド後ファイル名
+	 * Java ビルド後ファイル名(Java file name after build)
 	 */
 	@Value("${prglanguage.java.buildFileName}")
     private String javaBuildFileName;
 
 	/**
-	 * C_CPP ビルドコマンドパス
+	 * C/C++ ビルドコマンドパス(c/c++ build command path)
 	 */
 	@Value("${prglanguage.ccpp.buildCmdPath}")
     private String cCppBuildCmdPath;
 
 	/**
-	 * C_CPP 実行コマンドパス
+	 * C/C++ 実行コマンドパス(c/c++ execute command path)
 	 */
 	@Value("${prglanguage.ccpp.executeCmdPath}")
     private String cCppExecuteCmdPath;
 
 	/**
-	 * C_CPP 作業フォルダパス
+	 * C/C++ 作業フォルダパス(c/c++ work folder path)
 	 */
 	@Value("${prglanguage.ccpp.workFolderPath}")
     private String cCppWorkFolderPath;
 
 	/**
-	 * C_CPP ファイル名
+	 * C/C++ ファイル名(C/C++ file name)
 	 */
 	@Value("${prglanguage.ccpp.fileName}")
     private String cCppFileName;
 
 	/**
-	 * C_CPP ビルド後ファイル名
+	 * C/C++ ビルド後ファイル名(c,/c++ file name after build)
 	 */
 	@Value("${prglanguage.ccpp.buildFileName}")
     private String cCppBuildFileName;
 	
 	/**
-	 * Python ビルドコマンドパス
+	 * Python ビルドコマンドパス(Python build command path)
 	 */
 	@Value("${prglanguage.python.buildCmdPath}")
     private String pythonBuildCmdPath;
 
 	/**
-	 * Python 実行コマンドパス
+	 * Python 実行コマンドパス(Python execute command path)
 	 */
 	@Value("${prglanguage.python.executeCmdPath}")
     private String pythonExecuteCmdPath;
 
 	/**
-	 * Python 作業フォルダパス
+	 * Python 作業フォルダパス(Python work folder path)
 	 */
 	@Value("${prglanguage.python.workFolderPath}")
     private String pythonWorkFolderPath;
 
 	/**
-	 * Python ファイル名
+	 * Python ファイル名(Python file name)
 	 */
 	@Value("${prglanguage.python.fileName}")
     private String pythonFileName;
 
 	/**
-	 * Python ビルド後ファイル名
+	 * Python ビルド後ファイル名(Python file name after build)
 	 */
 	@Value("${prglanguage.python.buildFileName}")
     private String pythonBuildFileName;
 	
 	/**
-	 * プロパティを取得する
+	 * プロパティを取得する(get the property)
 	 * 
-	 * @return プロパティ
+	 * @return プロパティ(property)
 	 */
     @Bean
     public PrgLanguageProperties prgLanguageProperties() {
@@ -148,15 +148,15 @@ public class PrgLanguageConfig {
     }
     
 	/**
-	 * サーバー文字コード
+	 * サーバー文字コード(server character code)
 	 */
 	@Value("${server.charactercode}")
     private String characterCode;
 
 	/**
-	 * プロパティを取得する
+	 * プロパティを取得する(get the property)
 	 * 
-	 * @return プロパティ
+	 * @return プロパティ(property)
 	 */
     @Bean
     public ServerProperties serverProperties() {

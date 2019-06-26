@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 
- * 先生用問題Form
+ * 先生用問題Form(question form for teacher)
  * 
  * @author tejc999999
  *
@@ -15,27 +15,27 @@ import lombok.NoArgsConstructor;
 public class QuestionForm {
 
 	/**
-	 * クラスID
+	 * クラスID(class id)
 	 */
 	private String id;
 	
 	/**
-	 * タイトル
+	 * タイトル(title)
 	 */
 	private String title;
 
 	/**
-	 * 説明文
+	 * 説明文(description)
 	 */
 	private String description;
 
 	/**
-	 * 入力値個数
+	 * 入力値個数(number of input param)
 	 */
 	private int inputNum;
 	
 	/**
-	 * 問題公開フラグ
+	 * 問題公開フラグ(question public flag)
 	 */
 	private boolean publicFlg;
 }

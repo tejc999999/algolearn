@@ -14,9 +14,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -67,6 +65,7 @@ public class QuestionBean {
 	@Column(name="public_flg", nullable = false)
 	private boolean publicFlg;
 	
+
 	@OneToMany(mappedBy="questionBean", cascade= {CascadeType.ALL})
 //    @MapsId("questionBean")
 	private List<TaskBean> taskBeans;

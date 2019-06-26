@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,16 +62,15 @@ public class CourseController {
 	 */
 	@GetMapping
 	String list(CourseForm form, Model model) {
-		
-		List<CourseForm> list = new ArrayList<CourseForm>();
 
+		// 全コース取得
+		List<CourseForm> list = new ArrayList<CourseForm>();
 		for (CourseBean courseBean : courseRepository.findAll()) {
 			CourseForm courseForm = new CourseForm();
 			BeanUtils.copyProperties(courseBean, courseForm);
 			courseForm.setId(String.valueOf(courseBean.getId()));
 			list.add(courseForm);
 		}			
-
 		model.addAttribute("courses", list);
 
 		return "teacher/course/list";
@@ -84,21 +84,20 @@ public class CourseController {
 	@GetMapping(path="add")
 	public String add(Model model) {
 
+		// 全クラス取得
 		Map<String, String> classMap = new HashMap<>();
 		List<ClassBean> classBeanList = classRepository.findAll();
-		for(ClassBean bean : classBeanList) {
-			classMap.put(String.valueOf(bean.getId()), bean.getName());
-		}
-		
+		if(classBeanList != null) classBeanList.forEach(bean -> {
+            classMap.put(String.valueOf(bean.getId()), bean.getName());
+		});
 		model.addAttribute("classCheckItems", classMap);
 		
-		
+		// 全ユーザ取得
 		Map<String, String> userMap = new HashMap<>();
 		List<UserBean> userBeanList = userRepository.findAll();
-		for(UserBean bean : userBeanList) {
-			userMap.put(bean.getId(), bean.getName());
-		}
-		
+		if(userBeanList != null) userBeanList.forEach(bean -> {
+            userMap.put(bean.getId(), bean.getName());
+		});
 		model.addAttribute("userCheckItems", userMap);
 		
 		return "teacher/course/add";
@@ -137,38 +136,37 @@ public class CourseController {
 	@PostMapping(path="add", params = "userExclusionBtn")
 	public String addUserExclusion(@Validated CourseForm form, BindingResult result, Model model) {
 		
+		// 全クラス取得
 		Map<String, String> classMap = new HashMap<>();
 		List<ClassBean> classBeanList = classRepository.findAll();
-		for(ClassBean bean : classBeanList) {
-			classMap.put(String.valueOf(bean.getId()), bean.getName());
-		}
-		
+		if(classBeanList != null) classBeanList.forEach(bean -> {
+            classMap.put(String.valueOf(bean.getId()), bean.getName());
+		});
 		model.addAttribute("classCheckItems", classMap);
-		
+
+		// 全ユーザ取得後、選択済みクラスに所属するユーザを除外
 		Map<String, String> userMap = new HashMap<>();
 		List<UserBean> userBeanList = userRepository.findAll();
-		for(UserBean bean : userBeanList) {
-			userMap.put(bean.getId(), bean.getName());
-		}
+		if(userBeanList != null) userBeanList.forEach(bean -> {
+            userMap.put(bean.getId(), bean.getName());
+		});
 		
-		if(form.getClassChecks() != null) {
-			List<String> list = new ArrayList<>();
-			for(String classId : form.getClassChecks()) {
-				Optional<ClassBean> opt = classRepository.findById(Integer.parseInt(classId));
-				opt.ifPresent(bean -> {
-					if(bean.getUserBeans() != null) {
-						for(UserBean userBean : bean.getUserBeans()) {
-							list.add(userBean.getId());
-						}
-					}
-				});
-			}
-
-			if(list != null) {
-				for(String userId : list) {
-					userMap.remove(userId);
-				}
-			}
+		if(form.getClassCheckedList() != null) {
+			List<String> userLlist = new ArrayList<>();
+			List<String> classList = form.getClassCheckedList();
+			if(classList != null) classList.forEach(classId -> {
+                Optional<ClassBean> opt = classRepository.findById(Integer.parseInt(classId));
+                opt.ifPresent(classBean -> {
+                    Set<UserBean> userBeanSet = classBean.getUserBeans();
+                    if(userBeanSet != null) userBeanSet.forEach(userBean -> {
+                        userLlist.add(userBean.getId());
+                    });
+                });
+			});
+			// 選択済みクラス所属ユーザを除外
+			if(userLlist != null) userLlist.forEach(userId -> {
+                userMap.remove(userId);
+			});
 		}
 		model.addAttribute("userCheckItems", userMap);
 				
