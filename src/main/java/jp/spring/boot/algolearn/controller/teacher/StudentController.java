@@ -135,6 +135,7 @@ public class StudentController {
                 userBean.removeFromClass(classBeanArray[i]);
             }
 
+            
             userRepository.delete(userBean);
         });
 
