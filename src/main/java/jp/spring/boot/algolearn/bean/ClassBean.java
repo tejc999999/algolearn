@@ -28,8 +28,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @Entity
 @Data
-@ToString(exclude = "userBeans")
-@EqualsAndHashCode(exclude = "userBeans")
+@ToString(exclude =  { "userBeans", "courseBeans" })
+@EqualsAndHashCode(exclude = { "userBeans", "courseBeans" })
 @Table(name = "t_class")
 public class ClassBean {
 
@@ -75,6 +75,4 @@ public class ClassBean {
         courseBean.getClassBeans().remove(this);
         courseBeans.remove(courseBean);
     }
-
-
 }

@@ -12,10 +12,10 @@ spring:
       ddl-auto: none
   datasource:
     initialization-mode: always
-    url: jdbc:mysql://localhost/algolearn?useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://localhost/algolearn?serverTimezone=JST&useUnicode=true&characterEncoding=utf8
     username: algolearnadmin
     password: algolearnpass
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
 prglanguage: 
   java: 
     fileName: Test.java

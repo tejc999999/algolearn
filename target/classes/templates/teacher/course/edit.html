@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="layout :: common_layout(title = 'コース登録画面', scripts = ~{::script}, links = ~{::link})">
+ </head>
+<body>
+
+<div th:replace="layout :: header"></div>
+
+<h2>■コース編集</h2>
+<div class="container-fluid no-gutters pb-5">
+		<form th:action="@{/teacher/course/editprocess}" th:object="${courseForm}" method="post">
+  <div class="form-row">
+    <div class="form-group col-md-12">
+      <label for="name" class="col-form-label">コース名</label>
+      <input type="text" class="form-control" name="name"  th:value="*{name}" placeholder="クラスの名前" aria-label="クラスの名前" />
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="col-md-12">
+      <input type="submit" class="btn btn-info btn-block" th:value="作成">
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+    <div class="form-group">
+      <label class="col-form-label">所属クラス</label>
+        <div class="checkbox" th:each="item : ${classCheckItems}">
+          <label>
+            <input type="checkbox" name="classCheckedList" th:value="${item.key}" th:text="${item.value}" th:field="*{classCheckedList}" />
+          </label>
+        </div>
+      </div>
+      <div>
+        <input type="submit" name="userExclusionBtn" class="btn btn-info btn-block" th:value="クラスユーザ除外">
+      </div>
+    </div>
+    <div class="form-group col-md-6">
+      <div class="form-group">
+      <label class="col-form-label">所属ユーザー</label>
+        <div class="checkbox" th:each="item : ${userCheckItems}">
+          <label>
+            <input type="checkbox" name="userCheckedList" th:value="${item.key}" th:text="${item.value}" th:field="*{userCheckedList}" />
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  </form>
+</div>
+ 
+<div th:replace="layout :: footer"></div>
+  
+</body>
+</html>

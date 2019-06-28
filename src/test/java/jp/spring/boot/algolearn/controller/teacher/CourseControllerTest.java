@@ -1,5 +1,6 @@
 package jp.spring.boot.algolearn.controller.teacher;
 
+
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.hasEntry;
@@ -42,9 +43,9 @@ import com.ninja_squad.dbsetup.destination.Destination;
 import com.ninja_squad.dbsetup.operation.Operation;
 
 import jp.spring.boot.algolearn.bean.ClassBean;
+import jp.spring.boot.algolearn.bean.CourseBean;
 import jp.spring.boot.algolearn.bean.UserBean;
 import jp.spring.boot.algolearn.config.RoleCode;
-import jp.spring.boot.algolearn.form.ClassForm;
 import jp.spring.boot.algolearn.form.CourseForm;
 import jp.spring.boot.algolearn.repository.ClassRepository;
 import jp.spring.boot.algolearn.repository.CourseRepository;
@@ -83,11 +84,11 @@ public class CourseControllerTest {
             "t_user").columns("id", "password", "name", "role_id").values(
                     "userid02", "password", "テストユーザー２", RoleCode.ROLE_STUDENT
                             .getString()).build();
-    public static final Operation INSERT_TEACHER_DATA3 = Operations.insertInto(
+    public static final Operation INSERT_TEACHER_DATA1 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
                     "userid03", "password", "テストユーザー３", RoleCode.ROLE_TEACHER
                             .getString()).build();
-    public static final Operation INSERT_ADMIN_DATA4 = Operations.insertInto(
+    public static final Operation INSERT_ADMIN_DATA1 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
                     "userid04", "password", "テストユーザー４", RoleCode.ROLE_ADMIN
                             .getString()).build();
@@ -113,6 +114,9 @@ public class CourseControllerTest {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    ClassRepository classRepository;
 
     @Autowired
     WebApplicationContext wac;
@@ -192,8 +196,9 @@ public class CourseControllerTest {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-                INSERT_STUDENT_DATA2, 
-                INSERT_CLASS_DATA1, INSERT_CLASS_DATA2, INSERT_USER_CLASS_DATA1);
+                INSERT_STUDENT_DATA2, INSERT_TEACHER_DATA1, INSERT_ADMIN_DATA1,
+                INSERT_CLASS_DATA1, INSERT_CLASS_DATA2,
+                INSERT_USER_CLASS_DATA1);
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
@@ -201,18 +206,20 @@ public class CourseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("classCheckItems"))
                 .andExpect(model().attributeExists("userCheckItems"))
+                .andExpect(model().attribute("classCheckItems",
+                        allOf(hasEntry("1", "クラス１"),
+                                hasEntry("2","クラス２"))))
+                .andExpect(model().attribute("userCheckItems",
+                        allOf(hasEntry("userid01", "テストユーザー１"),
+                                hasEntry("userid02","テストユーザー２"))))
                 .andExpect(view().name("teacher/course/add"))
                 .andReturn();
         
-        Map<String, String> classMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
-        assertEquals(classMap.size(), 2);
-        assertThat(classMap, hasEntry("1", "クラス１"));
-        assertThat(classMap, hasEntry("2", "クラス２"));
-
-        Map<String, String> userMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
-        assertEquals(userMap.size(), 2);
-        assertThat(userMap, hasEntry("userid01", "テストユーザー１"));
-        assertThat(userMap, hasEntry("userid02", "テストユーザー２"));
+        // まだMavenのHamcrestでCollection系のサイズチェックができないため、ここでチェック
+        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        assertEquals(classCheckMap.size(), 2);
+        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        assertEquals(userCheckMap.size(), 2);
     }
 
     /**
@@ -245,7 +252,7 @@ public class CourseControllerTest {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-                INSERT_STUDENT_DATA2, 
+                INSERT_STUDENT_DATA2,  INSERT_TEACHER_DATA1, INSERT_ADMIN_DATA1,
                 INSERT_CLASS_DATA1, INSERT_CLASS_DATA2, INSERT_USER_CLASS_DATA1);
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
@@ -260,22 +267,21 @@ public class CourseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("classCheckItems"))
                 .andExpect(model().attributeExists("userCheckItems"))
+                .andExpect(model().attribute("classCheckItems",
+                        allOf(hasEntry("1", "クラス１"),
+                                hasEntry("2","クラス２"))))
+                .andExpect(model().attribute("userCheckItems",
+                        hasEntry("userid02","テストユーザー２")))
                 .andExpect(view().name("teacher/course/add"))
                 .andReturn();
 
-        Map<String, String> classMap = (Map<String, String>) result
-                .getModelAndView().getModel().get("classCheckItems");
-        assertEquals(classMap.size(), 2);
-        assertThat(classMap, hasEntry("1", "クラス１"));
-        assertThat(classMap, hasEntry("2", "クラス２"));
-
-        Map<String, String> userMap = (Map<String, String>) result
-                .getModelAndView().getModel().get("userCheckItems");
-        assertEquals(userMap.size(), 1);
-        assertThat(userMap, hasEntry("userid02", "テストユーザー２"));
-
+        // まだMavenのHamcrestでCollection系のサイズチェックができないため、ここでチェック
+        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        assertEquals(classCheckMap.size(), 2);
+        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        assertEquals(userCheckMap.size(), 1);
+        
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel().get("courseForm");
-
         List<String> classCheckedList = courseForm.getClassCheckedList();
         assertEquals(classCheckedList.size(), 1);
         assertThat(classCheckedList, containsInAnyOrder("1"));
@@ -293,8 +299,9 @@ public class CourseControllerTest {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-                INSERT_STUDENT_DATA2, 
-                INSERT_CLASS_DATA1, INSERT_CLASS_DATA2, INSERT_USER_CLASS_DATA1);
+                INSERT_STUDENT_DATA2, INSERT_TEACHER_DATA1, INSERT_ADMIN_DATA1,
+                INSERT_CLASS_DATA1, INSERT_CLASS_DATA2,
+                INSERT_USER_CLASS_DATA1);
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
@@ -308,20 +315,20 @@ public class CourseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("classCheckItems"))
                 .andExpect(model().attributeExists("userCheckItems"))
+                .andExpect(model().attribute("classCheckItems", 
+                        allOf(hasEntry("1", "クラス１"),
+                                hasEntry("2","クラス２"))))
+                .andExpect(model().attribute("userCheckItems",
+                        allOf(hasEntry("userid01", "テストユーザー１"),
+                                hasEntry("userid02","テストユーザー２"))))
                 .andExpect(view().name("teacher/course/add"))
                 .andReturn();
 
-        Map<String, String> classMap = (Map<String, String>) result
-                .getModelAndView().getModel().get("classCheckItems");
-        assertEquals(classMap.size(), 2);
-        assertThat(classMap, hasEntry("1", "クラス１"));
-        assertThat(classMap, hasEntry("2", "クラス２"));
-
-        Map<String, String> userMap = (Map<String, String>) result
-                .getModelAndView().getModel().get("userCheckItems");
-        assertEquals(userMap.size(), 2);
-        assertThat(userMap, hasEntry("userid01", "テストユーザー１"));
-        assertThat(userMap, hasEntry("userid02", "テストユーザー２"));
+        // まだMavenのHamcrestでCollection系のサイズチェックができないため、ここでチェック
+        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        assertEquals(classCheckMap.size(), 2);
+        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        assertEquals(userCheckMap.size(), 2);
 
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel().get("courseForm");
 
@@ -340,34 +347,104 @@ public class CourseControllerTest {
     @Test
     public void 先生用クラス登録処理_ユーザーあり_クラスあり() throws Exception {
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        ClassForm form = new ClassForm();
-//        form.setName("クラス１");
-//        List<String> userIdList = new ArrayList<>();
-//        userIdList.add("userid01");
-//        form.setUserCheckedList(userIdList);
-//
-//        mockMvc.perform(post("/teacher/class/add").flashAttr("classForm", form))
-//                .andExpect(status().is3xxRedirection()).andExpect(view().name(
-//                        "redirect:/teacher/class"));
-//
-//        Optional<ClassBean> opt = classRepository.findById(1);
-//        // ifPresentOrElseの実装はJDK9からの様子
-//        opt.ifPresent(classBean -> {
-//            assertEquals(classBean.getName(), form.getName());
-//            assertEquals(classBean.getUserBeans().size(), 1);
-//            Set<UserBean> userBeanSet = classBean.getUserBeans();
-//            if (userBeanSet != null)
-//                userBeanSet.forEach(userBean -> {
-//                    assertEquals(String.valueOf(userBean.getId()), "userid01");
-//                    assertEquals(userBean.getPassword(), "password");
-//                    assertEquals(userBean.getName(), "テストユーザー１");
-//                });
-//        });
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_USER_CLASS_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        CourseForm form = new CourseForm();
+        form.setName("コース１");
+        List<String> classList = new ArrayList<>();
+        classList.add("1");
+        form.setClassCheckedList(classList);
+        List<String> userIdList = new ArrayList<>();
+        userIdList.add("userid02");
+        form.setUserCheckedList(userIdList);
+
+        mockMvc.perform(post("/teacher/course/add").flashAttr("courseForm", form))
+                .andExpect(status().is3xxRedirection()).andExpect(view().name(
+                        "redirect:/teacher/course"));
+
+        Optional<CourseBean> optCourse = courseRepository.findById(1);
+        // ifPresentOrElseの実装はJDK9からの様子
+        optCourse.ifPresent(courseBean -> {
+            assertEquals(courseBean.getName(), form.getName());
+            Set<ClassBean> classBeanSet = courseBean.getClassBeans();
+            assertEquals(classBeanSet.size(), 1);
+            if (classBeanSet != null) classBeanSet.forEach(classBean -> {
+                    assertEquals(String.valueOf(classBean.getId()), 1);
+                    assertEquals(classBean.getName(), "クラス２");
+                    Set<UserBean> userBeanSet = classBean.getUserBeans();
+                    userBeanSet.forEach(userBean -> {
+                        assertEquals(String.valueOf(userBean.getId()), "userid01");
+                        assertEquals(userBean.getPassword(), "password");
+                        assertEquals(userBean.getName(), "テストユーザー１");
+                    });
+            });
+            Set<UserBean> userBeanSet = courseBean.getUserBeans();
+            assertEquals(userBeanSet.size(), 1);
+            if (userBeanSet != null) userBeanSet.forEach(userBean -> {
+                    assertEquals(String.valueOf(userBean.getId()), "userid02");
+                    assertEquals(userBean.getPassword(), "password");
+                    assertEquals(userBean.getName(), "テストユーザー２");
+            });
+        });
+    }
+    
+    /**
+     * 先生用コース登録処理_ユーザーあり_クラスあり_ユーザ重複
+     * @throws Exception
+     */
+    @Test
+    public void 先生用クラス登録処理_ユーザーあり_クラスあり_ユーザ重複() throws Exception {
+
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_USER_CLASS_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        CourseForm form = new CourseForm();
+        form.setName("コース１");
+        List<String> classList = new ArrayList<>();
+        classList.add("1");
+        form.setClassCheckedList(classList);
+        List<String> userIdList = new ArrayList<>();
+        userIdList.add("userid01");
+        userIdList.add("userid02");
+        form.setUserCheckedList(userIdList);
+
+        mockMvc.perform(post("/teacher/course/add").flashAttr("courseForm", form))
+                .andExpect(status().is3xxRedirection()).andExpect(view().name(
+                        "redirect:/teacher/course"));
+
+        Optional<CourseBean> optCourse = courseRepository.findById(1);
+        // ifPresentOrElseの実装はJDK9からの様子
+        optCourse.ifPresent(courseBean -> {
+            assertEquals(courseBean.getName(), form.getName());
+            Set<ClassBean> classBeanSet = courseBean.getClassBeans();
+            assertEquals(classBeanSet.size(), 1);
+            if (classBeanSet != null) classBeanSet.forEach(classBean -> {
+                    assertEquals(String.valueOf(classBean.getId()), 1);
+                    assertEquals(classBean.getName(), "クラス２");
+                    Set<UserBean> userBeanSet = classBean.getUserBeans();
+                    userBeanSet.forEach(userBean -> {
+                        assertEquals(String.valueOf(userBean.getId()), "userid01");
+                        assertEquals(userBean.getPassword(), "password");
+                        assertEquals(userBean.getName(), "テストユーザー１");
+                    });
+            });
+            Set<UserBean> userBeanSet = courseBean.getUserBeans();
+            assertEquals(userBeanSet.size(), 1);
+            if (userBeanSet != null) userBeanSet.forEach(userBean -> {
+                    assertEquals(String.valueOf(userBean.getId()), "userid02");
+                    assertEquals(userBean.getPassword(), "password");
+                    assertEquals(userBean.getName(), "テストユーザー２");
+            });
+        });
     }
     
     /**
@@ -377,34 +454,39 @@ public class CourseControllerTest {
     @Test
     public void 先生用クラス登録処理_ユーザーあり_クラスなし() throws Exception {
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        ClassForm form = new ClassForm();
-//        form.setName("クラス１");
-//        List<String> userIdList = new ArrayList<>();
-//        userIdList.add("userid01");
-//        form.setUserCheckedList(userIdList);
-//
-//        mockMvc.perform(post("/teacher/class/add").flashAttr("classForm", form))
-//                .andExpect(status().is3xxRedirection()).andExpect(view().name(
-//                        "redirect:/teacher/class"));
-//
-//        Optional<ClassBean> opt = classRepository.findById(1);
-//        // ifPresentOrElseの実装はJDK9からの様子
-//        opt.ifPresent(classBean -> {
-//            assertEquals(classBean.getName(), form.getName());
-//            assertEquals(classBean.getUserBeans().size(), 1);
-//            Set<UserBean> userBeanSet = classBean.getUserBeans();
-//            if (userBeanSet != null)
-//                userBeanSet.forEach(userBean -> {
-//                    assertEquals(String.valueOf(userBean.getId()), "userid01");
-//                    assertEquals(userBean.getPassword(), "password");
-//                    assertEquals(userBean.getName(), "テストユーザー１");
-//                });
-//        });
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_USER_CLASS_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        CourseForm form = new CourseForm();
+        form.setName("コース１");
+        List<String> userIdList = new ArrayList<>();
+        userIdList.add("userid01");
+        userIdList.add("userid02");
+        form.setUserCheckedList(userIdList);
+
+        mockMvc.perform(post("/teacher/course/add").flashAttr("courseForm", form))
+                .andExpect(status().is3xxRedirection()).andExpect(view().name(
+                        "redirect:/teacher/course"));
+
+        Optional<CourseBean> optCourse = courseRepository.findById(1);
+        // ifPresentOrElseの実装はJDK9からの様子
+        optCourse.ifPresent(courseBean -> {
+            assertEquals(courseBean.getName(), form.getName());
+            Set<ClassBean> classBeanSet = courseBean.getClassBeans();
+            assertEquals(classBeanSet.size(), 1);
+            if (classBeanSet != null) assertEquals(classBeanSet.size(), 0);
+            Set<UserBean> userBeanSet = courseBean.getUserBeans();
+            assertEquals(userBeanSet.size(), 1);
+            if (userBeanSet != null) userBeanSet.forEach(userBean -> {
+                    assertEquals(String.valueOf(userBean.getId()), "userid02");
+                    assertEquals(userBean.getPassword(), "password");
+                    assertEquals(userBean.getName(), "テストユーザー２");
+            });
+        });
     }
     
     /**
@@ -414,34 +496,42 @@ public class CourseControllerTest {
     @Test
     public void 先生用クラス登録処理_ユーザーなし_クラスあり() throws Exception {
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        ClassForm form = new ClassForm();
-//        form.setName("クラス１");
-//        List<String> userIdList = new ArrayList<>();
-//        userIdList.add("userid01");
-//        form.setUserCheckedList(userIdList);
-//
-//        mockMvc.perform(post("/teacher/class/add").flashAttr("classForm", form))
-//                .andExpect(status().is3xxRedirection()).andExpect(view().name(
-//                        "redirect:/teacher/class"));
-//
-//        Optional<ClassBean> opt = classRepository.findById(1);
-//        // ifPresentOrElseの実装はJDK9からの様子
-//        opt.ifPresent(classBean -> {
-//            assertEquals(classBean.getName(), form.getName());
-//            assertEquals(classBean.getUserBeans().size(), 1);
-//            Set<UserBean> userBeanSet = classBean.getUserBeans();
-//            if (userBeanSet != null)
-//                userBeanSet.forEach(userBean -> {
-//                    assertEquals(String.valueOf(userBean.getId()), "userid01");
-//                    assertEquals(userBean.getPassword(), "password");
-//                    assertEquals(userBean.getName(), "テストユーザー１");
-//                });
-//        });
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_USER_CLASS_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        CourseForm form = new CourseForm();
+        form.setName("コース１");
+        List<String> classList = new ArrayList<>();
+        classList.add("1");
+        form.setClassCheckedList(classList);
+
+        mockMvc.perform(post("/teacher/course/add").flashAttr("courseForm", form))
+                .andExpect(status().is3xxRedirection()).andExpect(view().name(
+                        "redirect:/teacher/course"));
+
+        Optional<CourseBean> optCourse = courseRepository.findById(1);
+        // ifPresentOrElseの実装はJDK9からの様子
+        optCourse.ifPresent(courseBean -> {
+            assertEquals(courseBean.getName(), form.getName());
+            Set<ClassBean> classBeanSet = courseBean.getClassBeans();
+            assertEquals(classBeanSet.size(), 1);
+            if (classBeanSet != null) classBeanSet.forEach(classBean -> {
+                    assertEquals(String.valueOf(classBean.getId()), 1);
+                    assertEquals(classBean.getName(), "クラス２");
+                    Set<UserBean> userBeanSet = classBean.getUserBeans();
+                    userBeanSet.forEach(userBean -> {
+                        assertEquals(String.valueOf(userBean.getId()), "userid01");
+                        assertEquals(userBean.getPassword(), "password");
+                        assertEquals(userBean.getName(), "テストユーザー１");
+                    });
+            });
+            Set<UserBean> userBeanSet = courseBean.getUserBeans();
+            if(userBeanSet != null) assertEquals(userBeanSet.size(), 0);
+        });
     }
     
     /**
@@ -451,34 +541,31 @@ public class CourseControllerTest {
     @Test
     public void 先生用クラス登録処理_ユーザーなし_クラスなし() throws Exception {
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        ClassForm form = new ClassForm();
-//        form.setName("クラス１");
-//        List<String> userIdList = new ArrayList<>();
-//        userIdList.add("userid01");
-//        form.setUserCheckedList(userIdList);
-//
-//        mockMvc.perform(post("/teacher/class/add").flashAttr("classForm", form))
-//                .andExpect(status().is3xxRedirection()).andExpect(view().name(
-//                        "redirect:/teacher/class"));
-//
-//        Optional<ClassBean> opt = classRepository.findById(1);
-//        // ifPresentOrElseの実装はJDK9からの様子
-//        opt.ifPresent(classBean -> {
-//            assertEquals(classBean.getName(), form.getName());
-//            assertEquals(classBean.getUserBeans().size(), 1);
-//            Set<UserBean> userBeanSet = classBean.getUserBeans();
-//            if (userBeanSet != null)
-//                userBeanSet.forEach(userBean -> {
-//                    assertEquals(String.valueOf(userBean.getId()), "userid01");
-//                    assertEquals(userBean.getPassword(), "password");
-//                    assertEquals(userBean.getName(), "テストユーザー１");
-//                });
-//        });
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_USER_CLASS_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        CourseForm form = new CourseForm();
+        form.setName("コース１");
+
+        mockMvc.perform(post("/teacher/course/add").flashAttr("courseForm", form))
+                .andExpect(status().is3xxRedirection()).andExpect(view().name(
+                        "redirect:/teacher/course"));
+
+        Optional<CourseBean> optCourse = courseRepository.findById(1);
+        // ifPresentOrElseの実装はJDK9からの様子
+        optCourse.ifPresent(courseBean -> {
+            assertEquals(courseBean.getName(), form.getName());
+            Set<ClassBean> classBeanSet = courseBean.getClassBeans();
+            assertEquals(classBeanSet.size(), 1);
+            if (classBeanSet != null) assertEquals(classBeanSet.size(), 0);
+            Set<UserBean> userBeanSet = courseBean.getUserBeans();
+            assertEquals(userBeanSet.size(), 1);
+            if (userBeanSet != null) assertEquals(userBeanSet.size(), 0);
+        });
     }
 
     /**
@@ -488,39 +575,44 @@ public class CourseControllerTest {
     @Test
     public void 先生用クラス編集ページ表示_ユーザーあり_クラスあり() throws Exception {
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-//                INSERT_STUDENT_DATA2, INSERT_STUDENT_DATA3,
-//                INSERT_STUDENT_DATA4, INSERT_CLASS_DATA1,
-//                INSERT_USER_CLASS_DATA1, INSERT_USER_CLASS_DATA2);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        MvcResult result = mockMvc.perform(post("/teacher/class/edit")
-//                    .param("id", "1"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("teacher/class/edit"))
-//                .andExpect(model().attributeExists("userCheckItems"))
-//                .andExpect(model().attribute("userCheckItems",
-//                        allOf(hasEntry("userid01", "テストユーザー１"),
-//                                hasEntry("userid02","テストユーザー２"))))
-//                .andReturn();
-//
-//        ClassForm classForm = (ClassForm) result.getModelAndView().getModel()
-//                .get("classForm");
-//
-//        assertEquals(classForm.getId(), "1");
-//        assertEquals(classForm.getName(), "クラス１");
-//        assertEquals(classForm.getUserCheckedList().size(), 2);
-//        assertThat(classForm.getUserCheckedList(), containsInAnyOrder(
-//                "userid01", "userid02"));
-//        
-//        Map<String, String> userMap = (Map<String, String>) result
-//                .getModelAndView().getModel().get("userCheckItems");
-//
-//        assertEquals(userMap.size(), 2);
-//        assertThat(userMap, hasEntry("userid01", "テストユーザー１"));
-//        assertThat(userMap, hasEntry("userid02", "テストユーザー２"));
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_TEACHER_DATA1, INSERT_ADMIN_DATA1,
+                INSERT_CLASS_DATA1, INSERT_CLASS_DATA2, INSERT_USER_CLASS_DATA1,
+                INSERT_COURSE_DATA1, INSERT_USER_COURSE_DATA1,
+                INSERT_CLASS_COURSE_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        MvcResult result = mockMvc.perform(post("/teacher/course/edit")
+                    .param("id", "1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/course/edit"))
+                .andExpect(model().attributeExists("classCheckItems"))
+                .andExpect(model().attributeExists("userCheckItems"))
+                .andExpect(model().attribute("classCheckItems", 
+                        allOf(hasEntry("1", "クラス１"),
+                                hasEntry("2","クラス２"))))
+                .andExpect(model().attribute("userCheckItems",
+                        allOf(hasEntry("userid01", "テストユーザー１"),
+                                hasEntry("userid02","テストユーザー２"))))
+                .andReturn();
+
+        // まだMavenのHamcrestでCollection系のサイズチェックができないため、ここでチェック
+        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        assertEquals(classCheckMap.size(), 2);
+        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        assertEquals(userCheckMap.size(), 2);
+        
+        CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
+                .get("courseForm");
+
+        assertEquals(courseForm.getId(), "1");
+        assertEquals(courseForm.getName(), "コース１");
+        assertEquals(courseForm.getClassCheckedList().size(), 1);
+        assertThat(courseForm.getClassCheckedList(), containsInAnyOrder("1"));
+        assertEquals(courseForm.getUserCheckedList().size(), 1);
+        assertThat(courseForm.getUserCheckedList(), containsInAnyOrder("userid02"));
     }
     
     /**
@@ -530,39 +622,43 @@ public class CourseControllerTest {
     @Test
     public void 先生用クラス編集ページ表示_ユーザーなし_クラスなし() throws Exception {
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-//                INSERT_STUDENT_DATA2, INSERT_STUDENT_DATA3,
-//                INSERT_STUDENT_DATA4, INSERT_CLASS_DATA1,
-//                INSERT_USER_CLASS_DATA1, INSERT_USER_CLASS_DATA2);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        MvcResult result = mockMvc.perform(post("/teacher/class/edit")
-//                    .param("id", "1"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("teacher/class/edit"))
-//                .andExpect(model().attributeExists("userCheckItems"))
-//                .andExpect(model().attribute("userCheckItems",
-//                        allOf(hasEntry("userid01", "テストユーザー１"),
-//                                hasEntry("userid02","テストユーザー２"))))
-//                .andReturn();
-//
-//        ClassForm classForm = (ClassForm) result.getModelAndView().getModel()
-//                .get("classForm");
-//
-//        assertEquals(classForm.getId(), "1");
-//        assertEquals(classForm.getName(), "クラス１");
-//        assertEquals(classForm.getUserCheckedList().size(), 2);
-//        assertThat(classForm.getUserCheckedList(), containsInAnyOrder(
-//                "userid01", "userid02"));
-//        
-//        Map<String, String> userMap = (Map<String, String>) result
-//                .getModelAndView().getModel().get("userCheckItems");
-//
-//        assertEquals(userMap.size(), 2);
-//        assertThat(userMap, hasEntry("userid01", "テストユーザー１"));
-//        assertThat(userMap, hasEntry("userid02", "テストユーザー２"));
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_TEACHER_DATA1, INSERT_ADMIN_DATA1,
+                INSERT_COURSE_DATA1, INSERT_CLASS_DATA1, INSERT_CLASS_DATA2,
+                INSERT_USER_CLASS_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        MvcResult result = mockMvc.perform(post("/teacher/course/edit")
+                    .param("id", "1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/course/edit"))
+                .andExpect(model().attributeExists("classCheckItems"))
+                .andExpect(model().attributeExists("userCheckItems"))
+                .andExpect(model().attribute("classCheckItems",
+                        allOf(hasEntry("1", "クラス１"),
+                               hasEntry("2","クラス２"))))
+                .andExpect(model().attribute("userCheckItems",
+                        allOf(hasEntry("userid01", "テストユーザー１"),
+                               hasEntry("userid02","テストユーザー２"))))
+                .andReturn();
+
+        // まだMavenのHamcrestでCollection系のサイズチェックができないため、ここでチェック
+        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        assertEquals(classCheckMap.size(), 2);
+        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        assertEquals(userCheckMap.size(), 2);
+        
+        CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
+                .get("courseForm");
+
+        assertEquals(courseForm.getId(), "1");
+        assertEquals(courseForm.getName(), "コース１");
+        List<String> classIdList = courseForm.getClassCheckedList();
+        if(classIdList != null) assertEquals(classIdList.size(), 0);
+        List<String> userIdList = courseForm.getUserCheckedList();
+        if(userIdList != null) assertEquals(userIdList.size(), 0);
     }
 
     
@@ -573,15 +669,27 @@ public class CourseControllerTest {
     @Test
     public void 先生用コース編集ページ内クラス所属ユーザ除外_所属ユーザあり() throws Exception {
 
-//        MvcResult result = mockMvc.perform(get("/teacher/class")).andExpect(
-//                status().isOk()).andExpect(view().name("teacher/class/list"))
-//                .andReturn();
-//
-//        List<ClassForm> list = (List) result.getModelAndView().getModel().get("classes");
-//        if (list != null)
-//            assertEquals(list.size(), 0);
-    }
-    
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_TEACHER_DATA1, INSERT_ADMIN_DATA1,
+                INSERT_CLASS_DATA1, INSERT_CLASS_DATA2, INSERT_USER_CLASS_DATA1,
+                INSERT_COURSE_DATA1, INSERT_USER_COURSE_DATA1,
+                INSERT_CLASS_COURSE_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        CourseForm sendCourseForm = new CourseForm();
+        sendCourseForm.setId("1");
+        sendCourseForm.setName("コース１");
+        List<String> sendClassCheckedList = new ArrayList<String>();
+        sendClassCheckedList.add("1");
+        sendCourseForm.setClassCheckedList(sendClassCheckedList);
+        mockMvc.perform(post("/teacher/course/editprocess")
+                    .param("userExclusionBtn", "クラスユーザ除外")
+                    .flashAttr("courseForm", sendCourseForm))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/course"));
+    }    
     /**
      * 先生用コース編集ページ内クラス所属ユーザ除外_所属ユーザなし
      * @throws Exception
@@ -589,176 +697,261 @@ public class CourseControllerTest {
     @Test
     public void 先生用コース編集ページ内クラス所属ユーザ除外_所属ユーザなし() throws Exception {
 
-//        MvcResult result = mockMvc.perform(get("/teacher/class")).andExpect(
-//                status().isOk()).andExpect(view().name("teacher/class/list"))
-//                .andReturn();
-//
-//        List<ClassForm> list = (List) result.getModelAndView().getModel().get("classes");
-//        if (list != null)
-//            assertEquals(list.size(), 0);
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_TEACHER_DATA1, INSERT_ADMIN_DATA1,
+                INSERT_CLASS_DATA1, INSERT_CLASS_DATA2, INSERT_USER_CLASS_DATA1,
+                INSERT_COURSE_DATA1, INSERT_USER_COURSE_DATA1,
+                INSERT_CLASS_COURSE_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+        
+        CourseForm sendCourseForm = new CourseForm();
+        sendCourseForm.setId("1");
+        sendCourseForm.setName("コース１");
+        List<String> sendClassCheckedList = new ArrayList<String>();
+        sendClassCheckedList.add("2");
+        sendCourseForm.setClassCheckedList(sendClassCheckedList);
+        mockMvc.perform(post("/teacher/course/editprocess")
+                .param("userExclusionBtn", "クラスユーザ除外")
+                .flashAttr("courseForm", sendCourseForm))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/course"));
     }
 
     /**
-     * 先生用クラス編集処理_ユーザーあり_クラスあり
+     * 先生用クラス編集処理_ユーザーあり_クラスあり_変更後_ユーザーあり_クラスなし
      * @throws Exception
      */
     @Test
-    public void 先生用クラス編集処理_ユーザーあり_クラスあり() throws Exception {
+    public void 先生用クラス編集処理_ユーザーあり_クラスあり_変更後_ユーザーあり_クラスなし() throws Exception {
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-//                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
-//                INSERT_USER_CLASS_DATA1, INSERT_USER_CLASS_DATA2);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        ClassForm form = new ClassForm();
-//        form.setId("1");
-//        form.setName("クラス１－２");
-//        List<String> list = new ArrayList<>();
-//        list.add("userid02");
-//        form.setUserCheckedList(list);
-//
-//        mockMvc.perform(post("/teacher/class/editprocess").flashAttr(
-//                "classForm", form)).andExpect(status().is3xxRedirection())
-//                .andExpect(view().name("redirect:/teacher/class"));
-//
-//        Optional<ClassBean> opt = classRepository.findById(1);
-//        // ifPresentOrElseの実装はJDK9からの様子
-//        opt.ifPresent(classBean -> {
-//            assertEquals(classBean.getName(), "クラス１－２");
-//            assertEquals(classBean.getUserBeans().size(), 1);
-//            Set<UserBean> userBeanSet = classBean.getUserBeans();
-//
-//            assertEquals(userBeanSet.size(), 1);
-//            if (userBeanSet != null)
-//                userBeanSet.forEach(userBean -> {
-//                    assertEquals(String.valueOf(userBean.getId()), "userid02");
-//                    assertEquals(userBean.getPassword(), "password");
-//                    assertEquals(userBean.getName(), "テストユーザー２");
-//                });
-//        });
-//        opt.orElseThrow(() -> new Exception("bean not found."));
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_CLASS_DATA2, INSERT_COURSE_DATA1,
+                INSERT_USER_CLASS_DATA1, INSERT_USER_COURSE_DATA1,
+                INSERT_CLASS_COURSE_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        CourseForm courseForm = new CourseForm();
+        courseForm.setId("1");
+        courseForm.setName("コース１－２");
+        List<String> list = new ArrayList<>();
+        list.add("userid02");
+        courseForm.setUserCheckedList(list);
+
+        mockMvc.perform(post("/teacher/course/editprocess").
+                flashAttr("courseForm", courseForm))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/teacher/course"));
+
+        Optional<CourseBean> opt = courseRepository.findById(1);
+        // ifPresentOrElseの実装はJDK9からの様子
+        opt.ifPresent(courseBean -> {
+            assertEquals(courseBean.getName(), "コース１－２");
+            Set<UserBean> userBeanSet = courseBean.getUserBeans();
+            assertEquals(userBeanSet.size(), 1);
+            if (userBeanSet != null) userBeanSet.forEach(userBean -> {
+                    assertEquals(String.valueOf(userBean.getId()), "userid02");
+                    assertEquals(userBean.getPassword(), "password");
+                    assertEquals(userBean.getName(), "テストユーザー２");
+                });
+            Set<ClassBean> classBeanSet = courseBean.getClassBeans();
+            if(classBeanSet != null) assertEquals(classBeanSet.size(), 0);
+        });
+        opt.orElseThrow(() -> new Exception("bean not found."));
     }
     
     /**
-     * 先生用クラス編集処理_ユーザーあり_クラスなし
+     * 先生用クラス編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスあり
      * @throws Exception
      */
     @Test
-    public void 先生用クラス編集処理_ユーザーあり_クラスなし() throws Exception {
+    public void 先生用クラス編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスあり() throws Exception {
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-//                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
-//                INSERT_USER_CLASS_DATA1, INSERT_USER_CLASS_DATA2);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        ClassForm form = new ClassForm();
-//        form.setId("1");
-//        form.setName("クラス１－２");
-//        List<String> list = new ArrayList<>();
-//        list.add("userid02");
-//        form.setUserCheckedList(list);
-//
-//        mockMvc.perform(post("/teacher/class/editprocess").flashAttr(
-//                "classForm", form)).andExpect(status().is3xxRedirection())
-//                .andExpect(view().name("redirect:/teacher/class"));
-//
-//        Optional<ClassBean> opt = classRepository.findById(1);
-//        // ifPresentOrElseの実装はJDK9からの様子
-//        opt.ifPresent(classBean -> {
-//            assertEquals(classBean.getName(), "クラス１－２");
-//            assertEquals(classBean.getUserBeans().size(), 1);
-//            Set<UserBean> userBeanSet = classBean.getUserBeans();
-//
-//            assertEquals(userBeanSet.size(), 1);
-//            if (userBeanSet != null)
-//                userBeanSet.forEach(userBean -> {
-//                    assertEquals(String.valueOf(userBean.getId()), "userid02");
-//                    assertEquals(userBean.getPassword(), "password");
-//                    assertEquals(userBean.getName(), "テストユーザー２");
-//                });
-//        });
-//        opt.orElseThrow(() -> new Exception("bean not found."));
-    }
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_CLASS_DATA2, INSERT_COURSE_DATA1,
+                INSERT_USER_CLASS_DATA1, INSERT_USER_COURSE_DATA1,
+                INSERT_CLASS_COURSE_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
 
-    /**
-     * 先生用クラス編集処理_ユーザーなし_クラスあり
-     * @throws Exception
-     */
-    @Test
-    public void 先生用クラス編集処理_ユーザーなし_クラスあり() throws Exception {
+        CourseForm courseForm = new CourseForm();
+        courseForm.setId("1");
+        courseForm.setName("コース１－２");
+        List<String> classIdList = new ArrayList<>();
+        classIdList.add("1");
+        courseForm.setClassCheckedList(classIdList);
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-//                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
-//                INSERT_USER_CLASS_DATA1, INSERT_USER_CLASS_DATA2);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        ClassForm form = new ClassForm();
-//        form.setId("1");
-//        form.setName("クラス１－２");
-//        List<String> list = new ArrayList<>();
-//        list.add("userid02");
-//        form.setUserCheckedList(list);
-//
-//        mockMvc.perform(post("/teacher/class/editprocess").flashAttr(
-//                "classForm", form)).andExpect(status().is3xxRedirection())
-//                .andExpect(view().name("redirect:/teacher/class"));
-//
-//        Optional<ClassBean> opt = classRepository.findById(1);
-//        // ifPresentOrElseの実装はJDK9からの様子
-//        opt.ifPresent(classBean -> {
-//            assertEquals(classBean.getName(), "クラス１－２");
-//            assertEquals(classBean.getUserBeans().size(), 1);
-//            Set<UserBean> userBeanSet = classBean.getUserBeans();
-//
-//            assertEquals(userBeanSet.size(), 1);
-//            if (userBeanSet != null)
-//                userBeanSet.forEach(userBean -> {
-//                    assertEquals(String.valueOf(userBean.getId()), "userid02");
-//                    assertEquals(userBean.getPassword(), "password");
-//                    assertEquals(userBean.getName(), "テストユーザー２");
-//                });
-//        });
-//        opt.orElseThrow(() -> new Exception("bean not found."));
+        mockMvc.perform(post("/teacher/course/editprocess").
+                flashAttr("courseForm", courseForm))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/teacher/course"));
+
+        Optional<CourseBean> opt = courseRepository.findById(1);
+        // ifPresentOrElseの実装はJDK9からの様子
+        opt.ifPresent(courseBean -> {
+            assertEquals(courseBean.getName(), "コース１－２");
+            Set<UserBean> userBeanSet = courseBean.getUserBeans();
+            if(userBeanSet != null) assertEquals(userBeanSet.size(), 0);
+            Set<ClassBean> classBeanSet = courseBean.getClassBeans();
+            assertEquals(classBeanSet.size(), 1);
+            if (classBeanSet != null) classBeanSet.forEach(classBean -> {
+                    assertEquals(String.valueOf(classBean.getId()), "1");
+                    assertEquals(classBean.getName(), "クラス１");
+                });
+        });
+        opt.orElseThrow(() -> new Exception("bean not found."));
     }
     
     /**
-     * 先生用クラス編集処理_ユーザーなし_クラスなし
+     * 先生用クラス編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスなし
      * @throws Exception
      */
     @Test
-    public void 先生用クラス編集処理_ユーザーなし_クラスなし() throws Exception {
+    public void 先生用クラス編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスなし() throws Exception {
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_CLASS_DATA3);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        ClassForm form = new ClassForm();
-//        form.setId("3");
-//        form.setName("クラス３－２");
-//
-//        mockMvc.perform(post("/teacher/class/editprocess")
-//                .flashAttr("classForm", form))
-//            .andExpect(status().is3xxRedirection())
-//            .andExpect(view().name("redirect:/teacher/class"));
-//
-//        Optional<ClassBean> opt = classRepository.findById(3);
-//        // ifPresentOrElseの実装はJDK9からの様子
-//        opt.ifPresent(classBean -> {
-//            assertEquals(classBean.getName(), "クラス３－２");
-//            Set<UserBean> userBeanSet = classBean.getUserBeans();
-//            if (userBeanSet != null)
-//                assertEquals(userBeanSet.size(), 0);
-//        });
-//        opt.orElseThrow(() -> new Exception("bean not found."));
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_CLASS_DATA2, INSERT_COURSE_DATA1,
+                INSERT_USER_CLASS_DATA1, INSERT_USER_COURSE_DATA1,
+                INSERT_CLASS_COURSE_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        CourseForm courseForm = new CourseForm();
+        courseForm.setId("1");
+        courseForm.setName("コース１－２");
+
+        mockMvc.perform(post("/teacher/course/editprocess").
+                flashAttr("courseForm", courseForm))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/teacher/course"));
+
+        Optional<CourseBean> opt = courseRepository.findById(1);
+        // ifPresentOrElseの実装はJDK9からの様子
+        opt.ifPresent(courseBean -> {
+            assertEquals(courseBean.getName(), "コース１－２");
+            Set<UserBean> userBeanSet = courseBean.getUserBeans();
+            if(userBeanSet != null) assertEquals(userBeanSet.size(), 0);
+            Set<ClassBean> classBeanSet = courseBean.getClassBeans();
+            if (classBeanSet != null) assertEquals(classBeanSet.size(), 0);
+        });
+        opt.orElseThrow(() -> new Exception("bean not found."));
+    }
+    
+    /**
+     * 先生用クラス編集処理_ユーザーあり_クラスなし_変更後_ユーザーなし_クラスあり
+     * @throws Exception
+     */
+    @Test
+    public void 先生用クラス編集処理_ユーザーあり_クラスなし_変更後_ユーザーなし_クラスあり() throws Exception {
+
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_CLASS_DATA2, INSERT_COURSE_DATA1,
+                INSERT_USER_CLASS_DATA1, INSERT_USER_COURSE_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        CourseForm courseForm = new CourseForm();
+        courseForm.setId("1");
+        courseForm.setName("コース１－２");
+        List<String> classIdList = new ArrayList<>();
+        classIdList.add("1");
+        courseForm.setClassCheckedList(classIdList);
+
+        mockMvc.perform(post("/teacher/course/editprocess").
+                flashAttr("courseForm", courseForm))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/teacher/course"));
+
+        Optional<CourseBean> opt = courseRepository.findById(1);
+        // ifPresentOrElseの実装はJDK9からの様子
+        opt.ifPresent(courseBean -> {
+            assertEquals(courseBean.getName(), "コース１－２");
+            Set<UserBean> userBeanSet = courseBean.getUserBeans();
+            if(userBeanSet != null) assertEquals(userBeanSet.size(), 0);
+            Set<ClassBean> classBeanSet = courseBean.getClassBeans();
+            assertEquals(classBeanSet.size(), 1);
+            if (classBeanSet != null) classBeanSet.forEach(classBean -> {
+                    assertEquals(String.valueOf(classBean.getId()), "1");
+                    assertEquals(classBean.getName(), "クラス１");
+                    Set<UserBean> classUserBeanSet = classBean.getUserBeans();
+                    assertEquals(classUserBeanSet.size(), 1);
+                    classUserBeanSet.forEach(userBean -> {
+                        assertEquals(userBean.getId(), "userid01");
+                        assertEquals(userBean.getPassword(), "password");
+                        assertEquals(userBean.getName(), "テストユーザー１");
+                    });
+                });
+        });
+        opt.orElseThrow(() -> new Exception("bean not found."));
     }
 
+    /**
+     * 先生用クラス編集処理_ユーザーなし_クラスなし_変更後_ユーザーあり_クラスあり
+     * @throws Exception
+     */
+    @Test
+    public void 先生用クラス編集処理_ユーザーなし_クラスなし_変更後_ユーザーあり_クラスあり() throws Exception {
+
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1, INSERT_CLASS_DATA2,
+                INSERT_COURSE_DATA1, INSERT_USER_CLASS_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        CourseForm courseForm = new CourseForm();
+        courseForm.setId("1");
+        courseForm.setName("コース１－２");
+        List<String> classIdList = new ArrayList<>();
+        classIdList.add("1");
+        courseForm.setClassCheckedList(classIdList);
+        List<String> userIdList = new ArrayList<>();
+        userIdList.add("userid02");
+        courseForm.setUserCheckedList(userIdList);
+
+        mockMvc.perform(post("/teacher/course/editprocess").
+                flashAttr("courseForm", courseForm))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/teacher/course"));
+
+        Optional<CourseBean> opt = courseRepository.findById(1);
+        // ifPresentOrElseの実装はJDK9からの様子
+        opt.ifPresent(courseBean -> {
+            assertEquals(courseBean.getName(), "コース１－２");
+            Set<UserBean> userBeanSet = courseBean.getUserBeans();
+            assertEquals(userBeanSet.size(), 1);
+            if (userBeanSet != null) userBeanSet.forEach(userBean -> {
+                    assertEquals(String.valueOf(userBean.getId()), "userid02");
+                    assertEquals(userBean.getPassword(), "password");
+                    assertEquals(userBean.getName(), "テストユーザー２");
+                });
+            Set<ClassBean> classBeanSet = courseBean.getClassBeans();
+            assertEquals(classBeanSet.size(), 1);
+            if (classBeanSet != null) classBeanSet.forEach(classBean -> {
+                    assertEquals(String.valueOf(classBean.getId()), "1");
+                    assertEquals(classBean.getName(), "クラス１");
+                    Set<UserBean> classUserBeanSet = classBean.getUserBeans();
+                    assertEquals(classUserBeanSet.size(), 1);
+                    classUserBeanSet.forEach(userBean -> {
+                        assertEquals(userBean.getId(), "userid01");
+                        assertEquals(userBean.getPassword(), "password");
+                        assertEquals(userBean.getName(), "テストユーザー１");
+                    });
+                });
+        });
+    }
+    
+ 
     /**
      * 先生用クラス削除処理_ユーザーあり_クラスあり
      * @throws Exception
@@ -766,33 +959,53 @@ public class CourseControllerTest {
     @Test
     public void 先生用クラス削除処理_ユーザーあり_クラスあり() throws Exception {
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-//                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1, INSERT_CLASS_DATA2,
-//                INSERT_USER_CLASS_DATA1, INSERT_USER_CLASS_DATA2,
-//                INSERT_USER_CLASS_DATA3);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        mockMvc.perform(post("/teacher/class/delete").param("id", "1"))
-//                .andExpect(status().is3xxRedirection()).andExpect(view().name(
-//                        "redirect:/teacher/class"));
-//
-//        List<ClassBean> classList = classRepository.findAll();
-//        assertEquals(classList.size(), 1);
-//        if (classList != null)
-//            classList.forEach(classBean -> {
-//                assertEquals(classBean.getName(), "クラス２");
-//                Set<UserBean> userBeanSet = classBean.getUserBeans();
-//                assertEquals(userBeanSet.size(), 1);
-//                if (userBeanSet != null)
-//                    userBeanSet.forEach(userBean -> {
-//                        assertEquals(String.valueOf(userBean.getId()),
-//                                "userid01");
-//                        assertEquals(userBean.getPassword(), "password");
-//                        assertEquals(userBean.getName(), "テストユーザー１");
-//                    });
-//            });
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_USER_CLASS_DATA1, INSERT_COURSE_DATA1, 
+                INSERT_USER_COURSE_DATA1, INSERT_CLASS_COURSE_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        mockMvc.perform(post("/teacher/course/delete")
+                    .param("id", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/course"));
+
+        List<CourseBean> courseList = courseRepository.findAll();
+        if(courseList != null) assertEquals(courseList.size(), 0);
+        
+        Optional<UserBean> userOpt1 = userRepository.findById("userid01");
+        userOpt1.ifPresent(userBean -> {
+            assertEquals(userBean.getId(), "userid01");
+            assertEquals(userBean.getPassword(), "password");
+            assertEquals(userBean.getName(), "テストユーザー１");
+            Set<CourseBean> courseBeanSet = userBean.getCourseBeans();
+            if(courseBeanSet != null) assertEquals(courseBeanSet.size(), 0);
+        });
+
+        Optional<UserBean> userOpt2 = userRepository.findById("userid02");
+        userOpt2.ifPresent(userBean -> {
+            assertEquals(userBean.getId(), "userid02");
+            assertEquals(userBean.getPassword(), "password");
+            assertEquals(userBean.getName(), "テストユーザー２");
+            Set<CourseBean> courseBeanSet = userBean.getCourseBeans();
+            if(courseBeanSet != null) assertEquals(courseBeanSet.size(), 0);
+        });
+        
+        Optional<ClassBean> classOpt = classRepository.findById(1);
+        classOpt.ifPresent(classBean -> {
+            assertEquals(classBean.getId(), 1);
+            assertEquals(classBean.getName(), "クラス１");
+            Set<UserBean> userBeanSet = classBean.getUserBeans();
+            userBeanSet.forEach(userBean -> {
+                assertEquals(userBean.getId(), "userid01");
+                assertEquals(userBean.getPassword(), "password");
+                assertEquals(userBean.getName(), "テストユーザー１");
+            });
+            Set<CourseBean> courseBeanSet = classBean.getCourseBeans();
+            if(courseBeanSet != null) assertEquals(courseBeanSet.size(), 0);
+        });
     }
 
     /**
@@ -802,33 +1015,30 @@ public class CourseControllerTest {
     @Test
     public void 先生用クラス削除処理_ユーザーあり_クラスなし() throws Exception {
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-//                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1, INSERT_CLASS_DATA2,
-//                INSERT_USER_CLASS_DATA1, INSERT_USER_CLASS_DATA2,
-//                INSERT_USER_CLASS_DATA3);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        mockMvc.perform(post("/teacher/class/delete").param("id", "1"))
-//                .andExpect(status().is3xxRedirection()).andExpect(view().name(
-//                        "redirect:/teacher/class"));
-//
-//        List<ClassBean> classList = classRepository.findAll();
-//        assertEquals(classList.size(), 1);
-//        if (classList != null)
-//            classList.forEach(classBean -> {
-//                assertEquals(classBean.getName(), "クラス２");
-//                Set<UserBean> userBeanSet = classBean.getUserBeans();
-//                assertEquals(userBeanSet.size(), 1);
-//                if (userBeanSet != null)
-//                    userBeanSet.forEach(userBean -> {
-//                        assertEquals(String.valueOf(userBean.getId()),
-//                                "userid01");
-//                        assertEquals(userBean.getPassword(), "password");
-//                        assertEquals(userBean.getName(), "テストユーザー１");
-//                    });
-//            });
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_USER_CLASS_DATA1, INSERT_COURSE_DATA1, 
+                INSERT_USER_COURSE_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        mockMvc.perform(post("/teacher/course/delete")
+                    .param("id", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/course"));
+
+        List<CourseBean> courseList = courseRepository.findAll();
+        if(courseList != null) assertEquals(courseList.size(), 0);
+        
+        Optional<UserBean> userOpt2 = userRepository.findById("userid02");
+        userOpt2.ifPresent(userBean -> {
+            assertEquals(userBean.getId(), "userid02");
+            assertEquals(userBean.getPassword(), "password");
+            assertEquals(userBean.getName(), "テストユーザー２");
+            Set<CourseBean> courseBeanSet = userBean.getCourseBeans();
+            if(courseBeanSet != null) assertEquals(courseBeanSet.size(), 0);
+        });
     }
     
     /**
@@ -838,33 +1048,45 @@ public class CourseControllerTest {
     @Test
     public void 先生用クラス削除処理_ユーザーなし_クラスあり() throws Exception {
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-//                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1, INSERT_CLASS_DATA2,
-//                INSERT_USER_CLASS_DATA1, INSERT_USER_CLASS_DATA2,
-//                INSERT_USER_CLASS_DATA3);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        mockMvc.perform(post("/teacher/class/delete").param("id", "1"))
-//                .andExpect(status().is3xxRedirection()).andExpect(view().name(
-//                        "redirect:/teacher/class"));
-//
-//        List<ClassBean> classList = classRepository.findAll();
-//        assertEquals(classList.size(), 1);
-//        if (classList != null)
-//            classList.forEach(classBean -> {
-//                assertEquals(classBean.getName(), "クラス２");
-//                Set<UserBean> userBeanSet = classBean.getUserBeans();
-//                assertEquals(userBeanSet.size(), 1);
-//                if (userBeanSet != null)
-//                    userBeanSet.forEach(userBean -> {
-//                        assertEquals(String.valueOf(userBean.getId()),
-//                                "userid01");
-//                        assertEquals(userBean.getPassword(), "password");
-//                        assertEquals(userBean.getName(), "テストユーザー１");
-//                    });
-//            });
+
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_USER_CLASS_DATA1, INSERT_COURSE_DATA1, 
+                INSERT_CLASS_COURSE_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        mockMvc.perform(post("/teacher/course/delete")
+                    .param("id", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/course"));
+
+        List<CourseBean> courseList = courseRepository.findAll();
+        if(courseList != null) assertEquals(courseList.size(), 0);
+        
+        Optional<UserBean> userOpt1 = userRepository.findById("userid01");
+        userOpt1.ifPresent(userBean -> {
+            assertEquals(userBean.getId(), "userid01");
+            assertEquals(userBean.getPassword(), "password");
+            assertEquals(userBean.getName(), "テストユーザー１");
+            Set<CourseBean> courseBeanSet = userBean.getCourseBeans();
+            if(courseBeanSet != null) assertEquals(courseBeanSet.size(), 0);
+        });
+        
+        Optional<ClassBean> classOpt = classRepository.findById(1);
+        classOpt.ifPresent(classBean -> {
+            assertEquals(classBean.getId(), 1);
+            assertEquals(classBean.getName(), "クラス１");
+            Set<UserBean> userBeanSet = classBean.getUserBeans();
+            userBeanSet.forEach(userBean -> {
+                assertEquals(userBean.getId(), "userid01");
+                assertEquals(userBean.getPassword(), "password");
+                assertEquals(userBean.getName(), "テストユーザー１");
+            });
+            Set<CourseBean> courseBeanSet = classBean.getCourseBeans();
+            if(courseBeanSet != null) assertEquals(courseBeanSet.size(), 0);
+        });
     }
     
     
@@ -875,17 +1097,51 @@ public class CourseControllerTest {
     @Test
     public void 先生用クラス削除処理_ユーザーなし_クラスなし() throws Exception {
 
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_CLASS_DATA3);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        mockMvc.perform(post("/teacher/class/delete").param("id", "3"))
-//                .andExpect(status().is3xxRedirection()).andExpect(view().name(
-//                        "redirect:/teacher/class"));
-//
-//        List<ClassBean> classList = classRepository.findAll();
-//        if (classList != null)
-//            assertEquals(classList.size(), 0);
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_USER_CLASS_DATA1, INSERT_COURSE_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        mockMvc.perform(post("/teacher/course/delete")
+                    .param("id", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/course"));
+
+        List<CourseBean> courseList = courseRepository.findAll();
+        if(courseList != null) assertEquals(courseList.size(), 0);
+        
+        Optional<UserBean> userOpt1 = userRepository.findById("userid01");
+        userOpt1.ifPresent(userBean -> {
+            assertEquals(userBean.getId(), "userid01");
+            assertEquals(userBean.getPassword(), "password");
+            assertEquals(userBean.getName(), "テストユーザー１");
+            Set<CourseBean> courseBeanSet = userBean.getCourseBeans();
+            if(courseBeanSet != null) assertEquals(courseBeanSet.size(), 0);
+        });
+
+        Optional<UserBean> userOpt2 = userRepository.findById("userid02");
+        userOpt2.ifPresent(userBean -> {
+            assertEquals(userBean.getId(), "userid02");
+            assertEquals(userBean.getPassword(), "password");
+            assertEquals(userBean.getName(), "テストユーザー２");
+            Set<CourseBean> courseBeanSet = userBean.getCourseBeans();
+            if(courseBeanSet != null) assertEquals(courseBeanSet.size(), 0);
+        });
+        
+        Optional<ClassBean> classOpt = classRepository.findById(1);
+        classOpt.ifPresent(classBean -> {
+            assertEquals(classBean.getId(), 1);
+            assertEquals(classBean.getName(), "クラス１");
+            Set<UserBean> userBeanSet = classBean.getUserBeans();
+            userBeanSet.forEach(userBean -> {
+                assertEquals(userBean.getId(), "userid01");
+                assertEquals(userBean.getPassword(), "password");
+                assertEquals(userBean.getName(), "テストユーザー１");
+            });
+            Set<CourseBean> courseBeanSet = classBean.getCourseBeans();
+            if(courseBeanSet != null) assertEquals(courseBeanSet.size(), 0);
+        });
     }
 }

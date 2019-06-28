@@ -29,8 +29,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @Entity
 @Data
-@ToString(exclude = "userBeans")
-@EqualsAndHashCode(exclude = "userBeans")
+@ToString(exclude = { "userBeans", "classBeans" })
+@EqualsAndHashCode(exclude = { "userBeans" , "classBeans" })
 @Table(name = "t_course")
 public class CourseBean {
 

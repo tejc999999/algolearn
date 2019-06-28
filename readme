@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS t_user_class;
 DROP TABLE IF EXISTS t_class;
 DROP TABLE IF EXISTS t_user_course;
 DROP TABLE IF EXISTS t_course;
+DROP TABLE IF EXISTS t_class_course;
 DROP TABLE IF EXISTS t_user;
 DROP TABLE IF EXISTS m_role;
 DROP TABLE IF EXISTS t_task_valiable;
@@ -27,6 +28,7 @@ CREATE TABLE t_user_class(user_id VARCHAR(20), class_id INT, PRIMARY KEY(user_id
 CREATE TABLE t_course(id INT AUTO_INCREMENT, name VARCHAR(200), PRIMARY KEY(id)) CHARACTER SET 'utf8';
 CREATE TABLE t_class_course(class_id INT, course_id INT, PRIMARY KEY(class_id, course_id), FOREIGN KEY(class_id) REFERENCES t_class(id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(class_id) REFERENCES t_course(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
 CREATE TABLE t_user_course(user_id VARCHAR(20), course_id INT, PRIMARY KEY(user_id, course_id), FOREIGN KEY(user_id) REFERENCES t_user(id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(course_id) REFERENCES t_course(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
+CREATE TABLE t_class_course(class_id INT, course_id INT, PRIMARY KEY(class_id, course_id), FOREIGN KEY(class_id) REFERENCES t_class(id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(course_id) REFERENCES t_course(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
 INSERT INTO m_role(id, name) VALUES('001', '管理者');
 INSERT INTO m_role(id, name) VALUES('002', '先生');
 INSERT INTO m_role(id, name) VALUES('003', '学生');
