@@ -2,7 +2,8 @@ package jp.spring.boot.algolearn.datasource;
 
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
-public class DynamicRoutingDataSourceResolver extends AbstractRoutingDataSource {
+public class DynamicRoutingDataSourceResolver extends
+                                              AbstractRoutingDataSource {
 
     @Override
     protected Object determineCurrentLookupKey() {
@@ -10,17 +11,17 @@ public class DynamicRoutingDataSourceResolver extends AbstractRoutingDataSource 
             // デフォルト
             return SchemaType.H2DB.toString();
 
-        } else if(SchemaContextHolder.schemaType == SchemaType.H2DB) {
+        } else if (SchemaContextHolder.schemaType == SchemaType.H2DB) {
 
-        	return SchemaType.H2DB.toString();
+            return SchemaType.H2DB.toString();
 
-        } else if(SchemaContextHolder.schemaType == SchemaType.MARIADB) {
+        } else if (SchemaContextHolder.schemaType == SchemaType.MARIADB) {
 
-        	return SchemaType.MARIADB.toString();
+            return SchemaType.MARIADB.toString();
 
-        }else{
-        	// デフォルト
-        	
+        } else {
+            // デフォルト
+
             return SchemaType.H2DB.toString();
         }
     }

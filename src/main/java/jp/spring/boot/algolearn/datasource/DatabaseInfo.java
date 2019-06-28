@@ -1,6 +1,5 @@
 package jp.spring.boot.algolearn.datasource;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

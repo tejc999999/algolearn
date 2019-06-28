@@ -38,6 +38,11 @@ import jp.spring.boot.algolearn.bean.QuestionBean;
 import jp.spring.boot.algolearn.form.QuestionForm;
 import jp.spring.boot.algolearn.repository.QuestionRepository;
 
+/**
+ * 問題Controllerテスト(question class controller)
+ * @author tejc999999
+ *
+ */
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -45,17 +50,11 @@ import jp.spring.boot.algolearn.repository.QuestionRepository;
 @ActiveProfiles("test")
 public class QuestionControllerTest {
 
-    public static final Operation DELETE_ALL = Operations.deleteAllFrom(
-            "t_question");
-
-    public static final Operation RESET_AUTO_INCREMENT = Operations.sql(
-            "ALTER TABLE t_question ALTER COLUMN id RESTART WITH 1");
-
+    // テスト用問題データ作成
     public static final Operation INSERT_DATA1 = Operations.insertInto(
             "t_question").columns("id", "title", "description", "input_num",
                     "public_flg").values(1, "問題タイトル１", "問題説明１", 2, true)
             .build();
-
     public static final Operation INSERT_DATA2 = Operations.insertInto(
             "t_question").columns("id", "title", "description", "input_num",
                     "public_flg").values(2, "問題タイトル２", "問題説明２", 3, false)
@@ -73,6 +72,10 @@ public class QuestionControllerTest {
     @Autowired
     private DataSource dataSource;
 
+    /**
+     * テスト前処理
+     * @throws Exception
+     */
     @Before
     public void テスト前処理() throws Exception {
         // Thymeleafを使用していることがテスト時に認識されない様子
@@ -85,6 +88,10 @@ public class QuestionControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
+    /**
+     * 先生用問題一覧ページ表示_問題あり
+     * @throws Exception
+     */
     @Test
     public void 先生用問題一覧ページ表示_問題あり() throws Exception {
 
@@ -97,8 +104,7 @@ public class QuestionControllerTest {
                 status().isOk()).andExpect(view().name("teacher/question/list"))
                 .andReturn();
 
-        List<QuestionForm> list = (List) result.getModelAndView().getModel()
-                .get("questions");
+        List<QuestionForm> list = (List) result.getModelAndView().getModel().get("questions");
 
         QuestionForm form1 = new QuestionForm();
         form1.setId("1");
@@ -117,26 +123,39 @@ public class QuestionControllerTest {
         assertThat(list, hasItems(form1, form2));
     }
 
+    /**
+     * 先生用問題一覧ページ表示_問題なし
+     * @throws Exception
+     */
     @Test
     public void 先生用問題一覧ページ表示_問題なし() throws Exception {
 
-        MvcResult result = mockMvc.perform(get("/teacher/question")).andExpect(
-                status().isOk()).andExpect(view().name("teacher/question/list"))
+        MvcResult result = mockMvc.perform(get("/teacher/question"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/question/list"))
                 .andReturn();
 
-        List<QuestionForm> list = (List) result.getModelAndView().getModel()
-                .get("questions");
+        List<QuestionForm> list = (List) result.getModelAndView().getModel().get("questions");
         if (list != null)
             assertEquals(list.size(), 0);
     }
 
+    /**
+     * 先生用問題登録ページ表示
+     * @throws Exception
+     */
     @Test
     public void 先生用問題登録ページ表示() throws Exception {
 
-        mockMvc.perform(get("/teacher/question/add")).andExpect(status().isOk())
-                .andExpect(view().name("teacher/question/add"));
+        mockMvc.perform(get("/teacher/question/add"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("teacher/question/add"));
     }
 
+    /**
+     * 先生用問題登録処理
+     * @throws Exception
+     */
     @Test
     public void 先生用問題登録処理() throws Exception {
 
@@ -146,9 +165,10 @@ public class QuestionControllerTest {
         form.setInputNum(2);
         form.setPublicFlg(true);
 
-        mockMvc.perform(post("/teacher/question/add").flashAttr("questionForm",
-                form)).andExpect(status().is3xxRedirection()).andExpect(view()
-                        .name("redirect:/teacher/question"));
+        mockMvc.perform(post("/teacher/question/add")
+                .flashAttr("questionForm", form))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/teacher/question"));
 
         Optional<QuestionBean> opt = questionRepository.findById(1);
         // ifPresentOrElseの実装はJDK9からの様子
@@ -162,6 +182,10 @@ public class QuestionControllerTest {
         opt.orElseThrow(() -> new Exception("bean not found."));
     }
 
+    /**
+     * 先生用問題編集ページ表示
+     * @throws Exception
+     */
     @Test
     public void 先生用問題編集ページ表示() throws Exception {
 
@@ -170,9 +194,11 @@ public class QuestionControllerTest {
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
-        MvcResult result = mockMvc.perform(post("/teacher/question/edit").param(
-                "id", "1")).andExpect(status().isOk()).andExpect(view().name(
-                        "teacher/question/edit")).andReturn();
+        MvcResult result = mockMvc.perform(post("/teacher/question/edit")
+                    .param("id", "1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/question/edit"))
+                .andReturn();
 
         QuestionForm resultForm = (QuestionForm) result.getModelAndView()
                 .getModel().get("questionForm");
@@ -184,6 +210,10 @@ public class QuestionControllerTest {
         assertEquals(resultForm.isPublicFlg(), true);
     }
 
+    /**
+     * 先生用問題編集処理
+     * @throws Exception
+     */
     @Test
     public void 先生用問題編集処理() throws Exception {
 
@@ -199,9 +229,10 @@ public class QuestionControllerTest {
         form.setInputNum(0);
         form.setPublicFlg(false);
 
-        mockMvc.perform(post("/teacher/question/editprocess").flashAttr(
-                "questionForm", form)).andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/question"));
+        mockMvc.perform(post("/teacher/question/editprocess")
+                    .flashAttr("questionForm", form))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/teacher/question"));
 
         Optional<QuestionBean> opt = questionRepository.findById(1);
         // ifPresentOrElseの実装はJDK9からの様子
@@ -216,6 +247,10 @@ public class QuestionControllerTest {
         opt.orElseThrow(() -> new Exception("bean not found."));
     }
 
+    /**
+     * 先生用問題削除処理
+     * @throws Exception
+     */
     @Test
     public void 先生用問題削除処理() throws Exception {
 
@@ -224,9 +259,10 @@ public class QuestionControllerTest {
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
-        mockMvc.perform(post("/teacher/question/delete").param("id", "1"))
-                .andExpect(status().is3xxRedirection()).andExpect(view().name(
-                        "redirect:/teacher/question"));
+        mockMvc.perform(post("/teacher/question/delete")
+                    .param("id", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/question"));
 
         long cnt = questionRepository.count();
         assertEquals(cnt, 0);

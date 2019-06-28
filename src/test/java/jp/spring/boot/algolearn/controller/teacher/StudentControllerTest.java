@@ -42,6 +42,11 @@ import jp.spring.boot.algolearn.form.StudentForm;
 import jp.spring.boot.algolearn.repository.ClassRepository;
 import jp.spring.boot.algolearn.repository.UserRepository;
 
+/**
+ * 学生Controllerテスト(question class controller)
+ * @author t.kawana
+ *
+ */
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -62,9 +67,9 @@ public class StudentControllerTest {
                     "userid02", "password", "テストユーザー２", RoleCode.ROLE_STUDENT
                             .getString()).build();
 
-    public static final Operation INSERT_STUDNET_DATA3 = Operations.insertInto(
+    public static final Operation INSERT_STUDENT_DATA3 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
-                    "userid02", "password", "テストユーザー２", RoleCode.ROLE_STUDENT
+                    "teacherid", "password", "テスト先生", RoleCode.ROLE_TEACHER
                             .getString()).build();
 
     public static final Operation INSERT_CLASS_DATA1 = Operations.insertInto(
@@ -100,6 +105,10 @@ public class StudentControllerTest {
     @Autowired
     private DataSource dataSource;
 
+    /**
+     * テスト前処理
+     * @throws Exception
+     */
     @Before
     public void テスト前処理() throws Exception {
         // Thymeleafを使用していることがテスト時に認識されない様子
@@ -112,21 +121,28 @@ public class StudentControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
+    /**
+     * 先生用学生一覧ページ表示_ユーザーあり
+     * @throws Exception
+     */
     @Test
     public void 先生用学生一覧ページ表示_ユーザーあり() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
-        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1, INSERT_STUDENT_DATA2);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_STUDENT_DATA3);
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
-        MvcResult result = mockMvc.perform(get("/teacher/student")).andExpect(
-                status().isOk()).andExpect(view().name("teacher/student/list"))
+        MvcResult result = mockMvc.perform(get("/teacher/student"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/student/list"))
                 .andReturn();
 
-        List<StudentForm> list = (List) result.getModelAndView().getModel().get(
-                "students");
+        List<StudentForm> list = (List) result.getModelAndView().getModel().get("students");
 
+        assertEquals(list.size(), 2);
+        
         StudentForm form1 = new StudentForm();
         form1.setId("userid01");
         form1.setPassword("password");
@@ -140,6 +156,10 @@ public class StudentControllerTest {
         assertThat(list, hasItems(form1, form2));
     }
     
+    /**
+     * 先生用学生一覧ページ表示_ユーザーなし
+     * @throws Exception
+     */
     @Test
     public void 先生用学生一覧ページ表示_ユーザーなし() throws Exception {
 
@@ -147,11 +167,14 @@ public class StudentControllerTest {
                 status().isOk()).andExpect(view().name("teacher/student/list"))
                 .andReturn();
 
-        List<StudentForm> list = (List) result.getModelAndView().getModel().get(
-                "students");
+        List<StudentForm> list = (List) result.getModelAndView().getModel().get("students");
         if(list != null) assertEquals(list.size(), 0);
     }
 
+    /**
+     * 先生用学生登録ページ表示
+     * @throws Exception
+     */
     @Test
     public void 先生用学生登録ページ表示() throws Exception {
 
@@ -159,6 +182,10 @@ public class StudentControllerTest {
                 .andExpect(view().name("teacher/student/add"));
     }
 
+    /**
+     * 先生用学生登録処理
+     * @throws Exception
+     */
     @Test
     public void 先生用学生登録処理() throws Exception {
 
@@ -167,9 +194,10 @@ public class StudentControllerTest {
         form.setPassword("password");
         form.setName("テストユーザー１");
 
-        mockMvc.perform(post("/teacher/student/add").flashAttr("studentForm",
-                form)).andExpect(status().is3xxRedirection()).andExpect(view()
-                        .name("redirect:/teacher/student"));
+        mockMvc.perform(post("/teacher/student/add")
+                    .flashAttr("studentForm", form))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/teacher/student"));
 
         Optional<UserBean> opt = userRepository.findById("userid01");
         // ifPresentOrElseの実装はJDK9からの様子
@@ -183,6 +211,10 @@ public class StudentControllerTest {
         opt.orElseThrow(() -> new Exception("bean not found."));
     }
 
+    /**
+     * 先生用学生編集ページ表示_クラスあり
+     * @throws Exception
+     */
     @Test
     public void 先生用学生編集ページ表示_クラスあり() throws Exception {
 
@@ -192,9 +224,11 @@ public class StudentControllerTest {
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
-        MvcResult result = mockMvc.perform(post("/teacher/student/edit").param(
-                "id", "userid01")).andExpect(status().isOk()).andExpect(view()
-                        .name("teacher/student/edit")).andReturn();
+        MvcResult result = mockMvc.perform(post("/teacher/student/edit")
+                    .param("id", "userid01"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/student/edit"))
+                .andReturn();
 
         StudentForm resultForm = (StudentForm) result.getModelAndView()
                 .getModel().get("studentForm");
@@ -205,6 +239,10 @@ public class StudentControllerTest {
         assertEquals(resultForm.getRoleId(), RoleCode.ROLE_STUDENT.getString());
     }
 
+    /**
+     * 先生用学生編集ページ表示_クラスなし
+     * @throws Exception
+     */
     @Test
     public void 先生用学生編集ページ表示_クラスなし() throws Exception {
 
@@ -213,9 +251,11 @@ public class StudentControllerTest {
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
-        MvcResult result = mockMvc.perform(post("/teacher/student/edit").param(
-                "id", "userid01")).andExpect(status().isOk()).andExpect(view()
-                        .name("teacher/student/edit")).andReturn();
+        MvcResult result = mockMvc.perform(post("/teacher/student/edit")
+                    .param("id", "userid01"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/student/edit"))
+                .andReturn();
 
         StudentForm resultForm = (StudentForm) result.getModelAndView()
                 .getModel().get("studentForm");
@@ -226,7 +266,10 @@ public class StudentControllerTest {
         assertEquals(resultForm.getRoleId(), RoleCode.ROLE_STUDENT.getString());
     }
 
-    
+    /**
+     * 先生用学生編集処理_クラスあり
+     * @throws Exception
+     */
     @Test
     public void 先生用学生編集処理_クラスあり() throws Exception {
 
@@ -241,9 +284,10 @@ public class StudentControllerTest {
         form.setName("テストユーザー１－２");
         form.setPassword("password2");
 
-        mockMvc.perform(post("/teacher/student/editprocess").flashAttr(
-                "studentForm", form)).andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/student"));
+        mockMvc.perform(post("/teacher/student/editprocess")
+                    .flashAttr("studentForm", form))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/teacher/student"));
 
         Optional<UserBean> opt = userRepository.findById("userid01");
         // ifPresentOrElseの実装はJDK9からの様子
@@ -264,6 +308,10 @@ public class StudentControllerTest {
         opt.orElseThrow(() -> new Exception("bean not found."));
     }
     
+    /**
+     * 先生用学生編集処理_クラスなし
+     * @throws Exception
+     */
     @Test
     public void 先生用学生編集処理_クラスなし() throws Exception {
 
@@ -277,9 +325,10 @@ public class StudentControllerTest {
         form.setName("テストユーザー１－２");
         form.setPassword("password2");
 
-        mockMvc.perform(post("/teacher/student/editprocess").flashAttr(
-                "studentForm", form)).andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/student"));
+        mockMvc.perform(post("/teacher/student/editprocess")
+                    .flashAttr("studentForm", form))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/teacher/student"));
 
         Optional<UserBean> opt = userRepository.findById("userid01");
         // ifPresentOrElseの実装はJDK9からの様子
@@ -296,6 +345,10 @@ public class StudentControllerTest {
         opt.orElseThrow(() -> new Exception("bean not found."));
     }
 
+    /**
+     * 先生用学生削除処理_クラスあり
+     * @throws Exception
+     */
     @Test
     public void 先生用学生削除処理_クラスあり() throws Exception {
 
@@ -308,9 +361,10 @@ public class StudentControllerTest {
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
-        mockMvc.perform(post("/teacher/student/delete").param("id", "userid01"))
-                .andExpect(status().is3xxRedirection()).andExpect(view().name(
-                        "redirect:/teacher/student"));
+        mockMvc.perform(post("/teacher/student/delete")
+                    .param("id", "userid01"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/student"));
         
         List<ClassBean> classList = classRepository.findAll();
         assertEquals(classList.size() , 2);
@@ -323,6 +377,10 @@ public class StudentControllerTest {
         });
     }
     
+    /**
+     * 先生用学生削除処理_クラスなし
+     * @throws Exception
+     */
     @Test
     public void 先生用学生削除処理_クラスなし() throws Exception {
 
@@ -331,9 +389,10 @@ public class StudentControllerTest {
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
-        mockMvc.perform(post("/teacher/student/delete").param("id", "userid01"))
-                .andExpect(status().is3xxRedirection()).andExpect(view().name(
-                        "redirect:/teacher/student"));
+        mockMvc.perform(post("/teacher/student/delete")
+                    .param("id", "userid01"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/student"));
 
         long cnt = userRepository.count();
         assertEquals(cnt, 0);

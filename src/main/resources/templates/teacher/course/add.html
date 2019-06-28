@@ -27,7 +27,7 @@
       <label class="col-form-label">所属クラス</label>
         <div class="checkbox" th:each="item : ${classCheckItems}">
           <label>
-            <input type="checkbox" name="classChecks" th:value="${item.key}" th:text="${item.value}" th:field="*{classChecks}" />
+            <input type="checkbox" name="classCheckedList" th:value="${item.key}" th:text="${item.value}" th:field="*{classCheckedList}" />
           </label>
         </div>
       </div>

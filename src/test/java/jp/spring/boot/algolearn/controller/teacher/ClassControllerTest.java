@@ -1,9 +1,7 @@
 package jp.spring.boot.algolearn.controller.teacher;
 
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.either;
 import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -16,6 +14,7 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -49,6 +48,11 @@ import jp.spring.boot.algolearn.form.ClassForm;
 import jp.spring.boot.algolearn.repository.ClassRepository;
 import jp.spring.boot.algolearn.repository.UserRepository;
 
+/**
+ * クラスControllerテスト(test class controller)
+ * @author tejc999999
+ *
+ */
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -56,45 +60,41 @@ import jp.spring.boot.algolearn.repository.UserRepository;
 @ActiveProfiles("test")
 public class ClassControllerTest {
 
-    public static final Operation DELETE_CLASS_ALL = Operations.deleteAllFrom(
-            "t_class");
-
-    public static final Operation DELETE_USER_ALL = Operations.deleteAllFrom(
-            "t_user");
-
-    public static final Operation RESET_CLASS_AUTO_INCREMENT = Operations.sql(
-            "ALTER TABLE t_class ALTER COLUMN id RESTART WITH 1");
-
-    public static final Operation RESET_USER_AUTO_INCREMENT = Operations.sql(
-            "ALTER TABLE t_user ALTER COLUMN id RESTART WITH 1");
-
+    // テスト用クラスデータ作成
     public static final Operation INSERT_CLASS_DATA1 = Operations.insertInto(
             "t_class").columns("id", "name").values(1, "クラス１").build();
-
     public static final Operation INSERT_CLASS_DATA2 = Operations.insertInto(
             "t_class").columns("id", "name").values(2, "クラス２").build();
-
     public static final Operation INSERT_CLASS_DATA3 = Operations.insertInto(
             "t_class").columns("id", "name").values(3, "クラス３").build();
 
+    // テスト用学生データ作成
     public static final Operation INSERT_STUDENT_DATA1 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
                     "userid01", "password", "テストユーザー１", RoleCode.ROLE_STUDENT
                             .getString()).build();
-
     public static final Operation INSERT_STUDENT_DATA2 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
                     "userid02", "password", "テストユーザー２", RoleCode.ROLE_STUDENT
                             .getString()).build();
 
+    public static final Operation INSERT_TEACHER_DATA3 = Operations.insertInto(
+            "t_user").columns("id", "password", "name", "role_id").values(
+                    "userid03", "password", "テストユーザー３", RoleCode.ROLE_TEACHER
+                            .getString()).build();
+
+    public static final Operation INSERT_ADMIN_DATA4 = Operations.insertInto(
+            "t_user").columns("id", "password", "name", "role_id").values(
+                    "userid04", "password", "テストユーザー４", RoleCode.ROLE_ADMIN
+                            .getString()).build();
+
+    // テスト用学生-クラス関連データ作成
     public static final Operation INSERT_USER_CLASS_DATA1 = Operations
             .insertInto("t_user_class").columns("user_id", "class_id").values(
                     "userid01", 1).build();
-
     public static final Operation INSERT_USER_CLASS_DATA2 = Operations
             .insertInto("t_user_class").columns("user_id", "class_id").values(
                     "userid02", 1).build();
-
     public static final Operation INSERT_USER_CLASS_DATA3 = Operations
             .insertInto("t_user_class").columns("user_id", "class_id").values(
                     "userid01", 2).build();
@@ -114,6 +114,10 @@ public class ClassControllerTest {
     @Autowired
     private DataSource dataSource;
 
+    /**
+     * テスト前処理
+     * @throws Exception
+     */
     @Before
     public void テスト前処理() throws Exception {
         // Thymeleafを使用していることがテスト時に認識されない様子
@@ -126,6 +130,10 @@ public class ClassControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
+    /**
+     * 先生用クラス一覧ページ表示_クラスあり
+     * @throws Exception
+     */
     @Test
     public void 先生用クラス一覧ページ表示_クラスあり() throws Exception {
 
@@ -137,12 +145,12 @@ public class ClassControllerTest {
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
-        MvcResult result = mockMvc.perform(get("/teacher/class")).andExpect(
-                status().isOk()).andExpect(view().name("teacher/class/list"))
+        MvcResult result = mockMvc.perform(get("/teacher/class"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/class/list"))
                 .andReturn();
 
-        List<ClassForm> list = (List) result.getModelAndView().getModel().get(
-                "classes");
+        List<ClassForm> list = (List) result.getModelAndView().getModel().get("classes");
 
         ClassForm form1 = new ClassForm();
         form1.setId("1");
@@ -159,6 +167,10 @@ public class ClassControllerTest {
         assertThat(list, hasItems(form1, form2, form3));
     }
 
+    /**
+     * 先生用クラス一覧ページ表示_クラスなし
+     * @throws Exception
+     */
     @Test
     public void 先生用クラス一覧ページ表示_クラスなし() throws Exception {
 
@@ -166,28 +178,60 @@ public class ClassControllerTest {
                 status().isOk()).andExpect(view().name("teacher/class/list"))
                 .andReturn();
 
-        List<ClassForm> list = (List) result.getModelAndView().getModel().get(
-                "classes");
+        List<ClassForm> list = (List) result.getModelAndView().getModel().get("classes");
         if (list != null)
             assertEquals(list.size(), 0);
     }
 
+    /**
+     * 先生用クラス登録ページ表示_ユーザーあり
+     * @throws Exception
+     */
     @Test
-    public void 先生用クラス登録ページ表示() throws Exception {
+    public void 先生用クラス登録ページ表示_ユーザーあり() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1, INSERT_CLASS_DATA2,
+                INSERT_STUDENT_DATA2, INSERT_TEACHER_DATA3,
+                INSERT_ADMIN_DATA4, INSERT_CLASS_DATA1, INSERT_CLASS_DATA2,
                 INSERT_CLASS_DATA3, INSERT_USER_CLASS_DATA1,
                 INSERT_USER_CLASS_DATA2, INSERT_USER_CLASS_DATA3);
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
-        mockMvc.perform(get("/teacher/class/add")).andExpect(status().isOk())
+        MvcResult result = mockMvc.perform(get("/teacher/class/add")).andExpect(status().isOk())
                 .andExpect(model().attributeExists("userCheckItems")).andExpect(
                         view().name("teacher/class/add")).andReturn();
+        
+        Map<String, String> userMap = (Map<String, String>) result.getModelAndView().getModel()
+                .get("userCheckItems");
+
+        assertEquals(userMap.size(), 2);
+        assertThat(userMap, hasEntry("userid01", "テストユーザー１"));
+        assertThat(userMap, hasEntry("userid02", "テストユーザー２"));
+    }
+    
+    /**
+     * 先生用クラス登録ページ表示_ユーザーなし
+     * @throws Exception
+     */
+    @Test
+    public void 先生用クラス登録ページ表示_ユーザーなし() throws Exception {
+
+        MvcResult result = mockMvc.perform(get("/teacher/class/add")).andExpect(status().isOk())
+                .andExpect(model().attributeExists("userCheckItems")).andExpect(
+                        view().name("teacher/class/add")).andReturn();
+        
+        Map<String, String> userMap = (Map<String, String>) result.getModelAndView().getModel()
+                .get("userCheckItems");
+
+        if(userMap != null) assertEquals(userMap.size(), 0);
     }
 
+    /**
+     * 先生用クラス登録処理_ユーザーあり
+     * @throws Exception
+     */
     @Test
     public void 先生用クラス登録処理_ユーザーあり() throws Exception {
 
@@ -221,6 +265,10 @@ public class ClassControllerTest {
         });
     }
 
+    /**
+     * 先生用クラス登録処理_ユーザーなし
+     * @throws Exception
+     */
     @Test
     public void 先生用クラス登録処理_ユーザーなし() throws Exception {
 
@@ -241,25 +289,29 @@ public class ClassControllerTest {
         });
     }
 
+    /**
+     * 先生用クラス編集ページ表示
+     * @throws Exception
+     */
     @Test
     public void 先生用クラス編集ページ表示() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-                INSERT_STUDENT_DATA2, INSERT_CLASS_DATA1,
+                INSERT_STUDENT_DATA2, INSERT_TEACHER_DATA3,
+                INSERT_ADMIN_DATA4, INSERT_CLASS_DATA1,
                 INSERT_USER_CLASS_DATA1, INSERT_USER_CLASS_DATA2);
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
-        MvcResult result = mockMvc.perform(post("/teacher/class/edit").param(
-                "id", "1")).andExpect(status().isOk()).andExpect(view().name(
-                        "teacher/class/edit")).andExpect(model()
-                                .attributeExists("userCheckItems")).andExpect(
-                                        model().attribute("userCheckItems",
-                                                allOf(hasEntry("userid01",
-                                                        "テストユーザー１"), hasEntry(
-                                                                "userid02",
-                                                                "テストユーザー２"))))
+        MvcResult result = mockMvc.perform(post("/teacher/class/edit")
+                    .param("id", "1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/class/edit"))
+                .andExpect(model().attributeExists("userCheckItems"))
+                .andExpect(model().attribute("userCheckItems",
+                        allOf(hasEntry("userid01", "テストユーザー１"),
+                                hasEntry("userid02","テストユーザー２"))))
                 .andReturn();
 
         ClassForm classForm = (ClassForm) result.getModelAndView().getModel()
@@ -270,8 +322,19 @@ public class ClassControllerTest {
         assertEquals(classForm.getUserCheckedList().size(), 2);
         assertThat(classForm.getUserCheckedList(), containsInAnyOrder(
                 "userid01", "userid02"));
+        
+        Map<String, String> userMap = (Map<String, String>) result
+                .getModelAndView().getModel().get("userCheckItems");
+
+        assertEquals(userMap.size(), 2);
+        assertThat(userMap, hasEntry("userid01", "テストユーザー１"));
+        assertThat(userMap, hasEntry("userid02", "テストユーザー２"));
     }
 
+    /**
+     * 先生用クラス編集処理_ユーザーあり
+     * @throws Exception
+     */
     @Test
     public void 先生用クラス編集処理_ユーザーあり() throws Exception {
 
@@ -311,6 +374,10 @@ public class ClassControllerTest {
         opt.orElseThrow(() -> new Exception("bean not found."));
     }
 
+    /**
+     * 先生用クラス編集処理_ユーザーなし
+     * @throws Exception
+     */
     @Test
     public void 先生用クラス編集処理_ユーザーなし() throws Exception {
 
@@ -323,9 +390,10 @@ public class ClassControllerTest {
         form.setId("3");
         form.setName("クラス３－２");
 
-        mockMvc.perform(post("/teacher/class/editprocess").flashAttr(
-                "classForm", form)).andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/class"));
+        mockMvc.perform(post("/teacher/class/editprocess")
+                .flashAttr("classForm", form))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/teacher/class"));
 
         Optional<ClassBean> opt = classRepository.findById(3);
         // ifPresentOrElseの実装はJDK9からの様子
@@ -338,6 +406,10 @@ public class ClassControllerTest {
         opt.orElseThrow(() -> new Exception("bean not found."));
     }
 
+    /**
+     * 先生用クラス削除処理_ユーザーあり
+     * @throws Exception
+     */
     @Test
     public void 先生用クラス削除処理_ユーザーあり() throws Exception {
 
@@ -370,6 +442,10 @@ public class ClassControllerTest {
             });
     }
 
+    /**
+     * 先生用クラス削除処理_ユーザーなし
+     * @throws Exception
+     */
     @Test
     public void 先生用クラス削除処理_ユーザーなし() throws Exception {
 

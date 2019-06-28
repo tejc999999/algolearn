@@ -12,23 +12,21 @@ import lombok.Data;
 
 /**
  * 課題入出力値
- * 
  * @author tejc999999
- *
  */
 @Data
 @Entity
 @Table(name = "t_task_valiable")
 public class TaskValiableBean {
 
-	@EmbeddedId
-	private TaskValiableId taskValiableId;
-	
-	@Column(name="date_type")
-	private String dataType;
-	
-	@ManyToOne
+    @EmbeddedId
+    private TaskValiableId taskValiableId;
+
+    @Column(name = "date_type")
+    private String dataType;
+
+    @ManyToOne
     @JoinColumn(name = "task_id", referencedColumnName = "id", insertable = false, updatable = false)
-//    @MapsId("taskId")
-	private TaskBean taskBean;
+    // @MapsId("taskId")
+    private TaskBean taskBean;
 }

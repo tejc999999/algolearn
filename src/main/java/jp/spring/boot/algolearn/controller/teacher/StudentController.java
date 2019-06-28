@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jp.spring.boot.algolearn.bean.ClassBean;
 import jp.spring.boot.algolearn.bean.UserBean;
+import jp.spring.boot.algolearn.config.RoleCode;
 import jp.spring.boot.algolearn.form.StudentForm;
 import jp.spring.boot.algolearn.repository.UserRepository;
 
@@ -43,7 +44,7 @@ public class StudentController {
 
         List<StudentForm> list = new ArrayList<StudentForm>();
 
-        for (UserBean userBean : userRepository.findAll()) {
+        for (UserBean userBean : userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString())) {
             StudentForm userForm = new StudentForm();
             BeanUtils.copyProperties(userBean, userForm);
             list.add(userForm);
@@ -135,7 +136,6 @@ public class StudentController {
                 userBean.removeFromClass(classBeanArray[i]);
             }
 
-            
             userRepository.delete(userBean);
         });
 

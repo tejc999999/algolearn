@@ -70,7 +70,6 @@ public class UserBean {
 
     /**
      * クラス関連削除
-     * 
      * @param classBean クラスBean
      */
     public void removeFromClass(ClassBean classBean) {
@@ -80,7 +79,6 @@ public class UserBean {
 
     /**
      * コース関連削除
-     * 
      * @param classBean コースBean
      */
     public void removeFromCourse(CourseBean courseBean) {

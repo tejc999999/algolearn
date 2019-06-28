@@ -23,9 +23,7 @@ import lombok.ToString;
 
 /**
  * コースBean(course Bean)
- * 
  * @author tejc999999
- *
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,21 +34,34 @@ import lombok.ToString;
 @Table(name = "t_course")
 public class CourseBean {
 
-	@Id
-	@Column(name = "id")
-	private int id;
+    /**
+     * コースコード(course code)
+     */
+    @Id
+    @Column(name = "id")
+    private int id;
 
-	@Column(name = "name")
-	private String name;
-	
-	/**
-	 * ユーザー所属コース：相互参照オブジェクト(user belonging course：cross reference object)
-	 */
-	@ManyToMany(cascade = {CascadeType.REFRESH}, fetch=FetchType.EAGER)
-	@JoinTable(
-			name = "t_user_course",
-			joinColumns = {@JoinColumn(name = "course_id", referencedColumnName="id")},
-			inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName="id")}
-			)
-	Set<UserBean> userBeans;
+    /**
+     * コース名(course name)
+     */
+    @Column(name = "name")
+    private String name;
+
+    /**
+     * ユーザー所属コース：相互参照オブジェクト(user belonging course：cross reference object)
+     */
+    @ManyToMany(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @JoinTable(name = "t_user_course", joinColumns = {
+            @JoinColumn(name = "course_id", referencedColumnName = "id") }, inverseJoinColumns = {
+                    @JoinColumn(name = "user_id", referencedColumnName = "id") })
+    Set<UserBean> userBeans;
+    
+    /**
+     * クラス所属コース：相互参照オブジェクト(user belonging course：cross reference object)
+     */
+    @ManyToMany(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @JoinTable(name = "t_class_course", joinColumns = {
+            @JoinColumn(name = "course_id", referencedColumnName = "id") }, inverseJoinColumns = {
+                    @JoinColumn(name = "class_id", referencedColumnName = "id") })
+    Set<ClassBean> classBeans;
 }

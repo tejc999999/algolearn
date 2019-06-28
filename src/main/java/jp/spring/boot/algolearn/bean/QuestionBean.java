@@ -64,8 +64,10 @@ public class QuestionBean {
 	 */
 	@Column(name="public_flg", nullable = false)
 	private boolean publicFlg;
-	
 
+	/**
+	 * 問題を使用した課題：相互参照オブジェクト(task belonging question：cross reference object)
+	 */
 	@OneToMany(mappedBy="questionBean", cascade= {CascadeType.ALL})
 //    @MapsId("questionBean")
 	private List<TaskBean> taskBeans;
