@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>課題登録画面</title>
+  <link rel="stylesheet"
+    href="http://maxcdn.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css"
+    th:href="@{/webjars/bootstrap/4.3.0/css/bootstrap.min.css}" />
+  <script th:src="@{/webjars/jquery/3.4.0/jquery.slim.min.js}" type="text/javascript" charset="utf-8"></script>
+  <script th:src="@{/webjars/bootstrap/4.3.0/js/bootstrap.bundle.min.js}" type="text/javascript" charset="utf-8"></script>
+
+
+ </head>
+<body>
+
+<div th:replace="layout :: header"></div>
+
+■課題登録ページ
+<div class="container-fluid no-gutters pb-5">
+
+  <div class="form-row">
+    <div class="form-group col-md-5">
+      <label for="prgLanguage" class="col-form-label " th:text="言語">言語</label>
+      <select class="form-control" id="prgLanguage">
+        <option th:each="item : ${prgLanguageList}" th:value="${item}"
+		  th:text="${item}">pull down</option>
+      </select>
+    </div>
+    <div class="form-group col-md-7">
+      <label for="title" class="col-form-label">課題名</label>
+      <input type="text" class="form-control" id="title" value="課題名を書いてください"/>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-12">
+    <label for="description" class="col-form-label">説明文</label>
+      <textarea class="form-control" id="description">課題の説明文を書いてください</textarea>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-12">
+      <label for="courceCode" class="col-form-label">登録コース</label>
+      <select class="form-control" name="courceCode">
+        <option value="course1">Java基礎コース</option>
+        <option value="course2">C基礎コース</option>
+        <option value="course3">Python基礎コース</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      <label for="description" class="col-form-label">入力値のデータと個数</label>
+      <select class="form-control" name="inputType[0]" onchange="textEnable(this)">
+        <option value="void">なし</option>
+        <option value="int">数値</option>
+        <option value="char">文字</option>
+        <option value="float">小数</option>
+        <option value="string">文字列</option>
+        <option value="code">コード記入</option>
+      </select>
+    </div>
+    <div class="form-group col-md-3">
+      <input type="text" class="form-control" id="import_inputType[0]" value="/*import文を記入*/" disabled/>
+      <input type="text" class="form-control" id="code_inputType[0]" value="int p1" disabled/>
+    </div>
+    <div class="form-group col-md-6">
+      <label for="description" class="col-form-label">説明文(入力値)</label>
+      <input type="text" class="form-control" id="description_inputType[0]" value="説明文を書いてください"/>
+    </div>
+    <input type="button" value="＋" class="add pluralBtn">
+    <input type="button" value="－" class="del pluralBtn">
+  </div>    
+    
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      <label for="outputType[0]" class="col-form-label">出力値のデータと個数</label>
+      <select class="form-control" name="outputType[0]" onchange="textEnable(this)">
+        <option value="void">なし</option>
+        <option value="int">数値</option>
+        <option value="char">文字</option>
+        <option value="float">小数</option>
+        <option value="string">文字列</option>
+        <option value="code">コード記入</option>
+      </select>
+    </div>
+    <div class="form-group col-md-3">
+      <input type="text" class="form-control" id="import_outputType[0]" value="/*import文を記入*/" disabled/>
+      <input type="text" class="form-control" id="code_outputType[0]" value="" disabled/>
+    </div>
+    <div class="form-group col-md-6">
+      <label for="description" class="col-form-label">説明文(出力値)</label>
+      <input type="text" class="form-control" id="description_outputType[0]" value="説明文を書いてください"/>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="title" class="col-form-label">解答　入力値（公開）</label>
+      <input type="text" class="form-control" id="inputResultPublic" value=""/>
+    </div>
+    <div class="form-group col-md-6">
+      <label for="title" class="col-form-label">解答　出力値（公開）</label>
+      <input type="text" class="form-control" id="outputResultPublic" value=""/>
+    </div>
+  </div>
+  
+    <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="title" class="col-form-label">解答　入力値（秘匿）</label>
+      <input type="text" class="form-control" id="inputResultPrivate" value=""/>
+    </div>
+    <div class="form-group col-md-6">
+      <label for="title" class="col-form-label">解答　出力値（秘匿）</label>
+      <input type="text" class="form-control" id="outputResultPrivate" value=""/>
+    </div>
+  </div>
+
+  <fieldset class="form-group">
+  <div class="form-row">
+    <!-- /* form-cechk-inlineによってmarginが発生するためグリッドレイアウトが崩れる。m-0で対処 */ -->
+    <legend class="col-form-label ">保存先</legend>
+    <div class="form-group form-check-inline form-check col-md-9 m-0">
+      <label for="public" class="form-check-label mr-2">公開</label>
+      <input type="radio" class="form-check-input mr-2" name="publicTaskFlg" id="public" value="true" checked>
+      <label for="private" class="form-check-label mr-2">個人</label>
+      <input type="radio" class="form-check-input" name="publicTaskFlg" id="private" value="false">
+    </div>
+
+    <div class="col-md-3">
+      <input type="submit" class="btn btn-info btn-block" th:value="作成">
+    </div>
+  </div>
+  </fieldset>
+ </div>
+ 
+ <div th:replace="layout :: footer"></div>
+
+<script type="text/javascript">
+$(document).on("click", ".add", function() {
+    $(this).parent().clone(true).insertAfter($(this).parent());
+});
+$(document).on("click", ".del", function() {
+    var target = $(this).parent();
+    // 引数なしに対応
+    alert(target.parent().children().length );
+    if (target.parent().children().length > 8) {
+        target.remove();
+    }
+});
+</script>
+
+<script>
+function textEnable(element) {
+	if(element.value == "code") {
+		document.getElementById('code_' + element.name).value="";
+		document.getElementById('import_' + element.name).value="/*import文を記入*/";
+		document.getElementById('code_' + element.name).disabled = false;
+		document.getElementById('import_' + element.name).disabled = false;
+	} else {
+		document.getElementById('code_' + element.name).disabled = true;
+		document.getElementById('import_' + element.name).disabled = true;
+	}
+}
+</script>
+ 
+</body>
+</html>
