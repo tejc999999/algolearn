@@ -23,16 +23,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 /**
- * 学生用学習Contollerクラス
+ * 学生用学習Contollerクラス(lean controller)
  * @author tejc999999
  */
 @Controller
 @RequestMapping("/student")
 public class LearnController {
 
+    /**
+     * 
+     */
     @Autowired
     PrgLanguageProperties prgLanguageProperties;
 
+    /**
+     * 
+     */
     @Autowired
     ServerProperties serverProperties;
 

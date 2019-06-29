@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * ログイン用コントローラクラス
+ * ログイン用コントローラクラス(login controller)
  * 
  * @author tejc999999
  *

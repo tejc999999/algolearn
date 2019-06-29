@@ -41,15 +41,28 @@ import org.springframework.validation.annotation.Validated;
 @RequestMapping("/teacher/course")
 public class CourseController {
 
+    /**
+     * コース用リポジトリ(course repository)
+     */
     @Autowired
     CourseRepository courseRepository;
 
+    /**
+     * クラス用リポジトリ(class repository)
+     */
     @Autowired
     ClassRepository classRepository;
 
+    /**
+     * ユーザー用リポジトリ(user repository)
+     */
     @Autowired
     UserRepository userRepository;
 
+    /**
+     * モデルにフォームをセットする(set form the model)
+     * @return コースForm(course form)
+     */
     @ModelAttribute
     CourseForm setupForm() {
         return new CourseForm();
@@ -64,14 +77,14 @@ public class CourseController {
     String list(CourseForm form, Model model) {
 
         // 全コース取得
-        List<CourseForm> list = new ArrayList<CourseForm>();
+        List<CourseForm> courseFormList = new ArrayList<CourseForm>();
         for (CourseBean courseBean : courseRepository.findAll()) {
             CourseForm courseForm = new CourseForm();
             BeanUtils.copyProperties(courseBean, courseForm);
             courseForm.setId(String.valueOf(courseBean.getId()));
-            list.add(courseForm);
+            courseFormList.add(courseForm);
         }
-        model.addAttribute("courses", list);
+        model.addAttribute("courses", courseFormList);
 
         return "teacher/course/list";
     }
@@ -114,19 +127,40 @@ public class CourseController {
 
         CourseBean courseBean = new CourseBean();
         courseBean.setName(form.getName());
-        
-        Set<ClassBean> classBeanSet = new HashSet<>();        
+
+        // 選択ユーザ、選択クラス
         List<String> classIdList = form.getClassCheckedList();
+        List<String> userIdList = form.getUserCheckedList();
+
+        // 
+        Set<ClassBean> classBeanSet = new HashSet<>();        
+        List<String> userIdRemoveLlist = new ArrayList<>();
         if(classIdList != null) classIdList.forEach(classId -> {
-            Optional<ClassBean> opt = classRepository.findById(Integer.parseInt(classId));
-            opt.ifPresent(classBean -> {
+            Optional<ClassBean> optClass = classRepository.findById(Integer.parseInt(classId));
+            optClass.ifPresent(classBean -> {
                 classBeanSet.add(classBean);
             });
+            Optional<ClassBean> opt = classRepository.findById(Integer
+                    .parseInt(classId));
+            opt.ifPresent(classBean -> {
+                Set<UserBean> userBeanSet = classBean.getUserBeans();
+                if (userBeanSet != null)
+                    userBeanSet.forEach(userBean -> {
+                        userIdRemoveLlist.add(userBean.getId());
+                    });
+            });
+
+            // 選択済みクラス所属ユーザを除外
+            if (userIdRemoveLlist != null && userIdList != null)
+                userIdRemoveLlist.forEach(userId -> {
+                    userIdList.remove(userId);
+                });
+            
         });
         courseBean.setClassBeans(classBeanSet);
         
+        // 全ユーザ取得後、選択済みクラスに所属するユーザを除外       
         Set<UserBean> userBeanSet = new HashSet<>();
-        List<String> userIdList = form.getUserCheckedList();
         if(userIdList != null) userIdList.forEach(userId -> {
             Optional<UserBean> opt = userRepository.findById(userId);
             opt.ifPresent(userBean -> {
@@ -181,7 +215,7 @@ public class CourseController {
                     });
                 });
             // 選択済みクラス所属ユーザを除外
-            if (userLlist != null)
+            if (userLlist != null && userMap != null)
                 userLlist.forEach(userId -> {
                     userMap.remove(userId);
                 });
@@ -261,12 +295,37 @@ public class CourseController {
             });
         });
         courseBean.setClassBeans(classBeanSet);
+        
+        // 全ユーザ取得後、選択済みクラスに所属するユーザを除外
+        List<String> userIdList = form.getUserCheckedList();
+
+       // クラスに所属するユーザーを除外対象として保管
+        if (form.getClassCheckedList() != null) {
+            List<String> userIdRemoveLlist = new ArrayList<>();
+            List<String> classList = form.getClassCheckedList();
+            if (classList != null)
+                classList.forEach(classId -> {
+                    Optional<ClassBean> opt = classRepository.findById(Integer
+                            .parseInt(classId));
+                    opt.ifPresent(classBean -> {
+                        Set<UserBean> userBeanSet = classBean.getUserBeans();
+                        if (userBeanSet != null)
+                            userBeanSet.forEach(userBean -> {
+                                userIdRemoveLlist.add(userBean.getId());
+                            });
+                    });
+                });
+            // 選択済みクラス所属ユーザを除外
+            if (userIdRemoveLlist != null && userIdList != null)
+                userIdRemoveLlist.forEach(userId -> {
+                    userIdList.remove(userId);
+                });
+        }
         // 所属ユーザー登録
         Set<UserBean> userBeanSet = new HashSet<>();
-        List<String> userIdList = form.getUserCheckedList();
         if(userIdList != null) userIdList.forEach(userId -> {
-            Optional<UserBean> optUser = userRepository.findById(userId);
-            optUser.ifPresent(userBean -> {
+            Optional<UserBean> opt = userRepository.findById(userId);
+            opt.ifPresent(userBean -> {
                 userBeanSet.add(userBean);
             });
         });
@@ -281,7 +340,7 @@ public class CourseController {
      * クラス所属ユーザ除外処理(exclude user  belonging course)
      * @return コース編集ページビュー(course edit page view)
      */
-    @PostMapping(path = "edit", params = "userExclusionBtn")
+    @PostMapping(path = "editprocess", params = "userExclusionBtn")
     public String editUserExclusion(@Validated CourseForm form,
             BindingResult result, Model model) {
 
@@ -289,8 +348,8 @@ public class CourseController {
         Map<String, String> classMap = new HashMap<>();
         List<ClassBean> classBeanList = classRepository.findAll();
         if (classBeanList != null)
-            classBeanList.forEach(bean -> {
-                classMap.put(String.valueOf(bean.getId()), bean.getName());
+            classBeanList.forEach(classBean -> {
+                classMap.put(String.valueOf(classBean.getId()), classBean.getName());
             });
         model.addAttribute("classCheckItems", classMap);
 
@@ -298,28 +357,28 @@ public class CourseController {
         Map<String, String> userMap = new HashMap<>();
         List<UserBean> userBeanList = userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString());
         if (userBeanList != null)
-            userBeanList.forEach(bean -> {
-                userMap.put(bean.getId(), bean.getName());
+            userBeanList.forEach(userBean -> {
+                userMap.put(userBean.getId(), userBean.getName());
             });
 
         if (form.getClassCheckedList() != null) {
-            List<String> userLlist = new ArrayList<>();
-            List<String> classList = form.getClassCheckedList();
-            if (classList != null)
-                classList.forEach(classId -> {
-                    Optional<ClassBean> opt = classRepository.findById(Integer
+            List<String> userIdList = new ArrayList<>();
+            List<String> classIdList = form.getClassCheckedList();
+            if (classIdList != null)
+                classIdList.forEach(classId -> {
+                    Optional<ClassBean> optClass = classRepository.findById(Integer
                             .parseInt(classId));
-                    opt.ifPresent(classBean -> {
+                    optClass.ifPresent(classBean -> {
                         Set<UserBean> userBeanSet = classBean.getUserBeans();
                         if (userBeanSet != null)
                             userBeanSet.forEach(userBean -> {
-                                userLlist.add(userBean.getId());
+                                userIdList.add(userBean.getId());
                             });
                     });
                 });
             // 選択済みクラス所属ユーザを除外
-            if (userLlist != null)
-                userLlist.forEach(userId -> {
+            if (userIdList != null && userMap != null)
+                userIdList.forEach(userId -> {
                     userMap.remove(userId);
                 });
         }

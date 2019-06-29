@@ -69,8 +69,8 @@ public class UserBean {
     private Set<CourseBean> courseBeans;
 
     /**
-     * クラス関連削除
-     * @param classBean クラスBean
+     * クラスとの関連を削除(remove class assosiations)
+     * @param classBean クラスBean(class bean)
      */
     public void removeFromClass(ClassBean classBean) {
         classBean.getUserBeans().remove(this);
@@ -78,8 +78,8 @@ public class UserBean {
     }
 
     /**
-     * コース関連削除
-     * @param classBean コースBean
+     * コースとの関連を削除(remove course associations)
+     * @param classBean コースBean(course bean)
      */
     public void removeFromCourse(CourseBean courseBean) {
         courseBean.getUserBeans().remove(this);

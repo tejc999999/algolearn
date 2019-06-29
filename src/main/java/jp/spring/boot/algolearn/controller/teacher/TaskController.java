@@ -42,7 +42,7 @@ public class TaskController {
         //
         // model.addAttribute("students", list);
 
-        return "teacher/student/list";
+        return "teacher/task/list";
     }
 
     /**
@@ -52,7 +52,7 @@ public class TaskController {
     @GetMapping(path = "add")
     public String add(Model model) {
 
-        return "teacher/student/add";
+        return "teacher/task/add";
     }
 
     /**
@@ -67,7 +67,7 @@ public class TaskController {
         // BeanUtils.copyProperties(form, bean);
         // userRepository.save(bean);
 
-        return "redirect:/teacher/student";
+        return "redirect:/teacher/task";
     }
 
     /**
@@ -85,7 +85,7 @@ public class TaskController {
         // model.addAttribute("studentForm", form);
         // });
 
-        return "teacher/student/edit";
+        return "teacher/task/edit";
     }
 
     /**
@@ -100,7 +100,7 @@ public class TaskController {
         //
         // userRepository.save(bean);
 
-        return "redirect:/teacher/student";
+        return "redirect:/teacher/task";
     }
 
     /**
@@ -115,6 +115,6 @@ public class TaskController {
         //
         // userRepository.delete(bean);
 
-        return "redirect:/teacher/student";
+        return "redirect:/teacher/task";
     }
 }

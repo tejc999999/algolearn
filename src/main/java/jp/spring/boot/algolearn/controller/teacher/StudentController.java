@@ -31,6 +31,9 @@ import jp.spring.boot.algolearn.repository.UserRepository;
 @RequestMapping("/teacher/student")
 public class StudentController {
 
+    /**
+     * ユーザーリポジトリ(user repository)
+     */
     @Autowired
     UserRepository userRepository;
 
@@ -42,15 +45,15 @@ public class StudentController {
     @GetMapping
     String list(Model model) {
 
-        List<StudentForm> list = new ArrayList<StudentForm>();
+        List<StudentForm> studentFormList = new ArrayList<StudentForm>();
 
         for (UserBean userBean : userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString())) {
             StudentForm userForm = new StudentForm();
             BeanUtils.copyProperties(userBean, userForm);
-            list.add(userForm);
+            studentFormList.add(userForm);
         }
 
-        model.addAttribute("students", list);
+        model.addAttribute("students", studentFormList);
 
         return "teacher/student/list";
     }
@@ -73,9 +76,9 @@ public class StudentController {
     public String addProcess(@Validated StudentForm form, BindingResult result,
             Model model) {
 
-        UserBean bean = new UserBean();
-        BeanUtils.copyProperties(form, bean);
-        userRepository.save(bean);
+        UserBean userBean = new UserBean();
+        BeanUtils.copyProperties(form, userBean);
+        userRepository.save(userBean);
 
         return "redirect:/teacher/student";
     }
@@ -87,10 +90,10 @@ public class StudentController {
     @PostMapping(path = "edit")
     public String edit(@RequestParam String id, Model model) {
 
-        Optional<UserBean> opt = userRepository.findById(id);
-        opt.ifPresent(bean -> {
+        Optional<UserBean> optUser = userRepository.findById(id);
+        optUser.ifPresent(userBean -> {
             StudentForm form = new StudentForm();
-            BeanUtils.copyProperties(bean, form);
+            BeanUtils.copyProperties(userBean, form);
 
             model.addAttribute("studentForm", form);
         });
@@ -105,10 +108,10 @@ public class StudentController {
     @PostMapping(path = "editprocess")
     public String editProcess(StudentForm form, Model model) {
 
-        UserBean bean = new UserBean();
-        BeanUtils.copyProperties(form, bean);
+        UserBean userBean = new UserBean();
+        BeanUtils.copyProperties(form, userBean);
 
-        userRepository.save(bean);
+        userRepository.save(userBean);
 
         return "redirect:/teacher/student";
     }
@@ -122,8 +125,8 @@ public class StudentController {
 
         Set<ClassBean> deleteClassSet = new HashSet<>();
 
-        Optional<UserBean> opt = userRepository.findById(id);
-        opt.ifPresent(userBean -> {
+        Optional<UserBean> optUser = userRepository.findById(id);
+        optUser.ifPresent(userBean -> {
             Set<ClassBean> classBeanSet = userBean.getClassBeans();
             // java.util.ConcurrentModificationExceptionが発生するので一旦削除用のSetを使用
             if (classBeanSet != null)

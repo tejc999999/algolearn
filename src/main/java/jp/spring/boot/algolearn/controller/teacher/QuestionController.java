@@ -28,6 +28,9 @@ import org.springframework.validation.annotation.Validated;
 @RequestMapping("/teacher/question")
 public class QuestionController {
 
+    /**
+     * 問題リポジトリ(question repository)
+     */
     @Autowired
     QuestionRepository questionRepository;
 
@@ -39,16 +42,16 @@ public class QuestionController {
     @GetMapping
     String list(Model model) {
 
-        List<QuestionForm> list = new ArrayList<QuestionForm>();
+        List<QuestionForm> questionFormList = new ArrayList<QuestionForm>();
 
         for (QuestionBean questionBean : questionRepository.findAll()) {
             QuestionForm questionForm = new QuestionForm();
             BeanUtils.copyProperties(questionBean, questionForm);
             questionForm.setId(String.valueOf(questionBean.getId()));
-            list.add(questionForm);
+            questionFormList.add(questionForm);
         }
 
-        model.addAttribute("questions", list);
+        model.addAttribute("questions", questionFormList);
 
         return "teacher/question/list";
     }
@@ -71,9 +74,9 @@ public class QuestionController {
     public String addProcess(@Validated QuestionForm form, BindingResult result,
             Model model) {
 
-        QuestionBean bean = new QuestionBean();
-        BeanUtils.copyProperties(form, bean);
-        questionRepository.save(bean);
+        QuestionBean questionBean = new QuestionBean();
+        BeanUtils.copyProperties(form, questionBean);
+        questionRepository.save(questionBean);
 
         return "redirect:/teacher/question";
     }
@@ -85,12 +88,12 @@ public class QuestionController {
     @PostMapping(path = "edit")
     public String edit(@RequestParam String id, Model model) {
 
-        Optional<QuestionBean> opt = questionRepository.findById(Integer
+        Optional<QuestionBean> optQuestion = questionRepository.findById(Integer
                 .parseInt(id));
-        opt.ifPresent(bean -> {
+        optQuestion.ifPresent(questionBean -> {
             QuestionForm form = new QuestionForm();
-            BeanUtils.copyProperties(bean, form);
-            form.setId(String.valueOf(bean.getId()));
+            BeanUtils.copyProperties(questionBean, form);
+            form.setId(String.valueOf(questionBean.getId()));
 
             model.addAttribute("questionForm", form);
         });
@@ -105,11 +108,11 @@ public class QuestionController {
     @PostMapping(path = "editprocess")
     public String editProcess(QuestionForm form, Model model) {
 
-        QuestionBean bean = new QuestionBean();
-        BeanUtils.copyProperties(form, bean);
-        bean.setId(Integer.parseInt(form.getId()));
+        QuestionBean questionBean = new QuestionBean();
+        BeanUtils.copyProperties(form, questionBean);
+        questionBean.setId(Integer.parseInt(form.getId()));
 
-        questionRepository.save(bean);
+        questionRepository.save(questionBean);
 
         return "redirect:/teacher/question";
     }
@@ -121,10 +124,10 @@ public class QuestionController {
     @PostMapping(path = "delete")
     public String delete(@RequestParam String id, Model model) {
 
-        QuestionBean bean = new QuestionBean();
-        bean.setId(Integer.parseInt(id));
+        QuestionBean questionBean = new QuestionBean();
+        questionBean.setId(Integer.parseInt(id));
 
-        questionRepository.delete(bean);
+        questionRepository.delete(questionBean);
 
         return "redirect:/teacher/question";
     }

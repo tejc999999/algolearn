@@ -36,12 +36,22 @@ import org.springframework.validation.annotation.Validated;
 @RequestMapping("/teacher/class")
 public class ClassController {
 
+    /**
+     * クラス用リポジトリ(class repository)
+     */
     @Autowired
     ClassRepository classRepository;
 
+    /**
+     * ユーザー用リポジトリ(user repository)
+     */
     @Autowired
     UserRepository userRepository;
 
+    /**
+     * モデルにフォームをセット(set form the model)
+     * @return クラスForm(class form)
+     */
     @ModelAttribute
     ClassForm setupForm() {
         return new ClassForm();
@@ -55,16 +65,16 @@ public class ClassController {
     @GetMapping
     String list(ClassForm form, Model model) {
 
-        List<ClassForm> list = new ArrayList<ClassForm>();
+        List<ClassForm> classFormList = new ArrayList<ClassForm>();
 
         for (ClassBean classBean : classRepository.findAll()) {
             ClassForm classForm = new ClassForm();
             BeanUtils.copyProperties(classBean, classForm);
             classForm.setId(String.valueOf(classBean.getId()));
-            list.add(classForm);
+            classFormList.add(classForm);
         }
 
-        model.addAttribute("classes", list);
+        model.addAttribute("classes", classFormList);
 
         return "teacher/class/list";
     }
@@ -78,8 +88,8 @@ public class ClassController {
         Map<String, String> userMap = new HashMap<>();
         List<UserBean> userBeanList = userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString());
         if (userBeanList != null)
-            userBeanList.forEach(bean -> {
-                userMap.put(bean.getId(), bean.getName());
+            userBeanList.forEach(userBean -> {
+                userMap.put(userBean.getId(), userBean.getName());
             });
 
         model.addAttribute("userCheckItems", userMap);
@@ -95,21 +105,21 @@ public class ClassController {
     public String addProcess(@Validated ClassForm form, BindingResult result,
             Model model) {
 
-        ClassBean bean = new ClassBean();
-        bean.setName(form.getName());
+        ClassBean classBean = new ClassBean();
+        classBean.setName(form.getName());
 
         if (form.getUserCheckedList() != null) {
-            Set<UserBean> set = new HashSet<>();
-            List<String> userList = form.getUserCheckedList();
-            if (userList != null)
-                userList.forEach(userId -> {
+            Set<UserBean> userBeanSet = new HashSet<>();
+            List<String> userIdList = form.getUserCheckedList();
+            if (userIdList != null)
+                userIdList.forEach(userId -> {
                     UserBean userBean = new UserBean();
                     userBean.setId(userId);
-                    set.add(userBean);
+                    userBeanSet.add(userBean);
                 });
-            bean.setUserBeans(set);
+            classBean.setUserBeans(userBeanSet);
         }
-        classRepository.save(bean);
+        classRepository.save(classBean);
 
         return "redirect:/teacher/class";
     }
@@ -131,21 +141,21 @@ public class ClassController {
         model.addAttribute("userCheckItems", userMap);
 
         // クラスの既存情報
-        ClassForm form = new ClassForm();
-        List<String> list = new ArrayList<>();
-        Optional<ClassBean> opt = classRepository.findById(Integer.parseInt(
+        ClassForm classForm = new ClassForm();
+        List<String> userCheckedList = new ArrayList<>();
+        Optional<ClassBean> optClass = classRepository.findById(Integer.parseInt(
                 id));
-        opt.ifPresent(classBean -> {
-            form.setId(String.valueOf(classBean.getId()));
-            form.setName(classBean.getName());
+        optClass.ifPresent(classBean -> {
+            classForm.setId(String.valueOf(classBean.getId()));
+            classForm.setName(classBean.getName());
             Set<UserBean> userSet = classBean.getUserBeans();
             if (userSet != null)
                 userSet.forEach(userBean -> {
-                    list.add(String.valueOf(userBean.getId()));
+                    userCheckedList.add(String.valueOf(userBean.getId()));
                 });
         });
-        form.setUserCheckedList(list);
-        model.addAttribute("classForm", form);
+        classForm.setUserCheckedList(userCheckedList);
+        model.addAttribute("classForm", classForm);
 
         return "teacher/class/edit";
     }
@@ -157,22 +167,22 @@ public class ClassController {
     @PostMapping(path = "editprocess")
     public String editProcess(ClassForm form, Model model) {
 
-        ClassBean bean = new ClassBean();
-        bean.setId(Integer.parseInt(form.getId()));
-        bean.setName(form.getName());
+        ClassBean classBean = new ClassBean();
+        classBean.setId(Integer.parseInt(form.getId()));
+        classBean.setName(form.getName());
 
         if (form.getUserCheckedList() != null) {
-            Set<UserBean> set = new HashSet<>();
-            List<String> userList = form.getUserCheckedList();
-            if (userList != null)
-                userList.forEach(userId -> {
+            Set<UserBean> userBeanSet = new HashSet<>();
+            List<String> userIdList = form.getUserCheckedList();
+            if (userIdList != null)
+                userIdList.forEach(userId -> {
                     UserBean userBean = new UserBean();
                     userBean.setId(userId);
-                    set.add(userBean);
+                    userBeanSet.add(userBean);
                 });
-            bean.setUserBeans(set);
+            classBean.setUserBeans(userBeanSet);
         }
-        classRepository.save(bean);
+        classRepository.save(classBean);
 
         return "redirect:/teacher/class";
     }
@@ -187,15 +197,6 @@ public class ClassController {
         ClassBean classBean = new ClassBean();
         classBean.setId(Integer.parseInt(id));
         classRepository.delete(classBean);
-
-        // Optional<ClassBean> opt = classRepository.findById(Integer.parseInt(id));
-        // opt.ifPresent(classBean -> {
-        // Set<UserBean> userBeanSet = classBean.getUserBeans();
-        // if(userBeanSet != null) userBeanSet.forEach(userBean -> {
-        // userBean.removeFromClass(classBean);
-        // });
-        // classRepository.delete(classBean);
-        // });
 
         return "redirect:/teacher/class";
     }

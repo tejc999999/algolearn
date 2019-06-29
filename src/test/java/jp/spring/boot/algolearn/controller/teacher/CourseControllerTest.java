@@ -52,7 +52,7 @@ import jp.spring.boot.algolearn.repository.CourseRepository;
 import jp.spring.boot.algolearn.repository.UserRepository;
 
 /**
- * クラスControllerテスト(test class controller)
+ * コースControllerテスト(test class controller)
  * @author tejc999999
  *
  */
@@ -172,7 +172,7 @@ public class CourseControllerTest {
     }
 
     /**
-     * 先生用クラス一覧ページ表示_コースなし
+     * 先生用コース一覧ページ表示_コースなし
      * @throws Exception
      */
     @Test
@@ -345,7 +345,7 @@ public class CourseControllerTest {
      * @throws Exception
      */
     @Test
-    public void 先生用クラス登録処理_ユーザーあり_クラスあり() throws Exception {
+    public void 先生用コース登録処理_ユーザーあり_クラスあり() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -374,8 +374,8 @@ public class CourseControllerTest {
             Set<ClassBean> classBeanSet = courseBean.getClassBeans();
             assertEquals(classBeanSet.size(), 1);
             if (classBeanSet != null) classBeanSet.forEach(classBean -> {
-                    assertEquals(String.valueOf(classBean.getId()), 1);
-                    assertEquals(classBean.getName(), "クラス２");
+                    assertEquals(classBean.getId(), 1);
+                    assertEquals(classBean.getName(), "クラス１");
                     Set<UserBean> userBeanSet = classBean.getUserBeans();
                     userBeanSet.forEach(userBean -> {
                         assertEquals(String.valueOf(userBean.getId()), "userid01");
@@ -398,7 +398,7 @@ public class CourseControllerTest {
      * @throws Exception
      */
     @Test
-    public void 先生用クラス登録処理_ユーザーあり_クラスあり_ユーザ重複() throws Exception {
+    public void 先生用コース登録処理_ユーザーあり_クラスあり_ユーザ重複() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -428,8 +428,8 @@ public class CourseControllerTest {
             Set<ClassBean> classBeanSet = courseBean.getClassBeans();
             assertEquals(classBeanSet.size(), 1);
             if (classBeanSet != null) classBeanSet.forEach(classBean -> {
-                    assertEquals(String.valueOf(classBean.getId()), 1);
-                    assertEquals(classBean.getName(), "クラス２");
+                    assertEquals(classBean.getId(), 1);
+                    assertEquals(classBean.getName(), "クラス１");
                     Set<UserBean> userBeanSet = classBean.getUserBeans();
                     userBeanSet.forEach(userBean -> {
                         assertEquals(String.valueOf(userBean.getId()), "userid01");
@@ -452,7 +452,7 @@ public class CourseControllerTest {
      * @throws Exception
      */
     @Test
-    public void 先生用クラス登録処理_ユーザーあり_クラスなし() throws Exception {
+    public void 先生用コース登録処理_ユーザーあり_クラスなし() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -465,7 +465,6 @@ public class CourseControllerTest {
         form.setName("コース１");
         List<String> userIdList = new ArrayList<>();
         userIdList.add("userid01");
-        userIdList.add("userid02");
         form.setUserCheckedList(userIdList);
 
         mockMvc.perform(post("/teacher/course/add").flashAttr("courseForm", form))
@@ -477,14 +476,14 @@ public class CourseControllerTest {
         optCourse.ifPresent(courseBean -> {
             assertEquals(courseBean.getName(), form.getName());
             Set<ClassBean> classBeanSet = courseBean.getClassBeans();
-            assertEquals(classBeanSet.size(), 1);
+            assertEquals(classBeanSet.size(), 0);
             if (classBeanSet != null) assertEquals(classBeanSet.size(), 0);
             Set<UserBean> userBeanSet = courseBean.getUserBeans();
             assertEquals(userBeanSet.size(), 1);
             if (userBeanSet != null) userBeanSet.forEach(userBean -> {
-                    assertEquals(String.valueOf(userBean.getId()), "userid02");
+                    assertEquals(String.valueOf(userBean.getId()), "userid01");
                     assertEquals(userBean.getPassword(), "password");
-                    assertEquals(userBean.getName(), "テストユーザー２");
+                    assertEquals(userBean.getName(), "テストユーザー１");
             });
         });
     }
@@ -494,7 +493,7 @@ public class CourseControllerTest {
      * @throws Exception
      */
     @Test
-    public void 先生用クラス登録処理_ユーザーなし_クラスあり() throws Exception {
+    public void 先生用コース登録処理_ユーザーなし_クラスあり() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -520,8 +519,8 @@ public class CourseControllerTest {
             Set<ClassBean> classBeanSet = courseBean.getClassBeans();
             assertEquals(classBeanSet.size(), 1);
             if (classBeanSet != null) classBeanSet.forEach(classBean -> {
-                    assertEquals(String.valueOf(classBean.getId()), 1);
-                    assertEquals(classBean.getName(), "クラス２");
+                    assertEquals(classBean.getId(), 1);
+                    assertEquals(classBean.getName(), "クラス１");
                     Set<UserBean> userBeanSet = classBean.getUserBeans();
                     userBeanSet.forEach(userBean -> {
                         assertEquals(String.valueOf(userBean.getId()), "userid01");
@@ -539,7 +538,7 @@ public class CourseControllerTest {
      * @throws Exception
      */
     @Test
-    public void 先生用クラス登録処理_ユーザーなし_クラスなし() throws Exception {
+    public void 先生用コース登録処理_ユーザーなし_クラスなし() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -560,20 +559,18 @@ public class CourseControllerTest {
         optCourse.ifPresent(courseBean -> {
             assertEquals(courseBean.getName(), form.getName());
             Set<ClassBean> classBeanSet = courseBean.getClassBeans();
-            assertEquals(classBeanSet.size(), 1);
             if (classBeanSet != null) assertEquals(classBeanSet.size(), 0);
             Set<UserBean> userBeanSet = courseBean.getUserBeans();
-            assertEquals(userBeanSet.size(), 1);
             if (userBeanSet != null) assertEquals(userBeanSet.size(), 0);
         });
     }
 
     /**
-     * 先生用クラス編集ページ表示_ユーザーあり_クラスあり
+     * 先生用コース編集ページ表示_ユーザーあり_クラスあり
      * @throws Exception
      */
     @Test
-    public void 先生用クラス編集ページ表示_ユーザーあり_クラスあり() throws Exception {
+    public void 先生用コース編集ページ表示_ユーザーあり_クラスあり() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -616,11 +613,11 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用クラス編集ページ表示_ユーザーなし_クラスなし
+     * 先生用コース編集ページ表示_ユーザーなし_クラスなし
      * @throws Exception
      */
     @Test
-    public void 先生用クラス編集ページ表示_ユーザーなし_クラスなし() throws Exception {
+    public void 先生用コース編集ページ表示_ユーザーなし_クラスなし() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -684,12 +681,56 @@ public class CourseControllerTest {
         List<String> sendClassCheckedList = new ArrayList<String>();
         sendClassCheckedList.add("1");
         sendCourseForm.setClassCheckedList(sendClassCheckedList);
-        mockMvc.perform(post("/teacher/course/editprocess")
+        MvcResult result = mockMvc.perform(post("/teacher/course/editprocess")
                     .param("userExclusionBtn", "クラスユーザ除外")
                     .flashAttr("courseForm", sendCourseForm))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/course"));
-    }    
+                .andExpect(model().attributeExists("classCheckItems"))
+                .andExpect(model().attributeExists("userCheckItems"))
+                .andExpect(model().attribute("classCheckItems",
+                        allOf(hasEntry("1", "クラス１"),
+                               hasEntry("2","クラス２"))))
+                .andExpect(model().attribute("userCheckItems",
+                        hasEntry("userid02","テストユーザー２")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/course/edit"))
+                .andReturn();
+        
+        // まだMavenのHamcrestでCollection系のサイズチェックができないため、ここでチェック
+        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        assertEquals(classCheckMap.size(), 2);
+        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        assertEquals(userCheckMap.size(), 1);
+        
+        CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
+                .get("courseForm");
+
+        assertEquals(courseForm.getId(), "1");
+        assertEquals(courseForm.getName(), "コース１");
+        List<String> classIdList = courseForm.getClassCheckedList();
+        assertEquals(classIdList.size(), 1);
+        classIdList.forEach(classId -> {
+            Optional<ClassBean> optClass = classRepository.findById(Integer.parseInt(classId));
+            optClass.ifPresent(classBean -> {
+                assertEquals(classBean.getId(), 1);
+                assertEquals(classBean.getName(), "クラス１");
+                Set<UserBean> userBeanSet = classBean.getUserBeans();
+                userBeanSet.forEach(userBean -> {
+                    assertEquals(String.valueOf(userBean.getId()), "userid01");
+                    assertEquals(userBean.getPassword(), "password");
+                    assertEquals(userBean.getName(), "テストユーザー１");
+                });            });
+        });
+        List<String> userIdList = courseForm.getClassCheckedList();
+        assertEquals(userIdList.size(), 1);
+        userIdList.forEach(userId -> {
+            Optional<UserBean> optUser = userRepository.findById(userId);
+            optUser.ifPresent(userBean -> {
+                assertEquals(userBean.getId(), "userid02");
+                assertEquals(userBean.getPassword(), "password");
+                assertEquals(userBean.getName(), "テストユーザー２");
+            });
+        });
+    }
     /**
      * 先生用コース編集ページ内クラス所属ユーザ除外_所属ユーザなし
      * @throws Exception
@@ -712,19 +753,45 @@ public class CourseControllerTest {
         List<String> sendClassCheckedList = new ArrayList<String>();
         sendClassCheckedList.add("2");
         sendCourseForm.setClassCheckedList(sendClassCheckedList);
-        mockMvc.perform(post("/teacher/course/editprocess")
+        MvcResult result = mockMvc.perform(post("/teacher/course/editprocess")
                 .param("userExclusionBtn", "クラスユーザ除外")
                 .flashAttr("courseForm", sendCourseForm))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/course"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/course/edit"))
+                .andReturn();
+
+        // まだMavenのHamcrestでCollection系のサイズチェックができないため、ここでチェック
+        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        assertEquals(classCheckMap.size(), 2);
+        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        assertEquals(userCheckMap.size(), 2);
+        
+        CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
+                .get("courseForm");
+
+        assertEquals(courseForm.getId(), "1");
+        assertEquals(courseForm.getName(), "コース１");
+        List<String> classIdList = courseForm.getClassCheckedList();
+        assertEquals(classIdList.size(), 1);
+        classIdList.forEach(classId -> {
+            Optional<ClassBean> optClass = classRepository.findById(Integer.parseInt(classId));
+            optClass.ifPresent(classBean -> {
+                assertEquals(classBean.getId(), 2);
+                assertEquals(classBean.getName(), "クラス２");
+                Set<UserBean> userBeanSet = classBean.getUserBeans();
+                if(userBeanSet != null) assertEquals(userBeanSet.size(), 0);
+            });
+        });
+        List<String> userIdList = courseForm.getUserCheckedList();
+        if(userIdList != null) assertEquals(userIdList.size(), 0);
     }
 
     /**
-     * 先生用クラス編集処理_ユーザーあり_クラスあり_変更後_ユーザーあり_クラスなし
+     * 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーあり_クラスなし
      * @throws Exception
      */
     @Test
-    public void 先生用クラス編集処理_ユーザーあり_クラスあり_変更後_ユーザーあり_クラスなし() throws Exception {
+    public void 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーあり_クラスなし() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -765,11 +832,11 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用クラス編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスあり
+     * 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスあり
      * @throws Exception
      */
     @Test
-    public void 先生用クラス編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスあり() throws Exception {
+    public void 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスあり() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -809,11 +876,11 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用クラス編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスなし
+     * 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスなし
      * @throws Exception
      */
     @Test
-    public void 先生用クラス編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスなし() throws Exception {
+    public void 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスなし() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -846,11 +913,11 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用クラス編集処理_ユーザーあり_クラスなし_変更後_ユーザーなし_クラスあり
+     * 先生用コース編集処理_ユーザーあり_クラスなし_変更後_ユーザーなし_クラスあり
      * @throws Exception
      */
     @Test
-    public void 先生用クラス編集処理_ユーザーあり_クラスなし_変更後_ユーザーなし_クラスあり() throws Exception {
+    public void 先生用コース編集処理_ユーザーあり_クラスなし_変更後_ユーザーなし_クラスあり() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -896,11 +963,11 @@ public class CourseControllerTest {
     }
 
     /**
-     * 先生用クラス編集処理_ユーザーなし_クラスなし_変更後_ユーザーあり_クラスあり
+     * 先生用コース編集処理_ユーザーなし_クラスなし_変更後_ユーザーあり_クラスあり
      * @throws Exception
      */
     @Test
-    public void 先生用クラス編集処理_ユーザーなし_クラスなし_変更後_ユーザーあり_クラスあり() throws Exception {
+    public void 先生用コース編集処理_ユーザーなし_クラスなし_変更後_ユーザーあり_クラスあり() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -953,11 +1020,11 @@ public class CourseControllerTest {
     
  
     /**
-     * 先生用クラス削除処理_ユーザーあり_クラスあり
+     * 先生用コース削除処理_ユーザーあり_クラスあり
      * @throws Exception
      */
     @Test
-    public void 先生用クラス削除処理_ユーザーあり_クラスあり() throws Exception {
+    public void 先生用コース削除処理_ユーザーあり_クラスあり() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -1009,11 +1076,11 @@ public class CourseControllerTest {
     }
 
     /**
-     * 先生用クラス削除処理_ユーザーあり_クラスなし
+     * 先生用コース削除処理_ユーザーあり_クラスなし
      * @throws Exception
      */
     @Test
-    public void 先生用クラス削除処理_ユーザーあり_クラスなし() throws Exception {
+    public void 先生用コース削除処理_ユーザーあり_クラスなし() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
@@ -1042,11 +1109,11 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用クラス削除処理_ユーザーなし_クラスあり
+     * 先生用コース削除処理_ユーザーなし_クラスあり
      * @throws Exception
      */
     @Test
-    public void 先生用クラス削除処理_ユーザーなし_クラスあり() throws Exception {
+    public void 先生用コース削除処理_ユーザーなし_クラスあり() throws Exception {
 
 
         Destination dest = new DataSourceDestination(dataSource);
@@ -1091,11 +1158,11 @@ public class CourseControllerTest {
     
     
     /**
-     * 先生用クラス削除処理_ユーザーなし_クラスなし
+     * 先生用コース削除処理_ユーザーなし_クラスなし
      * @throws Exception
      */
     @Test
-    public void 先生用クラス削除処理_ユーザーなし_クラスなし() throws Exception {
+    public void 先生用コース削除処理_ユーザーなし_クラスなし() throws Exception {
 
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,

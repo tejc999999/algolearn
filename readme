@@ -6,27 +6,31 @@ GRANT ALL PRIVILEGES ON algolearn.* TO 'algolearnadmin'@'localhost' IDENTIFIED B
 DROP TABLE IF EXISTS t_language;
 DROP TABLE IF EXISTS t_clas_course;
 DROP TABLE IF EXISTS t_user_class;
-DROP TABLE IF EXISTS t_class;
 DROP TABLE IF EXISTS t_user_course;
-DROP TABLE IF EXISTS t_course;
 DROP TABLE IF EXISTS t_class_course;
-DROP TABLE IF EXISTS t_user;
-DROP TABLE IF EXISTS m_role;
 DROP TABLE IF EXISTS t_task_valiable;
 DROP TABLE IF EXISTS t_task_valiable_answer;
+DROP TABLE IF EXISTS t_class;
+DROP TABLE IF EXISTS t_course;
+DROP TABLE IF EXISTS t_user;
+DROP TABLE IF EXISTS m_role;
 DROP TABLE IF EXISTS t_task;
 DROP TABLE IF EXISTS t_question;
+#暫定
+DROP TABLE IF EXISTS t_task_valiable_answer
+DROP TABLE IF EXISTS t_task_valiable
 CREATE TABLE m_role(id CHAR(3), name VARCHAR(40), PRIMARY KEY(id)) CHARACTER SET 'utf8';
 CREATE TABLE t_question(id INT AUTO_INCREMENT, title VARCHAR(100), description VARCHAR(1000), input_num TINYINT DEFAULT 0 NOT NULL, public_flg TINYINT(1) NOT NULL, PRIMARY KEY(id)) CHARACTER SET 'utf8';
 CREATE TABLE t_user(id VARCHAR(20), password VARCHAR(10), name VARCHAR(100), role_id CHAR(3), PRIMARY KEY(id), FOREIGN KEY(role_id) REFERENCES m_role(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
 CREATE TABLE t_language(id CHAR(3), name VARCHAR(60), PRIMARY KEY(id));
 CREATE TABLE t_task(id INT, language_id CHAR(3), title VARCHAR(100), description VARCHAR(1000), question_id INT NOT NULL, self_made_check_code TEXT, PRIMARY KEY(id) , FOREIGN KEY(question_id) REFERENCES t_question(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
-CREATE TABLE t_task_valiable(task_id INT NOT NULL, val_number TINYINT NOT NULL, data_type VARCHAR(100), PRIMARY KEY(task_id, val_number), FOREIGN KEY(task_id) REFERENCES t_task(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
-CREATE TABLE t_task_valiable_answer(task_id INT NOT NULL, val_number TINYINT NOT NULL, parametor VARCHAR(200), public_flg TINYINT(1), PRIMARY KEY(task_id, val_number), FOREIGN KEY(task_id) REFERENCES t_task(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
+#CREATE TABLE t_task_valiable(task_id INT NOT NULL, val_number TINYINT NOT NULL, data_type VARCHAR(100), PRIMARY KEY(task_id, val_number), FOREIGN KEY(task_id) REFERENCES t_task(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
+#CREATE TABLE t_task_valiable_answer(task_id INT NOT NULL, val_number TINYINT NOT NULL, parametor VARCHAR(200), public_flg TINYINT(1), PRIMARY KEY(task_id, val_number), FOREIGN KEY(task_id) REFERENCES t_task(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
+CREATE TABLE t_task_input(task_id INT NOT NULL, val_number TINYINT NOT NULL, data_type VARCHAR(100), PRIMARY KEY(task_id, val_number), FOREIGN KEY(task_id) REFERENCES t_task(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
+CREATE TABLE t_task_output(task_id INT NOT NULL, val_number TINYINT NOT NULL, parametor VARCHAR(200), public_flg TINYINT(1), PRIMARY KEY(task_id, val_number), FOREIGN KEY(task_id) REFERENCES t_task(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
 CREATE TABLE t_class(id INT AUTO_INCREMENT, name VARCHAR(200), PRIMARY KEY(id)) CHARACTER SET 'utf8';
 CREATE TABLE t_user_class(user_id VARCHAR(20), class_id INT, PRIMARY KEY(user_id, class_id), FOREIGN KEY(user_id) REFERENCES t_user(id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(class_id) REFERENCES t_class(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
 CREATE TABLE t_course(id INT AUTO_INCREMENT, name VARCHAR(200), PRIMARY KEY(id)) CHARACTER SET 'utf8';
-CREATE TABLE t_class_course(class_id INT, course_id INT, PRIMARY KEY(class_id, course_id), FOREIGN KEY(class_id) REFERENCES t_class(id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(class_id) REFERENCES t_course(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
 CREATE TABLE t_user_course(user_id VARCHAR(20), course_id INT, PRIMARY KEY(user_id, course_id), FOREIGN KEY(user_id) REFERENCES t_user(id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(course_id) REFERENCES t_course(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
 CREATE TABLE t_class_course(class_id INT, course_id INT, PRIMARY KEY(class_id, course_id), FOREIGN KEY(class_id) REFERENCES t_class(id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(course_id) REFERENCES t_course(id) ON UPDATE CASCADE ON DELETE CASCADE) CHARACTER SET 'utf8';
 INSERT INTO m_role(id, name) VALUES('001', '管理者');
@@ -36,6 +40,19 @@ INSERT INTO t_language(id, name) VALUES('001', 'Ｃ／Ｃ＋＋');
 INSERT INTO t_language(id, name) VALUES('002', 'Ｊａｖａ');
 INSERT INTO t_language(id, name) VALUES('003', 'Ｐｙｔｈｏｎ');
 INSERT INTO t_question(id, title, description, input_num, public_flg) VALUES(1, '足し算問題', '与えられた２つの数値を足し合わせた結果を返す', 2, TRUE);
+INSERT INTO t_question(id, title, description, input_num, public_flg) VALUES(2, '引き算算問題', '与えられた２つの数値を引いた結果を返す', 2, TRUE);
+INSERT INTO t_question(id, title, description, input_num, public_flg) VALUES(3, '掛け算問題', '与えられた２つの数値を掛け合わせた結果を返す', 2, FALSE);
+INSERT INTO t_question(id, title, description, input_num, public_flg) VALUES(4, '割り算問題', '与えられた２つの数値を割った結果を返す', 2, FALSE);
+# t_task_outputを問題ごと3つ（公開用１つ、秘匿用２つ）
+# t_task_inputを問題ごと2つ（入力用引数２つ）
+# t_taskを３つ（足し算から２つ（Java、C）、引き算から１つ（Python））
+INSERT INTO t_task() VALUES();
+
+INSERT INTO t_task_input() VALUES();
+
+INSERT INTO t_task_output() VALUES();
+
+
 INSERT INTO t_user(id, password, name, role_id) VALUES('testadmin1', 'password', 'テスト用管理者１', '001');
 INSERT INTO t_user(id, password, name, role_id) VALUES('testteacher1', 'password', 'テスト用先生１', '002');
 INSERT INTO t_user(id, password, name, role_id) VALUES('teststudent1', 'password', 'テスト用学生１', '003');
