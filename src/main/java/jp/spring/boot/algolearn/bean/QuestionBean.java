@@ -1,21 +1,14 @@
 package jp.spring.boot.algolearn.bean;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 問題Bean(question Bean)
@@ -23,12 +16,9 @@ import lombok.ToString;
  * @author tejc999999
  *
  */
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Data
-@ToString(exclude = "taskBeans")
-@EqualsAndHashCode(exclude = "taskBeans")
+@Setter
+@Getter
 @Table(name = "t_question")
 public class QuestionBean {
 	
@@ -38,7 +28,7 @@ public class QuestionBean {
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
-	private int id;
+	private Long id;
 	
 	/**
 	 * タイトル(title)
@@ -65,10 +55,18 @@ public class QuestionBean {
 	@Column(name="public_flg", nullable = false)
 	private boolean publicFlg;
 
+//	/**
+//	 * コンストラクタ
+//	 */
+//	public QuestionBean() {
+////	    taskQuestionBeans = new HashSet<>();
+//	}
+	
 	/**
 	 * 問題を使用した課題：相互参照オブジェクト(task belonging question：cross reference object)
 	 */
-	@OneToMany(mappedBy="questionBean", cascade= {CascadeType.ALL})
-//    @MapsId("questionBean")
-	private List<TaskBean> taskBeans;
+////	@OneToMany(mappedBy="questionBean", cascade= {CascadeType.ALL})
+////    @MapsId("questionBean")
+//	@OneToMany(mappedBy="questionBean", fetch = FetchType.EAGER)
+//	private Set<TaskQuestionBean> taskQuestionBeans;
 }

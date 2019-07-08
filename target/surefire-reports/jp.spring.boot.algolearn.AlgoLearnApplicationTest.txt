@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: jp.spring.boot.algolearn.AlgoLearnApplicationTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.084 s - in jp.spring.boot.algolearn.AlgoLearnApplicationTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.538 s - in jp.spring.boot.algolearn.AlgoLearnApplicationTest

@@ -1,15 +1,8 @@
 package jp.spring.boot.algolearn.controller.teacher;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,16 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jp.spring.boot.algolearn.bean.CourseBean;
-import jp.spring.boot.algolearn.bean.UserBean;
-import jp.spring.boot.algolearn.config.RoleCode;
-import jp.spring.boot.algolearn.bean.ClassBean;
-import jp.spring.boot.algolearn.bean.CourseBean;
-import jp.spring.boot.algolearn.form.ClassForm;
 import jp.spring.boot.algolearn.form.CourseForm;
-import jp.spring.boot.algolearn.repository.ClassRepository;
-import jp.spring.boot.algolearn.repository.CourseRepository;
-import jp.spring.boot.algolearn.repository.UserRepository;
+import jp.spring.boot.algolearn.service.CourseService;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -42,23 +27,11 @@ import org.springframework.validation.annotation.Validated;
 public class CourseController {
 
     /**
-     * コース用リポジトリ(course repository)
+     * コースサービス
      */
     @Autowired
-    CourseRepository courseRepository;
-
-    /**
-     * クラス用リポジトリ(class repository)
-     */
-    @Autowired
-    ClassRepository classRepository;
-
-    /**
-     * ユーザー用リポジトリ(user repository)
-     */
-    @Autowired
-    UserRepository userRepository;
-
+    CourseService courseService;
+    
     /**
      * モデルにフォームをセットする(set form the model)
      * @return コースForm(course form)
@@ -77,13 +50,7 @@ public class CourseController {
     String list(CourseForm form, Model model) {
 
         // 全コース取得
-        List<CourseForm> courseFormList = new ArrayList<CourseForm>();
-        for (CourseBean courseBean : courseRepository.findAll()) {
-            CourseForm courseForm = new CourseForm();
-            BeanUtils.copyProperties(courseBean, courseForm);
-            courseForm.setId(String.valueOf(courseBean.getId()));
-            courseFormList.add(courseForm);
-        }
+        List<CourseForm> courseFormList = courseService.findAll();
         model.addAttribute("courses", courseFormList);
 
         return "teacher/course/list";
@@ -97,21 +64,11 @@ public class CourseController {
     public String add(Model model) {
 
         // 全クラス取得
-        Map<String, String> classMap = new HashMap<>();
-        List<ClassBean> classBeanList = classRepository.findAll();
-        if (classBeanList != null)
-            classBeanList.forEach(bean -> {
-                classMap.put(String.valueOf(bean.getId()), bean.getName());
-            });
+        Map<String, String> classMap = courseService.findAllClass();
         model.addAttribute("classCheckItems", classMap);
 
-        // 全ユーザ取得
-        Map<String, String> userMap = new HashMap<>();
-        List<UserBean> userBeanList = userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString());
-        if (userBeanList != null)
-            userBeanList.forEach(bean -> {
-                userMap.put(bean.getId(), bean.getName());
-            });
+        // 全学生取得
+        Map<String, String> userMap = courseService.findAllStudent();
         model.addAttribute("userCheckItems", userMap);
 
         return "teacher/course/add";
@@ -125,51 +82,8 @@ public class CourseController {
     public String addProcess(@Validated CourseForm form, BindingResult result,
             Model model) {
 
-        CourseBean courseBean = new CourseBean();
-        courseBean.setName(form.getName());
-
-        // 選択ユーザ、選択クラス
-        List<String> classIdList = form.getClassCheckedList();
-        List<String> userIdList = form.getUserCheckedList();
-
-        // 
-        Set<ClassBean> classBeanSet = new HashSet<>();        
-        List<String> userIdRemoveLlist = new ArrayList<>();
-        if(classIdList != null) classIdList.forEach(classId -> {
-            Optional<ClassBean> optClass = classRepository.findById(Integer.parseInt(classId));
-            optClass.ifPresent(classBean -> {
-                classBeanSet.add(classBean);
-            });
-            Optional<ClassBean> opt = classRepository.findById(Integer
-                    .parseInt(classId));
-            opt.ifPresent(classBean -> {
-                Set<UserBean> userBeanSet = classBean.getUserBeans();
-                if (userBeanSet != null)
-                    userBeanSet.forEach(userBean -> {
-                        userIdRemoveLlist.add(userBean.getId());
-                    });
-            });
-
-            // 選択済みクラス所属ユーザを除外
-            if (userIdRemoveLlist != null && userIdList != null)
-                userIdRemoveLlist.forEach(userId -> {
-                    userIdList.remove(userId);
-                });
-            
-        });
-        courseBean.setClassBeans(classBeanSet);
-        
-        // 全ユーザ取得後、選択済みクラスに所属するユーザを除外       
-        Set<UserBean> userBeanSet = new HashSet<>();
-        if(userIdList != null) userIdList.forEach(userId -> {
-            Optional<UserBean> opt = userRepository.findById(userId);
-            opt.ifPresent(userBean -> {
-                userBeanSet.add(userBean);
-            });
-        });
-
-        courseBean.setUserBeans(userBeanSet);
-        courseRepository.save(courseBean);
+        // コース情報をDBに保存する
+        courseService.save(form);
         
         return "redirect:/teacher/course";
     }
@@ -183,44 +97,15 @@ public class CourseController {
             BindingResult result, Model model) {
 
         // 全クラス取得
-        Map<String, String> classMap = new HashMap<>();
-        List<ClassBean> classBeanList = classRepository.findAll();
-        if (classBeanList != null)
-            classBeanList.forEach(bean -> {
-                classMap.put(String.valueOf(bean.getId()), bean.getName());
-            });
+        Map<String, String> classMap = courseService.findAllClass();
         model.addAttribute("classCheckItems", classMap);
 
-        // 全ユーザ取得後、選択済みクラスに所属するユーザを除外
-        Map<String, String> userMap = new HashMap<>();
-        List<UserBean> userBeanList = userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString());
-        if (userBeanList != null)
-            userBeanList.forEach(bean -> {
-                userMap.put(bean.getId(), bean.getName());
-            });
-
-        if (form.getClassCheckedList() != null) {
-            List<String> userLlist = new ArrayList<>();
-            List<String> classList = form.getClassCheckedList();
-            if (classList != null)
-                classList.forEach(classId -> {
-                    Optional<ClassBean> opt = classRepository.findById(Integer
-                            .parseInt(classId));
-                    opt.ifPresent(classBean -> {
-                        Set<UserBean> userBeanSet = classBean.getUserBeans();
-                        if (userBeanSet != null)
-                            userBeanSet.forEach(userBean -> {
-                                userLlist.add(userBean.getId());
-                            });
-                    });
-                });
-            // 選択済みクラス所属ユーザを除外
-            if (userLlist != null && userMap != null)
-                userLlist.forEach(userId -> {
-                    userMap.remove(userId);
-                });
-        }
+        // 全ユーザ取得(クラス所属ユーザを除外する）
+        Map<String, String> userMap = courseService.findAllStudent(form.getClassCheckedList());
         model.addAttribute("userCheckItems", userMap);
+        
+        // コース名の入力状態保持のため
+        model.addAttribute("courseForm", form);
 
         return "teacher/course/add";
     }
@@ -233,43 +118,15 @@ public class CourseController {
     public String edit(@RequestParam String id, Model model) {
 
         // 全クラス取得
-        Map<String, String> classMap = new HashMap<>();
-        List<ClassBean> classBeanList = classRepository.findAll();
-        if (classBeanList != null)
-            classBeanList.forEach(bean -> {
-                classMap.put(String.valueOf(bean.getId()), bean.getName());
-            });
+        Map<String, String> classMap = courseService.findAllClass();
         model.addAttribute("classCheckItems", classMap);
 
         // 全ユーザ取得
-        Map<String, String> userMap = new HashMap<>();
-        List<UserBean> userBeanList = userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString());
-        if (userBeanList != null)
-            userBeanList.forEach(bean -> {
-                userMap.put(bean.getId(), bean.getName());
-            });
+        Map<String, String> userMap = courseService.findAllStudent();
         model.addAttribute("userCheckItems", userMap);
         
         // コースの既存情報
-        CourseForm courseForm = new CourseForm();
-        Optional<CourseBean> optBean = courseRepository.findById(Integer.parseInt(id));
-        optBean.ifPresent(courseBean -> {
-            BeanUtils.copyProperties(courseBean, courseForm);
-            courseForm.setId(String.valueOf(courseBean.getId()));
-            Set<ClassBean> classBeanSet = courseBean.getClassBeans();
-            List<String> classIdList = new ArrayList<>();
-            if(classBeanSet != null) classBeanSet.forEach(classBean -> {
-                classIdList.add(String.valueOf(classBean.getId()));
-            });
-            courseForm.setClassCheckedList(classIdList);
-            Set<UserBean> userBeanSet = courseBean.getUserBeans();
-            List<String> userIdList = new ArrayList<>();
-            if(userBeanSet != null) userBeanSet.forEach(userBean -> {
-                userIdList.add(userBean.getId());
-            });
-            courseForm.setUserCheckedList(userIdList);
-        });
-
+        CourseForm courseForm = courseService.checkClassAndUser(id);
          model.addAttribute("courseForm", courseForm);
 
         return "teacher/course/edit";
@@ -282,56 +139,7 @@ public class CourseController {
     @PostMapping(path = "editprocess")
     public String editProcess(CourseForm form, Model model) {
 
-        CourseBean courseBean = new CourseBean();
-        courseBean.setId(Integer.parseInt(form.getId()));
-        courseBean.setName(form.getName());
-        // 所属クラス登録
-        Set<ClassBean> classBeanSet = new HashSet<>();
-        List<String> classIdList = form.getClassCheckedList();
-        if(classIdList != null) classIdList.forEach(classId -> {
-            Optional<ClassBean> optClass = classRepository.findById(Integer.parseInt(classId));
-            optClass.ifPresent(classBean -> {
-                classBeanSet.add(classBean);
-            });
-        });
-        courseBean.setClassBeans(classBeanSet);
-        
-        // 全ユーザ取得後、選択済みクラスに所属するユーザを除外
-        List<String> userIdList = form.getUserCheckedList();
-
-       // クラスに所属するユーザーを除外対象として保管
-        if (form.getClassCheckedList() != null) {
-            List<String> userIdRemoveLlist = new ArrayList<>();
-            List<String> classList = form.getClassCheckedList();
-            if (classList != null)
-                classList.forEach(classId -> {
-                    Optional<ClassBean> opt = classRepository.findById(Integer
-                            .parseInt(classId));
-                    opt.ifPresent(classBean -> {
-                        Set<UserBean> userBeanSet = classBean.getUserBeans();
-                        if (userBeanSet != null)
-                            userBeanSet.forEach(userBean -> {
-                                userIdRemoveLlist.add(userBean.getId());
-                            });
-                    });
-                });
-            // 選択済みクラス所属ユーザを除外
-            if (userIdRemoveLlist != null && userIdList != null)
-                userIdRemoveLlist.forEach(userId -> {
-                    userIdList.remove(userId);
-                });
-        }
-        // 所属ユーザー登録
-        Set<UserBean> userBeanSet = new HashSet<>();
-        if(userIdList != null) userIdList.forEach(userId -> {
-            Optional<UserBean> opt = userRepository.findById(userId);
-            opt.ifPresent(userBean -> {
-                userBeanSet.add(userBean);
-            });
-        });
-        courseBean.setUserBeans(userBeanSet);
-
-        courseRepository.save(courseBean);
+        courseService.save(form);
         
         return "redirect:/teacher/course";
     }
@@ -345,44 +153,15 @@ public class CourseController {
             BindingResult result, Model model) {
 
         // 全クラス取得
-        Map<String, String> classMap = new HashMap<>();
-        List<ClassBean> classBeanList = classRepository.findAll();
-        if (classBeanList != null)
-            classBeanList.forEach(classBean -> {
-                classMap.put(String.valueOf(classBean.getId()), classBean.getName());
-            });
+        Map<String, String> classMap = courseService.findAllClass();
         model.addAttribute("classCheckItems", classMap);
 
-        // 全ユーザ取得後、選択済みクラスに所属するユーザを除外
-        Map<String, String> userMap = new HashMap<>();
-        List<UserBean> userBeanList = userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString());
-        if (userBeanList != null)
-            userBeanList.forEach(userBean -> {
-                userMap.put(userBean.getId(), userBean.getName());
-            });
-
-        if (form.getClassCheckedList() != null) {
-            List<String> userIdList = new ArrayList<>();
-            List<String> classIdList = form.getClassCheckedList();
-            if (classIdList != null)
-                classIdList.forEach(classId -> {
-                    Optional<ClassBean> optClass = classRepository.findById(Integer
-                            .parseInt(classId));
-                    optClass.ifPresent(classBean -> {
-                        Set<UserBean> userBeanSet = classBean.getUserBeans();
-                        if (userBeanSet != null)
-                            userBeanSet.forEach(userBean -> {
-                                userIdList.add(userBean.getId());
-                            });
-                    });
-                });
-            // 選択済みクラス所属ユーザを除外
-            if (userIdList != null && userMap != null)
-                userIdList.forEach(userId -> {
-                    userMap.remove(userId);
-                });
-        }
+        // 全ユーザ取得(クラス所属ユーザを除外する）
+        Map<String, String> userMap = courseService.findAllStudent(form.getClassCheckedList());
         model.addAttribute("userCheckItems", userMap);
+
+        // コース名の入力状態保持のため
+        model.addAttribute("courseForm", form);
 
         return "teacher/course/edit";
     }
@@ -394,9 +173,7 @@ public class CourseController {
     @PostMapping(path = "delete")
     public String delete(@RequestParam String id, Model model) {
         
-        CourseBean courseBean = new CourseBean();
-        courseBean.setId(Integer.parseInt(id));
-        courseRepository.delete(courseBean);
+        courseService.delete(id);
 
         return "redirect:/teacher/course";
     }

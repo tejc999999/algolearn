@@ -1,0 +1,13 @@
+-------------------------------------------------------------------------------
+Test set: jp.spring.boot.algolearn.controller.teacher.CourseControllerTest
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 23.773 s <<< FAILURE! - in jp.spring.boot.algolearn.controller.teacher.CourseControllerTest
+先生用コース登録ページ内クラス所属ユーザ除外_所属ユーザあり(jp.spring.boot.algolearn.controller.teacher.CourseControllerTest)  Time elapsed: 3.616 s  <<< FAILURE!
+java.lang.AssertionError: Status expected:<200> but was:<302>
+	at jp.spring.boot.algolearn.controller.teacher.CourseControllerTest.先生用コース登録ページ内クラス所属ユーザ除外_所属ユーザあり(CourseControllerTest.java:269)
+
+先生用コース登録処理_ユーザーあり_クラスあり(jp.spring.boot.algolearn.controller.teacher.CourseControllerTest)  Time elapsed: 3.381 s  <<< FAILURE!
+java.lang.AssertionError: expected:<0> but was:<1>
+	at jp.spring.boot.algolearn.controller.teacher.CourseControllerTest.lambda$先生用コース登録処理_ユーザーあり_クラスあり$2(CourseControllerTest.java:377)
+	at jp.spring.boot.algolearn.controller.teacher.CourseControllerTest.先生用コース登録処理_ユーザーあり_クラスあり(CourseControllerTest.java:374)
+

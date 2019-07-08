@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: jp.spring.boot.algolearn.controller.student.LearnControllerTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.92 s - in jp.spring.boot.algolearn.controller.student.LearnControllerTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 22.863 s - in jp.spring.boot.algolearn.controller.student.LearnControllerTest

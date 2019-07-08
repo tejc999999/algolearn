@@ -1,14 +1,8 @@
 package jp.spring.boot.algolearn.controller.teacher;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,12 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jp.spring.boot.algolearn.bean.ClassBean;
-import jp.spring.boot.algolearn.bean.UserBean;
-import jp.spring.boot.algolearn.config.RoleCode;
 import jp.spring.boot.algolearn.form.ClassForm;
-import jp.spring.boot.algolearn.repository.ClassRepository;
-import jp.spring.boot.algolearn.repository.UserRepository;
+import jp.spring.boot.algolearn.service.ClassService;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -37,17 +27,11 @@ import org.springframework.validation.annotation.Validated;
 public class ClassController {
 
     /**
-     * クラス用リポジトリ(class repository)
+     * クラス用サービス(class service)
      */
     @Autowired
-    ClassRepository classRepository;
-
-    /**
-     * ユーザー用リポジトリ(user repository)
-     */
-    @Autowired
-    UserRepository userRepository;
-
+    ClassService classService;
+    
     /**
      * モデルにフォームをセット(set form the model)
      * @return クラスForm(class form)
@@ -65,14 +49,7 @@ public class ClassController {
     @GetMapping
     String list(ClassForm form, Model model) {
 
-        List<ClassForm> classFormList = new ArrayList<ClassForm>();
-
-        for (ClassBean classBean : classRepository.findAll()) {
-            ClassForm classForm = new ClassForm();
-            BeanUtils.copyProperties(classBean, classForm);
-            classForm.setId(String.valueOf(classBean.getId()));
-            classFormList.add(classForm);
-        }
+        List<ClassForm> classFormList = classService.findAll();
 
         model.addAttribute("classes", classFormList);
 
@@ -85,12 +62,8 @@ public class ClassController {
      */
     @GetMapping(path = "add")
     public String add(Model model) {
-        Map<String, String> userMap = new HashMap<>();
-        List<UserBean> userBeanList = userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString());
-        if (userBeanList != null)
-            userBeanList.forEach(userBean -> {
-                userMap.put(userBean.getId(), userBean.getName());
-            });
+        
+        Map<String, String> userMap = classService.getUserIdMap();
 
         model.addAttribute("userCheckItems", userMap);
 
@@ -105,21 +78,7 @@ public class ClassController {
     public String addProcess(@Validated ClassForm form, BindingResult result,
             Model model) {
 
-        ClassBean classBean = new ClassBean();
-        classBean.setName(form.getName());
-
-        if (form.getUserCheckedList() != null) {
-            Set<UserBean> userBeanSet = new HashSet<>();
-            List<String> userIdList = form.getUserCheckedList();
-            if (userIdList != null)
-                userIdList.forEach(userId -> {
-                    UserBean userBean = new UserBean();
-                    userBean.setId(userId);
-                    userBeanSet.add(userBean);
-                });
-            classBean.setUserBeans(userBeanSet);
-        }
-        classRepository.save(classBean);
+        classService.save(form);
 
         return "redirect:/teacher/class";
     }
@@ -131,30 +90,13 @@ public class ClassController {
     @PostMapping(path = "edit")
     public String edit(@RequestParam String id, Model model) {
 
-        // チェックボックスのユーザー一覧
-        Map<String, String> userMap = new HashMap<>();
-        List<UserBean> userBeanList = userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString());
-        if (userBeanList != null)
-            userBeanList.forEach(bean -> {
-                userMap.put(bean.getId(), bean.getName());
-            });
+        // チェックボックスのユーザー一覧を取得する
+        Map<String, String> userMap = classService.getUserIdMap();
         model.addAttribute("userCheckItems", userMap);
 
-        // クラスの既存情報
-        ClassForm classForm = new ClassForm();
-        List<String> userCheckedList = new ArrayList<>();
-        Optional<ClassBean> optClass = classRepository.findById(Integer.parseInt(
-                id));
-        optClass.ifPresent(classBean -> {
-            classForm.setId(String.valueOf(classBean.getId()));
-            classForm.setName(classBean.getName());
-            Set<UserBean> userSet = classBean.getUserBeans();
-            if (userSet != null)
-                userSet.forEach(userBean -> {
-                    userCheckedList.add(String.valueOf(userBean.getId()));
-                });
-        });
-        classForm.setUserCheckedList(userCheckedList);
+        // クラス選択情報を設定する
+        ClassForm classForm = classService.findById(id);
+
         model.addAttribute("classForm", classForm);
 
         return "teacher/class/edit";
@@ -167,22 +109,7 @@ public class ClassController {
     @PostMapping(path = "editprocess")
     public String editProcess(ClassForm form, Model model) {
 
-        ClassBean classBean = new ClassBean();
-        classBean.setId(Integer.parseInt(form.getId()));
-        classBean.setName(form.getName());
-
-        if (form.getUserCheckedList() != null) {
-            Set<UserBean> userBeanSet = new HashSet<>();
-            List<String> userIdList = form.getUserCheckedList();
-            if (userIdList != null)
-                userIdList.forEach(userId -> {
-                    UserBean userBean = new UserBean();
-                    userBean.setId(userId);
-                    userBeanSet.add(userBean);
-                });
-            classBean.setUserBeans(userBeanSet);
-        }
-        classRepository.save(classBean);
+        classService.save(form);
 
         return "redirect:/teacher/class";
     }
@@ -194,9 +121,7 @@ public class ClassController {
     @PostMapping(path = "delete")
     public String delete(@RequestParam String id, Model model) {
 
-        ClassBean classBean = new ClassBean();
-        classBean.setId(Integer.parseInt(id));
-        classRepository.delete(classBean);
+        classService.delete(id);
 
         return "redirect:/teacher/class";
     }

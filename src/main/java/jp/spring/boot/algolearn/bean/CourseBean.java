@@ -1,38 +1,31 @@
 package jp.spring.boot.algolearn.bean;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
  * コースBean(course Bean)
  * @author tejc999999
  */
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Data
-@ToString(exclude = { "userBeans", "classBeans" })
-@EqualsAndHashCode(exclude = { "userBeans" , "classBeans" })
+@Setter
+@Getter
 @Table(name = "t_course")
 public class CourseBean {
 
@@ -42,29 +35,76 @@ public class CourseBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     /**
      * コース名(course name)
      */
     @Column(name = "name")
     private String name;
-
-    /**
-     * ユーザー所属コース：相互参照オブジェクト(user belonging course：cross reference object)
-     */
-    @ManyToMany(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
-    @JoinTable(name = "t_user_course", joinColumns = {
-            @JoinColumn(name = "course_id", referencedColumnName = "id") }, inverseJoinColumns = {
-                    @JoinColumn(name = "user_id", referencedColumnName = "id") })
-    Set<UserBean> userBeans;
     
     /**
-     * クラス所属コース：相互参照オブジェクト(user belonging course：cross reference object)
+     * コンストラクタ
      */
-    @ManyToMany(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
-    @JoinTable(name = "t_class_course", joinColumns = {
-            @JoinColumn(name = "course_id", referencedColumnName = "id") }, inverseJoinColumns = {
-                    @JoinColumn(name = "class_id", referencedColumnName = "id") })
-    Set<ClassBean> classBeans;
+    public CourseBean() {
+        userCourseBeans = new HashSet<>();
+        classCourseBeans = new HashSet<>();
+//        userTaskCodeBeans = new HashSet<>();
+    }
+
+    /**
+     * ユーザ所属コース：相互参照オブジェクト(user belonging course：cross reference object)
+     */
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
+    @JoinColumn(name="course_id")
+    Set<UserCourseBean> userCourseBeans;
+    
+    /**
+     * クラス所属コース：相互参照オブジェクト(class belonging course：cross reference object)
+     */
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
+    @JoinColumn(name="course_id")
+    Set<ClassCourseBean> classCourseBeans;
+    
+
+    public void clearUserCourseBean() {
+        userCourseBeans.clear();
+    }
+    
+    public void clearClassCourseBean() {
+        classCourseBeans.clear();
+    }
+
+    public void addUserCourseBean(UserCourseBean userCourseBean) {
+        userCourseBeans.add(userCourseBean);
+    }
+    
+    public void addClassCourseBean(ClassCourseBean classCourseBean) {
+        classCourseBeans.add(classCourseBean);
+    }
+    
+    public List<String> getUserIdList() {
+        List<String> list = new ArrayList<>();
+        userCourseBeans.forEach(userCourseBean -> {
+            list.add(String.valueOf(userCourseBean.getUserId()));
+        });
+        return list;
+    }
+    
+    public List<String> getClassIdList() {
+        List<String> list = new ArrayList<>();
+        classCourseBeans.forEach(classCourseBean -> {
+            list.add(String.valueOf(classCourseBean.getClassId()));
+        });
+        return list;
+    }
+    
+
+//    @OneToMany(mappedBy = "courseBean", orphanRemoval=true, cascade = CascadeType.ALL)
+//    Set<UserTaskCodeBean> userTaskCodeBeans;
+
 }

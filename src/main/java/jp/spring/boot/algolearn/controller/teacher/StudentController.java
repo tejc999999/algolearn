@@ -1,12 +1,7 @@
 package jp.spring.boot.algolearn.controller.teacher;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,11 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jp.spring.boot.algolearn.bean.ClassBean;
-import jp.spring.boot.algolearn.bean.UserBean;
-import jp.spring.boot.algolearn.config.RoleCode;
 import jp.spring.boot.algolearn.form.StudentForm;
-import jp.spring.boot.algolearn.repository.UserRepository;
+import jp.spring.boot.algolearn.service.StudentService;
 
 /**
  * 先生用学生Contollerクラス（teacher student Controller Class）
@@ -35,7 +27,7 @@ public class StudentController {
      * ユーザーリポジトリ(user repository)
      */
     @Autowired
-    UserRepository userRepository;
+    StudentService studentService;
 
     /**
      * 学生一覧ページ表示(show student list page)
@@ -45,13 +37,7 @@ public class StudentController {
     @GetMapping
     String list(Model model) {
 
-        List<StudentForm> studentFormList = new ArrayList<StudentForm>();
-
-        for (UserBean userBean : userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString())) {
-            StudentForm userForm = new StudentForm();
-            BeanUtils.copyProperties(userBean, userForm);
-            studentFormList.add(userForm);
-        }
+        List<StudentForm> studentFormList = studentService.findAll();
 
         model.addAttribute("students", studentFormList);
 
@@ -76,9 +62,7 @@ public class StudentController {
     public String addProcess(@Validated StudentForm form, BindingResult result,
             Model model) {
 
-        UserBean userBean = new UserBean();
-        BeanUtils.copyProperties(form, userBean);
-        userRepository.save(userBean);
+        studentService.save(form);
 
         return "redirect:/teacher/student";
     }
@@ -90,13 +74,9 @@ public class StudentController {
     @PostMapping(path = "edit")
     public String edit(@RequestParam String id, Model model) {
 
-        Optional<UserBean> optUser = userRepository.findById(id);
-        optUser.ifPresent(userBean -> {
-            StudentForm form = new StudentForm();
-            BeanUtils.copyProperties(userBean, form);
-
-            model.addAttribute("studentForm", form);
-        });
+        StudentForm studentForm = studentService.findById(id);
+        
+        model.addAttribute("studentForm", studentForm);
 
         return "teacher/student/edit";
     }
@@ -107,11 +87,8 @@ public class StudentController {
      */
     @PostMapping(path = "editprocess")
     public String editProcess(StudentForm form, Model model) {
-
-        UserBean userBean = new UserBean();
-        BeanUtils.copyProperties(form, userBean);
-
-        userRepository.save(userBean);
+        
+        studentService.save(form);
 
         return "redirect:/teacher/student";
     }
@@ -123,24 +100,7 @@ public class StudentController {
     @PostMapping(path = "delete")
     public String delete(@RequestParam String id, Model model) {
 
-        Set<ClassBean> deleteClassSet = new HashSet<>();
-
-        Optional<UserBean> optUser = userRepository.findById(id);
-        optUser.ifPresent(userBean -> {
-            Set<ClassBean> classBeanSet = userBean.getClassBeans();
-            // java.util.ConcurrentModificationExceptionが発生するので一旦削除用のSetを使用
-            if (classBeanSet != null)
-                classBeanSet.forEach(classBean -> {
-                    deleteClassSet.add(classBean);
-                });
-            ClassBean[] classBeanArray = new ClassBean[deleteClassSet.size()];
-            deleteClassSet.toArray(classBeanArray);
-            for (int i = 0; i < classBeanArray.length; i++) {
-                userBean.removeFromClass(classBeanArray[i]);
-            }
-
-            userRepository.delete(userBean);
-        });
+        studentService.delete(id);
 
         return "redirect:/teacher/student";
     }

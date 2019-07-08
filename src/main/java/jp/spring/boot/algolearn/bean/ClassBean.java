@@ -1,35 +1,31 @@
 package jp.spring.boot.algolearn.bean;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.AccessLevel;
 
 /**
  * クラスBean(class Bean)
  * @author tejc999999
  */
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Data
-@ToString(exclude =  { "userBeans", "courseBeans" })
-@EqualsAndHashCode(exclude = { "userBeans", "courseBeans" })
+@Setter
+@Getter
 @Table(name = "t_class")
 public class ClassBean {
 
@@ -39,40 +35,63 @@ public class ClassBean {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     /**
      * クラス名(class name)
      */
     @Column(name = "name")
     private String name;
+    
+    /**
+     * コンストラクタ
+     */
+    public ClassBean() {
+        userClassBeans = new HashSet<>();
+        classCourseBeans = new HashSet<>();
+    }
 
     /**
      * ユーザー所属クラス：相互参照オブジェクト(user belonging class：cross reference object)
      */
-    // CascadeType.ALL:全ての操作
-    // CascadeType.MERGE:非管理状態のエンティティを永続化コンテキストに登録
-    // CascadeType.PERSIST:新規にエンティティを永続化コンテキストに登録
-    // CascadeType.REFRESH:エンティティをDBの内容で更新
-    // CascadeType.REMOVE:永続化コンテキストからエンティティを削除
-    @ManyToMany(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
-    @JoinTable(name = "t_user_class", joinColumns = {
-            @JoinColumn(name = "class_id", referencedColumnName = "id") }, inverseJoinColumns = {
-                    @JoinColumn(name = "user_id", referencedColumnName = "id") })
-    Set<UserBean> userBeans;
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
+    @JoinColumn(name="class_id")
+    private Set<UserClassBean> userClassBeans;
     
     /**
      * コース所属クラス：相互参照オブジェクト(class belonging course：cross reference object)
      */
-    @ManyToMany(mappedBy = "classBeans", fetch = FetchType.EAGER)
-    private Set<CourseBean> courseBeans;
-
-    /**
-     * クラスとの関連を削除(remove class associations)
-     * @param classBean クラスBean(class bean)
-     */
-    public void removeFromCourse(CourseBean courseBean) {
-        courseBean.getClassBeans().remove(this);
-        courseBeans.remove(courseBean);
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
+    @JoinColumn(name="class_id")
+    private Set<ClassCourseBean> classCourseBeans;
+    
+    
+    public void addUserClassBean(UserClassBean userClassBean) {
+        userClassBeans.add(userClassBean);
     }
+
+    public void clearUserClassBean() {
+        userClassBeans.clear();
+    }
+    
+    public List<String> getUserIdList() {
+        List<String> list = new ArrayList<>();
+        userClassBeans.forEach(userClassBean -> {
+            list.add(userClassBean.getUserId());
+        });
+        return list;
+    }
+    
+    public void addClassCourseBean(ClassCourseBean classCourseBean) {
+        classCourseBeans.add(classCourseBean);
+    }
+
+    public void clearClassCourseBean() {
+        classCourseBeans.clear();
+    }
+
 }

@@ -1,32 +1,26 @@
 package jp.spring.boot.algolearn.bean;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * ユーザーBean(user Bean)
  * @author tejc999999
  */
-@Data
-@ToString(exclude = { "classBeans", "courseBeans" })
-@EqualsAndHashCode(exclude = { "classBeans", "courseBeans" })
-@NoArgsConstructor
-@AllArgsConstructor
+@Setter
+@Getter
 @Entity
 @Table(name = "t_user")
 public class UserBean {
@@ -57,33 +51,28 @@ public class UserBean {
     private String roleId;
 
     /**
+     * コンストラクタ
+     */
+    public UserBean() {
+        userClassBeans = new HashSet<>();
+        userCourseBean = new HashSet<>();
+    }
+
+    /**
      * ユーザー所属クラス：相互参照オブジェクト(user belonging class：cross reference object)
      */
-    @ManyToMany(mappedBy = "userBeans", fetch = FetchType.EAGER)
-    private Set<ClassBean> classBeans;
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
+    @JoinColumn(name="user_id")
+    private Set<UserClassBean> userClassBeans;
 
     /**
      * ユーザー所属コース：相互参照オブジェクト(user belonging course：cross reference object)
      */
-    @ManyToMany(mappedBy = "userBeans", fetch = FetchType.EAGER)
-    private Set<CourseBean> courseBeans;
-
-    /**
-     * クラスとの関連を削除(remove class assosiations)
-     * @param classBean クラスBean(class bean)
-     */
-    public void removeFromClass(ClassBean classBean) {
-        classBean.getUserBeans().remove(this);
-        classBeans.remove(classBean);
-    }
-
-    /**
-     * コースとの関連を削除(remove course associations)
-     * @param classBean コースBean(course bean)
-     */
-    public void removeFromCourse(CourseBean courseBean) {
-        courseBean.getUserBeans().remove(this);
-        courseBeans.remove(courseBean);
-    }
-
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
+    @JoinColumn(name="user_id")
+    private Set<UserCourseBean> userCourseBean;
 }

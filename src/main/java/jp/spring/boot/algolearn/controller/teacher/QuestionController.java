@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jp.spring.boot.algolearn.bean.QuestionBean;
 import jp.spring.boot.algolearn.form.QuestionForm;
 import jp.spring.boot.algolearn.repository.QuestionRepository;
+import jp.spring.boot.algolearn.service.QuestionService;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -28,12 +29,9 @@ import org.springframework.validation.annotation.Validated;
 @RequestMapping("/teacher/question")
 public class QuestionController {
 
-    /**
-     * 問題リポジトリ(question repository)
-     */
     @Autowired
-    QuestionRepository questionRepository;
-
+    QuestionService questionService;
+    
     /**
      * 問題一覧ページ表示(show question list page)
      * @param model 問題一覧保存用モデル(model to save question list)
@@ -42,14 +40,7 @@ public class QuestionController {
     @GetMapping
     String list(Model model) {
 
-        List<QuestionForm> questionFormList = new ArrayList<QuestionForm>();
-
-        for (QuestionBean questionBean : questionRepository.findAll()) {
-            QuestionForm questionForm = new QuestionForm();
-            BeanUtils.copyProperties(questionBean, questionForm);
-            questionForm.setId(String.valueOf(questionBean.getId()));
-            questionFormList.add(questionForm);
-        }
+        List<QuestionForm> questionFormList = questionService.findAll();
 
         model.addAttribute("questions", questionFormList);
 
@@ -74,9 +65,7 @@ public class QuestionController {
     public String addProcess(@Validated QuestionForm form, BindingResult result,
             Model model) {
 
-        QuestionBean questionBean = new QuestionBean();
-        BeanUtils.copyProperties(form, questionBean);
-        questionRepository.save(questionBean);
+        questionService.save(form);
 
         return "redirect:/teacher/question";
     }
@@ -88,15 +77,8 @@ public class QuestionController {
     @PostMapping(path = "edit")
     public String edit(@RequestParam String id, Model model) {
 
-        Optional<QuestionBean> optQuestion = questionRepository.findById(Integer
-                .parseInt(id));
-        optQuestion.ifPresent(questionBean -> {
-            QuestionForm form = new QuestionForm();
-            BeanUtils.copyProperties(questionBean, form);
-            form.setId(String.valueOf(questionBean.getId()));
-
-            model.addAttribute("questionForm", form);
-        });
+        QuestionForm form = questionService.findById(id);
+        model.addAttribute("questionForm", form);
 
         return "teacher/question/edit";
     }
@@ -108,11 +90,7 @@ public class QuestionController {
     @PostMapping(path = "editprocess")
     public String editProcess(QuestionForm form, Model model) {
 
-        QuestionBean questionBean = new QuestionBean();
-        BeanUtils.copyProperties(form, questionBean);
-        questionBean.setId(Integer.parseInt(form.getId()));
-
-        questionRepository.save(questionBean);
+        questionService.save(form);
 
         return "redirect:/teacher/question";
     }
@@ -124,10 +102,7 @@ public class QuestionController {
     @PostMapping(path = "delete")
     public String delete(@RequestParam String id, Model model) {
 
-        QuestionBean questionBean = new QuestionBean();
-        questionBean.setId(Integer.parseInt(id));
-
-        questionRepository.delete(questionBean);
+        questionService.delete(id);
 
         return "redirect:/teacher/question";
     }
