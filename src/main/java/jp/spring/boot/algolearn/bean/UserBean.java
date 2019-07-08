@@ -1,6 +1,8 @@
 package jp.spring.boot.algolearn.bean;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -55,7 +57,7 @@ public class UserBean {
      */
     public UserBean() {
         userClassBeans = new HashSet<>();
-        userCourseBean = new HashSet<>();
+        userCourseBeans = new HashSet<>();
     }
 
     /**
@@ -74,5 +76,30 @@ public class UserBean {
     @Getter(AccessLevel.NONE)
     @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
     @JoinColumn(name="user_id")
-    private Set<UserCourseBean> userCourseBean;
+    private Set<UserCourseBean> userCourseBeans;
+    
+    /**
+     * クラスIDリストを取得する
+     * @return クラスIDリスト
+     */
+    public List<String> getClassIdList() {
+        List<String> list = new ArrayList<>();
+        userClassBeans.forEach(userClassBean -> {
+            list.add(String.valueOf(userClassBean.getClassId()));
+        });
+        return list;
+    }
+    
+    /**
+     * コースIDリストを取得する
+     * @return コースIDリスト
+     */
+    public List<String> getCourseIdList() {
+        List<String> list = new ArrayList<>();
+        userCourseBeans.forEach(userCourseBean -> {
+            list.add(String.valueOf(userCourseBean.getCourseId()));
+        });
+        return list;
+    }
+
 }

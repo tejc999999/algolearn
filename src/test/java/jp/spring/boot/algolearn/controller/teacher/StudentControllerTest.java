@@ -25,6 +25,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
@@ -46,6 +47,7 @@ import jp.spring.boot.algolearn.repository.UserRepository;
  * @author t.kawana
  *
  */
+@Transactional
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -53,41 +55,36 @@ import jp.spring.boot.algolearn.repository.UserRepository;
 @ActiveProfiles("test")
 public class StudentControllerTest {
 
-    public static final Operation DELETE_ALL = Operations.deleteAllFrom(
-            "t_user");
-
+    // テスト用ユーザー（学生）データ作成
     public static final Operation INSERT_STUDENT_DATA1 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
-                    "userid01", "password", "テストユーザー１", RoleCode.ROLE_STUDENT
+                    "user01", "password", "テストユーザー１", RoleCode.ROLE_STUDENT
                             .getString()).build();
-
     public static final Operation INSERT_STUDENT_DATA2 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
-                    "userid02", "password", "テストユーザー２", RoleCode.ROLE_STUDENT
+                    "user02", "password", "テストユーザー２", RoleCode.ROLE_STUDENT
                             .getString()).build();
-
     public static final Operation INSERT_STUDENT_DATA3 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
                     "teacherid", "password", "テスト先生", RoleCode.ROLE_TEACHER
                             .getString()).build();
 
+    // テスト用クラスデータ作成
     public static final Operation INSERT_CLASS_DATA1 = Operations.insertInto(
             "t_class").columns("id", "name").values(1, "クラス１").build();
-
     public static final Operation INSERT_CLASS_DATA2 = Operations.insertInto(
             "t_class").columns("id", "name").values(2, "クラス２").build();
 
+    // テスト用学生-クラス関連データ作成
     public static final Operation INSERT_USER_CLASS_DATA1 = Operations
-            .insertInto("t_user_class").columns("user_id", "class_id").values(
-                    "userid01", 1).build();
-
+            .insertInto("t_user_class").columns("id", "user_id", "class_id").values(
+                    1, "user01", 1).build();
     public static final Operation INSERT_USER_CLASS_DATA2 = Operations
-            .insertInto("t_user_class").columns("user_id", "class_id").values(
-                    "userid02", 1).build();
-
+            .insertInto("t_user_class").columns("id", "user_id", "class_id").values(
+                    2, "user02", 1).build();
     public static final Operation INSERT_USER_CLASS_DATA3 = Operations
-            .insertInto("t_user_class").columns("user_id", "class_id").values(
-                    "userid01", 2).build();
+            .insertInto("t_user_class").columns("id", "user_id", "class_id").values(
+                    3, "user01", 2).build();
 
     @Autowired
     MockMvc mockMvc;
@@ -127,6 +124,8 @@ public class StudentControllerTest {
     @Test
     public void 先生用学生一覧ページ表示_ユーザーあり() throws Exception {
 
+        // DB状態
+        // ユーザー：user01(学生), user02(学生), user03(学生)
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
                 INSERT_STUDENT_DATA2, INSERT_STUDENT_DATA3);
@@ -143,12 +142,12 @@ public class StudentControllerTest {
         assertEquals(list.size(), 2);
         
         StudentForm form1 = new StudentForm();
-        form1.setId("userid01");
+        form1.setId("user01");
         form1.setPassword("password");
         form1.setName("テストユーザー１");
 
         StudentForm form2 = new StudentForm();
-        form2.setId("userid02");
+        form2.setId("user02");
         form2.setPassword("password");
         form2.setName("テストユーザー２");
 
@@ -189,7 +188,7 @@ public class StudentControllerTest {
     public void 先生用学生登録処理() throws Exception {
 
         StudentForm form = new StudentForm();
-        form.setId("userid01");
+        form.setId("user01");
         form.setPassword("password");
         form.setName("テストユーザー１");
 
@@ -198,7 +197,7 @@ public class StudentControllerTest {
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/teacher/student"));
 
-        Optional<UserBean> opt = userRepository.findById("userid01");
+        Optional<UserBean> opt = userRepository.findById("user01");
         // ifPresentOrElseの実装はJDK9からの様子
         opt.ifPresent(bean -> {
 
@@ -217,6 +216,9 @@ public class StudentControllerTest {
     @Test
     public void 先生用学生編集ページ表示_クラスあり() throws Exception {
 
+        // DB状態
+        // ユーザー：user01(学生)
+        // クラス：クラス１(user01)
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
                 INSERT_CLASS_DATA1, INSERT_USER_CLASS_DATA1);
@@ -224,7 +226,7 @@ public class StudentControllerTest {
         dbSetup.launch();
 
         MvcResult result = mockMvc.perform(post("/teacher/student/edit")
-                    .param("id", "userid01"))
+                    .param("id", "user01"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("teacher/student/edit"))
                 .andReturn();
@@ -232,7 +234,7 @@ public class StudentControllerTest {
         StudentForm resultForm = (StudentForm) result.getModelAndView()
                 .getModel().get("studentForm");
 
-        assertEquals(resultForm.getId(), "userid01");
+        assertEquals(resultForm.getId(), "user01");
         assertEquals(resultForm.getPassword(), "password");
         assertEquals(resultForm.getName(), "テストユーザー１");
         assertEquals(resultForm.getRoleId(), RoleCode.ROLE_STUDENT.getString());
@@ -251,7 +253,7 @@ public class StudentControllerTest {
         dbSetup.launch();
 
         MvcResult result = mockMvc.perform(post("/teacher/student/edit")
-                    .param("id", "userid01"))
+                    .param("id", "user01"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("teacher/student/edit"))
                 .andReturn();
@@ -259,90 +261,89 @@ public class StudentControllerTest {
         StudentForm resultForm = (StudentForm) result.getModelAndView()
                 .getModel().get("studentForm");
 
-        assertEquals(resultForm.getId(), "userid01");
+        assertEquals(resultForm.getId(), "user01");
         assertEquals(resultForm.getPassword(), "password");
         assertEquals(resultForm.getName(), "テストユーザー１");
         assertEquals(resultForm.getRoleId(), RoleCode.ROLE_STUDENT.getString());
     }
 
-//    /**
-//     * 先生用学生編集処理_クラスあり
-//     * @throws Exception
-//     */
-//    @Test
-//    public void 先生用学生編集処理_クラスあり() throws Exception {
-//
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
-//                INSERT_CLASS_DATA1, INSERT_USER_CLASS_DATA1);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        StudentForm form = new StudentForm();
-//        form.setId("userid01");
-//        form.setName("テストユーザー１－２");
-//        form.setPassword("password2");
-//
-//        mockMvc.perform(post("/teacher/student/editprocess")
-//                    .flashAttr("studentForm", form))
-//            .andExpect(status().is3xxRedirection())
-//            .andExpect(view().name("redirect:/teacher/student"));
-//
-//        Optional<UserBean> opt = userRepository.findById("userid01");
-//        // ifPresentOrElseの実装はJDK9からの様子
-//        opt.ifPresent(userBean -> {
-//
-//            assertEquals(userBean.getId(), "userid01");
-//            assertEquals(userBean.getPassword(), "password2");
-//            assertEquals(userBean.getName(), "テストユーザー１－２");
-//            assertEquals(userBean.getRoleId(), RoleCode.ROLE_STUDENT
-//                    .getString());
-//            Set<ClassBean> classBeanSet = userBean.getClassBeans();
-//            assertEquals(classBeanSet.size(), 1);
-//            classBeanSet.forEach(classBean -> {
-//                assertEquals(classBean.getId(), 1);
-//                assertEquals(classBean.getName(), "クラス１");
-//            });
-//        });
-//        opt.orElseThrow(() -> new Exception("bean not found."));
-//    }
-//    
-//    /**
-//     * 先生用学生編集処理_クラスなし
-//     * @throws Exception
-//     */
-//    @Test
-//    public void 先生用学生編集処理_クラスなし() throws Exception {
-//
-//        Destination dest = new DataSourceDestination(dataSource);
-//        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1);
-//        DbSetup dbSetup = new DbSetup(dest, ops);
-//        dbSetup.launch();
-//
-//        StudentForm form = new StudentForm();
-//        form.setId("userid01");
-//        form.setName("テストユーザー１－２");
-//        form.setPassword("password2");
-//
-//        mockMvc.perform(post("/teacher/student/editprocess")
-//                    .flashAttr("studentForm", form))
-//            .andExpect(status().is3xxRedirection())
-//            .andExpect(view().name("redirect:/teacher/student"));
-//
-//        Optional<UserBean> opt = userRepository.findById("userid01");
-//        // ifPresentOrElseの実装はJDK9からの様子
-//        opt.ifPresent(userBean -> {
-//
-//            assertEquals(userBean.getId(), "userid01");
-//            assertEquals(userBean.getPassword(), "password2");
-//            assertEquals(userBean.getName(), "テストユーザー１－２");
-//            assertEquals(userBean.getRoleId(), RoleCode.ROLE_STUDENT
-//                    .getString());
-//            Set<ClassBean> classBeanSet = userBean.getClassBeans();
-//            if(classBeanSet != null) assertEquals(classBeanSet.size(), 0);
-//        });
-//        opt.orElseThrow(() -> new Exception("bean not found."));
-//    }
+    /**
+     * 先生用学生編集処理_クラスあり
+     * @throws Exception
+     */
+    @Test
+    public void 先生用学生編集処理_クラスあり() throws Exception {
+
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
+                INSERT_CLASS_DATA1, INSERT_USER_CLASS_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        StudentForm form = new StudentForm();
+        form.setId("user01");
+        form.setName("テストユーザー１－２");
+        form.setPassword("password2");
+
+        mockMvc.perform(post("/teacher/student/editprocess")
+                    .flashAttr("studentForm", form))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/teacher/student"));
+
+        Optional<UserBean> opt = userRepository.findById("user01");
+        // ifPresentOrElseの実装はJDK9からの様子
+        opt.ifPresent(userBean -> {
+
+            assertEquals(userBean.getId(), "user01");
+            assertEquals(userBean.getPassword(), "password2");
+            assertEquals(userBean.getName(), "テストユーザー１－２");
+            assertEquals(userBean.getRoleId(), RoleCode.ROLE_STUDENT
+                    .getString());
+            List<String> classIdList = userBean.getClassIdList();
+            assertEquals(classIdList.size(), 1);
+            classIdList.forEach(classId -> {
+                assertEquals(classId, "1");
+            });
+        });
+        opt.orElseThrow(() -> new Exception("bean not found."));
+    }
+    
+    /**
+     * 先生用学生編集処理_クラスなし
+     * @throws Exception
+     */
+    @Test
+    public void 先生用学生編集処理_クラスなし() throws Exception {
+
+        Destination dest = new DataSourceDestination(dataSource);
+        Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1);
+        DbSetup dbSetup = new DbSetup(dest, ops);
+        dbSetup.launch();
+
+        StudentForm form = new StudentForm();
+        form.setId("user01");
+        form.setName("テストユーザー１－２");
+        form.setPassword("password2");
+
+        mockMvc.perform(post("/teacher/student/editprocess")
+                    .flashAttr("studentForm", form))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/teacher/student"));
+
+        Optional<UserBean> opt = userRepository.findById("user01");
+        // ifPresentOrElseの実装はJDK9からの様子
+        opt.ifPresent(userBean -> {
+
+            assertEquals(userBean.getId(), "user01");
+            assertEquals(userBean.getPassword(), "password2");
+            assertEquals(userBean.getName(), "テストユーザー１－２");
+            assertEquals(userBean.getRoleId(), RoleCode.ROLE_STUDENT
+                    .getString());
+            List<String> classIdList = userBean.getClassIdList();
+            assertEquals(classIdList.size(), 0);
+        });
+        opt.orElseThrow(() -> new Exception("bean not found."));
+    }
 
     /**
      * 先生用学生削除処理_クラスあり
@@ -351,6 +352,9 @@ public class StudentControllerTest {
     @Test
     public void 先生用学生削除処理_クラスあり() throws Exception {
 
+        // DB状態
+        // ユーザー：user01(学生), user02(学生)
+        // クラス：クラス１(user01, user02), クラス２(user01)
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1,
                 INSERT_STUDENT_DATA2,
@@ -361,7 +365,7 @@ public class StudentControllerTest {
         dbSetup.launch();
 
         mockMvc.perform(post("/teacher/student/delete")
-                    .param("id", "userid01"))
+                    .param("id", "user01"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/student"));
         
@@ -383,13 +387,15 @@ public class StudentControllerTest {
     @Test
     public void 先生用学生削除処理_クラスなし() throws Exception {
 
+        // DB状態
+        // ユーザー：user01(学生)
         Destination dest = new DataSourceDestination(dataSource);
         Operation ops = Operations.sequenceOf(INSERT_STUDENT_DATA1);
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
         mockMvc.perform(post("/teacher/student/delete")
-                    .param("id", "userid01"))
+                    .param("id", "user01"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/student"));
 

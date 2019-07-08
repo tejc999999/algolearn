@@ -69,15 +69,25 @@ public class ClassBean {
     @JoinColumn(name="class_id")
     private Set<ClassCourseBean> classCourseBeans;
     
-    
+    /**
+     * ユーザー所属クラス：相互参照オブジェクトを追加する
+     * @param userClassBean ユーザ所属クラスBean
+     */
     public void addUserClassBean(UserClassBean userClassBean) {
         userClassBeans.add(userClassBean);
     }
 
+    /**
+     * ユーザー所属クラス：相互参照オブジェクトを削除する
+     */
     public void clearUserClassBean() {
         userClassBeans.clear();
     }
     
+    /**
+     * ユーザIDリストを取得する
+     * @return ユーザIDリスト
+     */
     public List<String> getUserIdList() {
         List<String> list = new ArrayList<>();
         userClassBeans.forEach(userClassBean -> {
@@ -85,13 +95,31 @@ public class ClassBean {
         });
         return list;
     }
-    
+
+    /**
+     * コース所属クラス：相互参照オブジェクトを追加する
+     * @param classCourseBean コース所属クラスBean
+     */
     public void addClassCourseBean(ClassCourseBean classCourseBean) {
         classCourseBeans.add(classCourseBean);
     }
 
+    /**
+     * コース所属クラス：相互参照オブジェクトを削除する
+     */
     public void clearClassCourseBean() {
         classCourseBeans.clear();
     }
 
+    /**
+     * コースIDリストを取得する
+     * @return コースIDリスト
+     */
+    public List<String> getCourseIdList() {
+        List<String> list = new ArrayList<>();
+        classCourseBeans.forEach(classCourseBean -> {
+            list.add(String.valueOf(classCourseBean.getCourseId()));
+        });
+        return list;
+    }
 }

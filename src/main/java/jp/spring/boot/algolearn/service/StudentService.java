@@ -52,11 +52,25 @@ public class StudentService {
      */
     public StudentForm save(StudentForm form) {
 
-        UserBean userBean = new UserBean();
-        BeanUtils.copyProperties(form, userBean);
-        userBean = userRepository.save(userBean);
+        UserBean saveUserBean;
+        String userId = form.getId();
+        List<UserBean> userBeanList = new ArrayList<>();
+        if(userId != null) {
+            Optional<UserBean> opt = userRepository.findById(userId);
+            opt.ifPresent(userBean -> {
+                userBeanList.add(userBean);
+            });
+        }
+        if(userBeanList.size() > 0) {
+            saveUserBean = userBeanList.get(0);
+        } else {
+            saveUserBean = new UserBean();
+        }
+        BeanUtils.copyProperties(form, saveUserBean);
+        
+        saveUserBean = userRepository.save(saveUserBean);
         StudentForm resultForm = new StudentForm();
-        BeanUtils.copyProperties(userBean, form);
+        BeanUtils.copyProperties(saveUserBean, form);
         
         return resultForm;
     }
