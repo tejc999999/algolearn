@@ -58,6 +58,7 @@ public class UserBean {
     public UserBean() {
         userClassBeans = new HashSet<>();
         userCourseBeans = new HashSet<>();
+        userTaskCodeBeans = new HashSet<>();
     }
 
     /**
@@ -77,6 +78,15 @@ public class UserBean {
     @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
     @JoinColumn(name="user_id")
     private Set<UserCourseBean> userCourseBeans;
+    
+    /**
+     * ユーザー、課題コードBean：相互参照オブジェクト(user・task：cross reference object)
+     */
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
+    @JoinColumn(name="user_id")
+    private Set<UserTaskCodeBean> userTaskCodeBeans;
     
     /**
      * クラスIDリストを取得する

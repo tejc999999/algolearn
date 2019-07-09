@@ -10,35 +10,43 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * 課題、コース結合テーブルBean
- * @author tejc999999
- *
- */
 @Entity
-@Table(name="t_task_course")
 @Setter
 @Getter
-public class TaskCourseBean {
+@Table(name="t_task_valparam")
+public class TaskValParamBean {
 
     /**
-     * サロゲートキー
+     * 識別ID
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Long id;
-    
+
     /**
      * 課題ID(task id)
      */
     @Column(name = "task_id")
-    private int taskId;
+    private Long taskId;
 
     /**
-     * コースID(course id)
+     * 入出力番号（0:出力値、1以上:第N引数)
      */
-    @Column(name = "course_id")
-    private int courseId;
+    @Column(name = "val_number")
+    private byte valNumber;
+
+    /**
+     * データ型(data type)
+     */
+    @Column(name = "date_type")
+    private String dataType;
+    
+    /**
+     * グループ番号(group number)
+     */
+    @Column(name = "group_id")
+    private byte groupId;
+
 
 }

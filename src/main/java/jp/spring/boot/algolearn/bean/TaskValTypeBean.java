@@ -11,34 +11,30 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 課題、コース結合テーブルBean
+ * 課題入出力値
  * @author tejc999999
- *
  */
 @Entity
-@Table(name="t_task_course")
 @Setter
 @Getter
-public class TaskCourseBean {
+@Table(name = "t_task_valtype")
+public class TaskValTypeBean {
 
     /**
-     * サロゲートキー
+     * 識別ID
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Long id;
     
-    /**
-     * 課題ID(task id)
-     */
-    @Column(name = "task_id")
-    private int taskId;
+    @Column(name="task_id")
+    private Long taskId;
+    
+    @Column(name="val_number")
+    private byte valNumber;
 
-    /**
-     * コースID(course id)
-     */
-    @Column(name = "course_id")
-    private int courseId;
+    @Column(name="data_type")
+    private String dataType;
 
 }

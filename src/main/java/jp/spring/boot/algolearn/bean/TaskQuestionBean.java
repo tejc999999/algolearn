@@ -1,27 +1,43 @@
 package jp.spring.boot.algolearn.bean;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * 
+ * 課題、問題結合テーブルBean
  * @author tejc999999
  *
  */
-//@Setter
-//@Getter
-//@Entity
-//@Table(name="t_task_question")
+@Entity
+@Setter
+@Getter
+@Table(name="t_task_question")
 public class TaskQuestionBean {
 
-//    @EmbeddedId
-//    private TaskQuestionId id;
-//
-//    @ManyToOne
-//    @MapsId("task_id")
-//    @JoinColumn(name = "task_id")
-//    TaskBean taskBean;
-// 
-//    @ManyToOne
-//    @MapsId("question_id")
-//    @JoinColumn(name = "question_id")
-//    QuestionBean questionBean;
+    /**
+     * サロゲートキー
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
+    private Long id;
+
+    /**
+     * 課題ID
+     */
+    @Column(name="task_id")
+    private Long taskId;
+
+    /**
+     * 問題ID
+     */
+    @Column(name="question_id")
+    private Long questionId;  
 }

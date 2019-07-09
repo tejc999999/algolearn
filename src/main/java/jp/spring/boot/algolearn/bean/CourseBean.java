@@ -49,7 +49,8 @@ public class CourseBean {
     public CourseBean() {
         userCourseBeans = new HashSet<>();
         classCourseBeans = new HashSet<>();
-//        userTaskCodeBeans = new HashSet<>();
+        taskCourseBeans = new HashSet<>();
+        userTaskCodeBeans = new HashSet<>();
     }
 
     /**
@@ -69,24 +70,59 @@ public class CourseBean {
     @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
     @JoinColumn(name="course_id")
     Set<ClassCourseBean> classCourseBeans;
-    
 
+    /**
+     * 課題・コース：相互参照オブジェクト(task・course：cross reference object)
+     */
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
+    @JoinColumn(name="course_id")
+    Set<TaskCourseBean> taskCourseBeans;
+
+    /**
+     * ユーザー・課題：相互参照オブジェクト(user・task：cross reference object)
+     */
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
+    @JoinColumn(name="course_id")
+    Set<UserTaskCodeBean> userTaskCodeBeans;
+
+    /**
+     * ユーザ・コース情報クリア
+     */
     public void clearUserCourseBean() {
         userCourseBeans.clear();
     }
     
+    /**
+     * クラス・コース情報クリア
+     */
     public void clearClassCourseBean() {
         classCourseBeans.clear();
     }
 
+    /**
+     * ユーザー・コース情報を追加する
+     * @param userCourseBean ユーザー・コースBean
+     */
     public void addUserCourseBean(UserCourseBean userCourseBean) {
         userCourseBeans.add(userCourseBean);
     }
     
+    /**
+     * クラス・コース情報を追加する
+     * @param classCourseBean クラス・コースBean
+     */
     public void addClassCourseBean(ClassCourseBean classCourseBean) {
         classCourseBeans.add(classCourseBean);
     }
     
+    /**
+     * コースに紐づくユーザーIDリストを取得する
+     * @return ユーザーIDリスト
+     */
     public List<String> getUserIdList() {
         List<String> list = new ArrayList<>();
         userCourseBeans.forEach(userCourseBean -> {
@@ -95,6 +131,10 @@ public class CourseBean {
         return list;
     }
     
+    /**
+     * コースに紐づくクラスIDリストを取得する
+     * @return クラスIDリスト
+     */
     public List<String> getClassIdList() {
         List<String> list = new ArrayList<>();
         classCourseBeans.forEach(classCourseBean -> {
@@ -102,9 +142,4 @@ public class CourseBean {
         });
         return list;
     }
-    
-
-//    @OneToMany(mappedBy = "courseBean", orphanRemoval=true, cascade = CascadeType.ALL)
-//    Set<UserTaskCodeBean> userTaskCodeBeans;
-
 }

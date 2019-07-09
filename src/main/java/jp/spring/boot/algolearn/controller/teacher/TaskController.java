@@ -1,5 +1,6 @@
 package jp.spring.boot.algolearn.controller.teacher;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jp.spring.boot.algolearn.form.StudentForm;
+import jp.spring.boot.algolearn.service.TaskService;
 
 /**
  * 先生用課題Contollerクラス（teacher task Controller Class）
@@ -19,8 +21,8 @@ import jp.spring.boot.algolearn.form.StudentForm;
 @RequestMapping("/teacher/task")
 public class TaskController {
 
-//    @Autowired
-//    TaskRepository taskRepository;
+    @Autowired
+    TaskService taskService;
 
     /**
      * 学生一覧ページ表示(show student list page)

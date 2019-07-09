@@ -1,12 +1,19 @@
 package jp.spring.boot.algolearn.bean;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,7 +53,7 @@ public class QuestionBean {
 	 * 入力値個数(number of input)
 	 */
 	@Column(name="input_num")
-	private int inputNum;
+	private byte inputNum;
 	
 	/**
 	 * 問題公開フラグ(question public flag)
@@ -55,18 +62,19 @@ public class QuestionBean {
 	@Column(name="public_flg", nullable = false)
 	private boolean publicFlg;
 
-//	/**
-//	 * コンストラクタ
-//	 */
-//	public QuestionBean() {
-////	    taskQuestionBeans = new HashSet<>();
-//	}
-	
 	/**
-	 * 問題を使用した課題：相互参照オブジェクト(task belonging question：cross reference object)
+	 * コンストラクタ
 	 */
-////	@OneToMany(mappedBy="questionBean", cascade= {CascadeType.ALL})
-////    @MapsId("questionBean")
-//	@OneToMany(mappedBy="questionBean", fetch = FetchType.EAGER)
-//	private Set<TaskQuestionBean> taskQuestionBeans;
+	public QuestionBean() {
+	    taskQuestionBeans = new HashSet<>();
+	}
+	
+    /**
+     * 課題・問題：相互参照オブジェクト(task・question：cross reference object)
+     */
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
+    @JoinColumn(name="question_id")
+	private Set<TaskQuestionBean> taskQuestionBeans;
 }
