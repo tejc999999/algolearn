@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 
+ * ユーザー、課題・連関エンティティ兼コードBean
  * @author tejc999999
  *
  */

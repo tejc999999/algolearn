@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.AccessLevel;
@@ -83,6 +84,13 @@ public class TaskBean {
      */
     @Column(name = "public_flg")
     private boolean publicFlg;
+
+
+    @ManyToOne
+    private LanguageBean languageBean;
+    
+    @OneToOne(mappedBy = "taskBean")
+    private UserBean userBean;
     
     /**
      * コンストラクタ
@@ -91,8 +99,6 @@ public class TaskBean {
         taskCourseBeans = new HashSet<>();
         taskQuestionBeans = new HashSet<>();
         userTaskCodeBeans = new HashSet<>();
-        taskValTypeBeans = new HashSet<>();
-        taskValParamBeans = new HashSet<>();
     }
     
     /**
@@ -121,25 +127,5 @@ public class TaskBean {
     @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
     @JoinColumn(name="task_id")
     private Set<UserTaskCodeBean> userTaskCodeBeans;
-    
-    /**
-     * 課題・コース：相互参照オブジェクト(task・course：cross reference object)
-     */
-    @Setter(AccessLevel.NONE)
-    @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="task_id")
-    private Set<TaskValTypeBean> taskValTypeBeans;
-    
-    /**
-     * 課題・コース：相互参照オブジェクト(task・course：cross reference object)
-     */
-    @Setter(AccessLevel.NONE)
-    @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="task_id")
-    private Set<TaskValParamBean> taskValParamBeans;
 
-    @ManyToOne
-    private LanguageBean languageBean;
 }

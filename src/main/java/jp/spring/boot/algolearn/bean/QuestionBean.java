@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.AccessLevel;
@@ -61,6 +62,9 @@ public class QuestionBean {
 	 */
 	@Column(name="public_flg", nullable = false)
 	private boolean publicFlg;
+
+    @OneToOne(mappedBy = "questionBean")
+    private UserBean userBean;
 
 	/**
 	 * コンストラクタ

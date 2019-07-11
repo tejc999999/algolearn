@@ -27,19 +27,30 @@ public class TaskService {
      */
     @Autowired
     TaskRepository taskRepository;
+    
+    @Autowired
+    QuestionRepository questionRepository;
 
     /**
      * 全ての課題を取得する
+     * @param 先生ID
      * @return 全ての問題Formリスト
      */
-    public List<TaskForm> findAll() {
-        List<TaskForm> list = new ArrayList<TaskForm>();
+    public List<QuestionForm> findByCreateUser(String teacherId) {
+        List<QuestionForm> list = new ArrayList<>();
 
-        for (TaskBean taskBean : taskRepository.findAll()) {
-            TaskForm taskForm = new TaskForm();
-            BeanUtils.copyProperties(taskBean, taskForm);
-            taskForm.setId(String.valueOf(taskBean.getId()));
-            list.add(taskForm);
+        for(QuestionBean questionBean : questionRepository.findByPublicFlgTrue()) {
+            QuestionForm questionForm = new QuestionForm();
+            BeanUtils.copyProperties(questionBean, questionForm);
+            questionForm.setId(String.valueOf(questionBean.getId()));
+            list.add(questionForm);
+        }
+        
+        for(QuestionBean questionBean : questionRepository.findByCreateUser(teacherId)) {
+            QuestionForm questionForm = new QuestionForm();
+            BeanUtils.copyProperties(questionBean, questionForm);
+            questionForm.setId(String.valueOf(questionBean.getId()));
+            list.add(questionForm);
         }
         
         return list;

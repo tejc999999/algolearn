@@ -1,5 +1,9 @@
 package jp.spring.boot.algolearn.controller.teacher;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jp.spring.boot.algolearn.form.QuestionForm;
 import jp.spring.boot.algolearn.form.StudentForm;
 import jp.spring.boot.algolearn.service.TaskService;
 
@@ -29,31 +34,36 @@ public class TaskController {
      * @param model 学生一覧保存用モデル(model to save student list)
      * @return 学生一覧ページビュー(student list page view)
      */
-    @GetMapping
-    String list(Model model) {
+    @GetMapping(path="addlist")
+    String addlist(Model model) {
 
-        // List<StudentForm> list = new ArrayList<StudentForm>();
-        //
-        // for (UserBean userBean : userRepository.findAll()) {
-        // StudentForm userForm = new StudentForm();
-        // BeanUtils.copyProperties(userBean, userForm);
-        // list.add(userForm);
-        // }
-        //
-        // model.addAttribute("students", list);
+        // TODO:あとで作成者ごとに登録        
+         List<QuestionForm> list = taskService.findByCreateUser("testteacher1");
+        
+         model.addAttribute("questions", list);
 
-        return "teacher/task/list";
+        return "teacher/task/addlist";
     }
-
-    /**
-     * 学生登録ページ表示(show add student page)
-     * @return 学生登録ページビュー(add student page view)
-     */
-    @GetMapping(path = "add")
-    public String add(Model model) {
-
-        return "teacher/task/add";
+    
+    @PostMapping(path = "addsearch")
+    public String addSearch(@Validated StudentForm form, BindingResult result,
+            Model model) {
+        
+        
+        return "redirect:/teacher/addlist";
     }
+    
+    
+    
+//    /**
+//     * 学生登録ページ表示(show add student page)
+//     * @return 学生登録ページビュー(add student page view)
+//     */
+//    @GetMapping(path = "add")
+//    public String add(Model model) {
+//
+//        return "teacher/task/add";
+//    }
 
     /**
      * 学生登録処理(add process for student)

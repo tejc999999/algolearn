@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * クラス、コース結合テーブルBean
+ * クラス、コース・連関エンティティBean
  * @author tejc999999
  *
  */

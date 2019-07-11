@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.AccessLevel;
@@ -52,14 +53,11 @@ public class UserBean {
     @Column(name = "role_id", nullable = false, length = 3)
     private String roleId;
 
-    /**
-     * コンストラクタ
-     */
-    public UserBean() {
-        userClassBeans = new HashSet<>();
-        userCourseBeans = new HashSet<>();
-        userTaskCodeBeans = new HashSet<>();
-    }
+    @OneToOne(cascade = CascadeType.ALL)
+    private TaskBean taskBean;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private QuestionBean questionBean;
 
     /**
      * ユーザー所属クラス：相互参照オブジェクト(user belonging class：cross reference object)
@@ -87,6 +85,15 @@ public class UserBean {
     @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
     @JoinColumn(name="user_id")
     private Set<UserTaskCodeBean> userTaskCodeBeans;
+
+    /**
+     * コンストラクタ
+     */
+    public UserBean() {
+        userClassBeans = new HashSet<>();
+        userCourseBeans = new HashSet<>();
+        userTaskCodeBeans = new HashSet<>();
+    }
     
     /**
      * クラスIDリストを取得する
