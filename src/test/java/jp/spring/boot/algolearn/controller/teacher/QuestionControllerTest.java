@@ -36,8 +36,8 @@ import com.ninja_squad.dbsetup.destination.Destination;
 import com.ninja_squad.dbsetup.operation.Operation;
 
 import jp.spring.boot.algolearn.bean.QuestionBean;
-import jp.spring.boot.algolearn.form.QuestionForm;
 import jp.spring.boot.algolearn.repository.QuestionRepository;
+import jp.spring.boot.algolearn.teacher.form.QuestionForm;
 
 /**
  * 問題Controllerテスト(question class controller)
@@ -54,13 +54,12 @@ public class QuestionControllerTest {
 
     // テスト用問題データ作成
     public static final Operation INSERT_DATA1 = Operations.insertInto(
-            "t_question").columns("id", "title", "description", "input_num",
-                    "public_flg").values(1, "問題タイトル１", "問題説明１", 2, true)
-            .build();
+            "t_question").columns("id", "title", "description", "input_num")
+            .values(1, "問題タイトル１", "問題説明１", 2).build();
+
     public static final Operation INSERT_DATA2 = Operations.insertInto(
-            "t_question").columns("id", "title", "description", "input_num",
-                    "public_flg").values(2, "問題タイトル２", "問題説明２", 3, false)
-            .build();
+            "t_question").columns("id", "title", "description", "input_num")
+            .values(2, "問題タイトル２", "問題説明２", 3).build();
 
     @Autowired
     MockMvc mockMvc;
@@ -115,14 +114,12 @@ public class QuestionControllerTest {
         form1.setTitle("問題タイトル１");
         form1.setDescription("問題説明１");
         form1.setInputNum(2);
-        form1.setPublicFlg(true);
 
         QuestionForm form2 = new QuestionForm();
         form2.setId("2");
         form2.setTitle("問題タイトル２");
         form2.setDescription("問題説明２");
         form2.setInputNum(3);
-        form2.setPublicFlg(false);
 
         assertThat(list, hasItems(form1, form2));
     }
@@ -167,7 +164,6 @@ public class QuestionControllerTest {
         form.setTitle("テストタイトル");
         form.setDescription("テスト説明");
         form.setInputNum(2);
-        form.setPublicFlg(true);
 
         mockMvc.perform(post("/teacher/question/add")
                 .flashAttr("questionForm", form))
@@ -179,7 +175,6 @@ public class QuestionControllerTest {
             assertEquals(questionBean.getTitle(), form.getTitle());
             assertEquals(questionBean.getDescription(), form.getDescription());
             assertEquals(questionBean.getInputNum(), form.getInputNum());
-            assertEquals(questionBean.isPublicFlg(), form.isPublicFlg());
         });
         // ifPresentOrElseの実装はJDK9からの様子
         opt.orElseThrow(() -> new Exception("bean not found."));
@@ -212,7 +207,6 @@ public class QuestionControllerTest {
         assertEquals(resultForm.getTitle(), "問題タイトル１");
         assertEquals(resultForm.getDescription(), "問題説明１");
         assertEquals(resultForm.getInputNum(), 2);
-        assertEquals(resultForm.isPublicFlg(), true);
     }
 
     /**
@@ -234,7 +228,6 @@ public class QuestionControllerTest {
         form.setTitle("問題タイトル１－２");
         form.setDescription("問題説明１ー２");
         form.setInputNum(0);
-        form.setPublicFlg(false);
 
         mockMvc.perform(post("/teacher/question/editprocess")
                     .flashAttr("questionForm", form))
@@ -248,7 +241,6 @@ public class QuestionControllerTest {
             assertEquals(questionBean.getTitle(), "問題タイトル１－２");
             assertEquals(questionBean.getDescription(), "問題説明１ー２");
             assertEquals(questionBean.getInputNum(), 0);
-            assertEquals(questionBean.isPublicFlg(), false);
         });
         opt.orElseThrow(() -> new Exception("bean not found."));
     }

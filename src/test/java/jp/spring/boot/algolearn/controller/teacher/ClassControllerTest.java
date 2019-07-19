@@ -44,9 +44,9 @@ import com.ninja_squad.dbsetup.operation.Operation;
 
 import jp.spring.boot.algolearn.bean.ClassBean;
 import jp.spring.boot.algolearn.config.RoleCode;
-import jp.spring.boot.algolearn.form.ClassForm;
 import jp.spring.boot.algolearn.repository.ClassRepository;
 import jp.spring.boot.algolearn.repository.UserRepository;
+import jp.spring.boot.algolearn.teacher.form.ClassForm;
 
 /**
  * クラスControllerテスト(test class controller)

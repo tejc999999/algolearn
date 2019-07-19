@@ -23,25 +23,18 @@
 	<h2>■課題登録ページ</h2>
 	<div class="able-responsive-md container">
 
-		<form th:action="@{/teacher/question/add}" th:object="${questionForm}"
+		<form th:action="@{/teacher/task/addsearch}" th:object="${questionForm}"
 			method="post">
 			<div class="form-row">
 				<div class="form-group col-md-9">
-					<label for="publicFlg" class="col-form-label">問題保存場所</label>
-					<select class="form-control" name="publicFlg">
-						<option value="false" selected>個人</option>
-						<option value="true">公開</option>
-					</select>
-				</div>			
-			</div>
-			<div class="form-row">
-				<div class="form-group col-md-9">
-					<label for="title" class="col-form-label">検索ワード</label> <input
+					<label for="searchWord" class="col-form-label">検索ワード</label>
+					<input
 						type="text" class="form-control" name="searchWord" placeholder="検索ワード"
 						aria-label="検索ワード" />
 				</div>
 				<div class="form-group col-md-offset-1 col-md-2">
-				    <input type="submit" class="btn btn-info btn-block" th:value="検索">
+					<label for="searchbtn" class="col-form-label">　</label>
+				    <input type="submit" name="searchbtn" class="btn btn-info btn-block" th:value="検索">
 				</div>
 			</div>
 		</form>
@@ -50,24 +43,24 @@
 			<thead class="thead-dark">
 				<tr class="row">
 					<th class="col-md-3 text-nowrap" scope="col" th:text="タイトル">タイトル</th>
-					<th class="col-md-5 text-nowrap" scope="col" th:text="説明文">説明文</th>
-					<th class="col-md-2 text-nowrap" scope="col" th:text="言語種別">言語種別</th>
-					<th class="col-md-1" scope="col"></th>
-					<th class="col-md-1" scope="col"></th>
+					<th class="col-md-4 text-nowrap" scope="col" th:text="説明文">説明文</th>
+					<th class="col-md-1 text-nowrap" scope="col" th:text="入力数">入力数</th>
+					<th class="col-md-2" scope="col"></th>
+					<th class="col-md-2" scope="col"></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr class="row" th:each="quesiotn : ${questions}">
+				<tr class="row" th:each="question : ${questions}">
 					<td class="col-md-3" th:text="${question.title}">タイトル</td>
-					<td class="col-md-6" th:text="${question.description}">説明文</td>
-					<td class="col-md-1" th:text="${question.inputNum">入力値数</td>
-					<td class="col-md-1">
+					<td class="col-md-4" th:text="${question.description}">説明文</td>
+					<td class="col-md-1" th:text="${question.inputNum}">入力数</td>
+					<td class="col-md-2">
 						<form th:action="@{/teacher/task/addeasy}" method="post">
-							<input type="submit" name="form" th:value="編集" /> <input
+							<input type="submit" name="form" th:value="作成" /> <input
 								type="hidden" name="id" th:value="${question.id}" />
 						</form>
 					</td>
-					<td class="col-md-1">
+					<td class="col-md-2">
 						<form th:action="@{/teacher/task/addcode}" method="post">
 							<input type="submit" name="form" th:value="削除" /> <input
 								type="hidden" name="id" th:value="${question.id}" />
@@ -76,7 +69,6 @@
 				</tr>
 			</tbody>
 		</table>
-		 -->
 	</div>
 	<div th:replace="layout :: footer"></div>
 

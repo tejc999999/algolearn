@@ -80,17 +80,10 @@ public class TaskBean {
     private String checkCode;
 
     /**
-     * 課題公開フラグ（TRUE:公開、FALSE:非公開）
+     * プログラム言語
      */
-    @Column(name = "public_flg")
-    private boolean publicFlg;
-
-
     @ManyToOne
     private LanguageBean languageBean;
-    
-    @OneToOne(mappedBy = "taskBean")
-    private UserBean userBean;
     
     /**
      * コンストラクタ

@@ -38,9 +38,9 @@ import com.ninja_squad.dbsetup.operation.Operation;
 import jp.spring.boot.algolearn.bean.ClassBean;
 import jp.spring.boot.algolearn.bean.UserBean;
 import jp.spring.boot.algolearn.config.RoleCode;
-import jp.spring.boot.algolearn.form.StudentForm;
 import jp.spring.boot.algolearn.repository.ClassRepository;
 import jp.spring.boot.algolearn.repository.UserRepository;
+import jp.spring.boot.algolearn.teacher.form.StudentForm;
 
 /**
  * 学生Controllerテスト(question class controller)

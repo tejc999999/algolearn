@@ -53,12 +53,6 @@ public class UserBean {
     @Column(name = "role_id", nullable = false, length = 3)
     private String roleId;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private TaskBean taskBean;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    private QuestionBean questionBean;
-
     /**
      * ユーザー所属クラス：相互参照オブジェクト(user belonging class：cross reference object)
      */

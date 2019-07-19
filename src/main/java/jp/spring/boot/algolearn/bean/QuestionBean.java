@@ -55,16 +55,6 @@ public class QuestionBean {
 	 */
 	@Column(name="input_num")
 	private byte inputNum;
-	
-	/**
-	 * 問題公開フラグ(question public flag)
-	 * falseの場合は個人用(false is private)
-	 */
-	@Column(name="public_flg", nullable = false)
-	private boolean publicFlg;
-
-    @OneToOne(mappedBy = "questionBean")
-    private UserBean userBean;
 
 	/**
 	 * コンストラクタ
