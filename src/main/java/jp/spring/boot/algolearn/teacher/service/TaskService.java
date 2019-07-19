@@ -12,6 +12,7 @@ import jp.spring.boot.algolearn.bean.TaskBean;
 import jp.spring.boot.algolearn.repository.QuestionRepository;
 import jp.spring.boot.algolearn.repository.TaskRepository;
 import jp.spring.boot.algolearn.teacher.form.QuestionForm;
+import jp.spring.boot.algolearn.teacher.form.TaskAddCodeForm;
 import jp.spring.boot.algolearn.teacher.form.TaskForm;
 
 /**
@@ -31,7 +32,7 @@ public class TaskService {
     @Autowired
     QuestionRepository questionRepository;
     /**
-     * 全ての課題を取得する
+     * 全ての問題を取得する
      * @return 全ての問題Formリスト
      */
     public List<QuestionForm> findAll() {
@@ -51,9 +52,9 @@ public class TaskService {
     
     
     /**
-     * 全ての課題を取得する
-     * @param 先生ID
-     * @return 全ての問題Formリスト
+     * 検索文字列をタイトルか説明文に含む問題を取得する
+     * @param searchStr 検索文字列
+     * @return 合致する問題Formリスト
      */
     public List<QuestionForm> findByTitleLikeOrDescriptionLike(String searchStr) {
         List<QuestionForm> list = new ArrayList<>();
@@ -71,5 +72,19 @@ public class TaskService {
         return list;
     }
     
-    
+    public TaskAddCodeForm save(TaskAddCodeForm form) {
+        
+        TaskBean taskBean = new TaskBean();
+        // TODO:form->beanへのデータコピー
+        
+        
+        
+        taskBean = taskRepository.save(taskBean);
+        
+        TaskAddCodeForm resultForm = new TaskAddCodeForm();
+        // TODO:bean->formへのデータコピー
+
+
+        return resultForm;
+    }
 }

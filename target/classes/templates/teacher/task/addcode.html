@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>課題登録画面</title>
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.0/css/bootstrap.min.css}" />
+<script th:src="@{/webjars/jquery/3.4.0/jquery.slim.min.js}"
+	type="text/javascript" charset="utf-8"></script>
+<script th:src="@{/webjars/bootstrap/4.3.0/js/bootstrap.bundle.min.js}"
+	type="text/javascript" charset="utf-8"></script>
+
+
+</head>
+<body>
+
+	<div th:replace="layout :: header"></div>
+
+	■課題登録
+	<div class="container-fluid no-gutters pb-5">
+
+		<form th:action="@{/teacher/task/add}"
+			th:object="${questionForm}" method="post">
+
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="frontCode" class="col-form-label "
+						th:text="コード前部(学生操作不可)">コード前部(学生操作不可)</label> <input type="text"
+						class="form-control" name="frontCode" value="" />
+				</div>
+			</div>
+
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="middleCode" class="col-form-label "
+						th:text="コード中部(学生操作可)">コード中部(学生操作可)</label> <input type="text"
+						class="form-control" name="middleCode" value="" />
+				</div>
+			</div>
+
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="backCode" class="col-form-label "
+						th:text="コード後部(学生操作不可)">コード後部(学生操作不可)</label> <input type="text"
+						class="form-control" name="backCode" value="" />
+				</div>
+			</div>
+		</form>
+	</div>
+
+
+</body>
+</html>

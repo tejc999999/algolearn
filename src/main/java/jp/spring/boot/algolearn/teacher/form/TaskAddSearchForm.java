@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 
- * 先生用クラス検索Form(class search form for teacher)
+ * 先生用課題登録時問題検索Form(question search form when task regist for teacher)
  * 
  * @author tejc999999
  *

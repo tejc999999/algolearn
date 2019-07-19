@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jp.spring.boot.algolearn.teacher.form.QuestionForm;
 import jp.spring.boot.algolearn.teacher.form.StudentForm;
+import jp.spring.boot.algolearn.teacher.form.TaskAddCodeForm;
 import jp.spring.boot.algolearn.teacher.form.TaskAddSearchForm;
 import jp.spring.boot.algolearn.teacher.service.TaskService;
 
@@ -31,9 +32,9 @@ public class TaskController {
     TaskService taskService;
 
     /**
-     * 学生一覧ページ表示(show student list page)
-     * @param model 学生一覧保存用モデル(model to save student list)
-     * @return 学生一覧ページビュー(student list page view)
+     * 課題登録用問題一覧ページ表示(show question list page for task add)
+     * @param model 問題一覧保存用モデル(model to save question list)
+     * @return 課題登録用問題一覧ページビュー(question list page view for task add)
      */
     @GetMapping(path="addlist")
     String addlist(Model model) {
@@ -46,6 +47,13 @@ public class TaskController {
         return "teacher/task/addlist";
     }
     
+    /**
+     * 課題登録用問題検索(question search for task add)
+     * @param form 検索Form(serach form)
+     * @param result エラーチェック結果(error validate result)
+     * @param model 問題一覧保存用モデル(model to save question list)
+     * @return 課題登録用問題一覧ページビュー(question list page view for task add)
+     */
     @PostMapping(path = "addsearch")
     public String addSearch(@Validated TaskAddSearchForm form, BindingResult result,
             Model model) {
@@ -57,32 +65,41 @@ public class TaskController {
 
         return "/teacher/task/addlist";
     }
-    
-    
-    
-//    /**
-//     * 学生登録ページ表示(show add student page)
-//     * @return 学生登録ページビュー(add student page view)
-//     */
-//    @GetMapping(path = "add")
-//    public String add(Model model) {
-//
-//        return "teacher/task/add";
-//    }
+
+    /**
+     * 課題自動作成画面表示(question list page view for task add)
+     * @return 課題自動作成ページビュー(auto create task page view)
+     */
+    @PostMapping(path = "addauto")
+    public String addAuto(@Validated StudentForm form, BindingResult result,
+            Model model) {
+
+
+        return addlist(model);
+    }
 
     /**
      * 学生登録処理(add process for student)
      * @return 学生一覧ページリダイレクト(redirect student list page)
      */
-    @PostMapping(path = "add")
-    public String addProcess(@Validated StudentForm form, BindingResult result,
+    @PostMapping(path = "addcode")
+    public String addCode(@Validated StudentForm form, BindingResult result,
             Model model) {
 
-        // UserBean bean = new UserBean();
-        // BeanUtils.copyProperties(form, bean);
-        // userRepository.save(bean);
+        return "/teacher/task/addcode";
+    }
+    
+    /**
+     * 課題登録処理(add process for task)
+     * @return 課題一覧ページリダイレクト(redirect task list page)
+     */
+    @PostMapping(path = "add")
+    public String addProcess(@Validated TaskAddCodeForm form, BindingResult result,
+            Model model) {
 
-        return "redirect:/teacher/task";
+        taskService.save(form);
+
+        return "redirect:/teacher/question";
     }
 
     /**
