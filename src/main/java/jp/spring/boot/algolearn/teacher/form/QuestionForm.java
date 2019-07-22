@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class QuestionForm {
 
 	/**
-	 * クラスID(class id)
+	 * 問題ID(question id)
 	 */
 	private String id;
 	

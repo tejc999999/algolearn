@@ -35,5 +35,5 @@ public class StudentForm {
 	 * 権限ID(role id)
 	 */
 	@Setter(AccessLevel.PRIVATE)
-	String roleId = RoleCode.ROLE_STUDENT.getString();
+	String roleId = RoleCode.ROLE_STUDENT.getId();
 }

@@ -5,26 +5,43 @@ package jp.spring.boot.algolearn.config;
  * @author tejc999999
  */
 public enum RoleCode {
-    ROLE_ADMIN("001"), ROLE_TEACHER("002"), ROLE_STUDENT("003");
+    ROLE_ADMIN("001", "管理者"),
+    ROLE_TEACHER("002", "先生"),
+    ROLE_STUDENT("003", "学生");
 
     /**
-     * 権限コード文字列(Role code string)
+     * 権限ID(Role id)
      */
-    private final String text;
+    private final String id;
+
+    /**
+     * 権限名(Role name)
+     */
+    private final String name;
 
     /**
      * コンストラクタ(Constructor)
-     * @param text 権限コード文字列(Role code string)
+     * @param id 権限ID
+     * @param name 権限名(Role name)
      */
-    private RoleCode(final String text) {
-        this.text = text;
+    private RoleCode(final String id, final String name) {
+        this.id = id;
+        this.name = name;
     }
 
     /**
-     * 権限コード文字列取得(Get role code string)
-     * @return 権限コード文字列(Role code string)
+     * 権限ID取得(Get role id)
+     * @return 権限ID(Role id)
      */
-    public String getString() {
-        return this.text;
+    public String getId() {
+        return this.id;
+    }
+    
+    /**
+     * 権限名取得(Get role name)
+     * @return 権限名(Role name)
+     */
+    public String getName() {
+        return this.name;
     }
 }

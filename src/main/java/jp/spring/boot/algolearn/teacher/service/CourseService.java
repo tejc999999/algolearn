@@ -88,7 +88,7 @@ public class CourseService {
     public Map<String, String> findAllStudent() {
         Map<String, String> userMap = new HashMap<>();
         // 全ての学生のユーザーBeanを取得する
-        List<UserBean> userBeanList = userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString());
+        List<UserBean> userBeanList = userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getId());
         if (userBeanList != null) userBeanList.forEach(bean -> userMap.put(bean.getId(), bean.getName()));
         
         return userMap;

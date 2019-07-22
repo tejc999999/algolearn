@@ -64,7 +64,7 @@ public class ClassService {
     public Map<String, String> getUserIdMap() {
         
         Map<String, String> userMap = new HashMap<>();
-        List<UserBean> userBeanList = userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString());
+        List<UserBean> userBeanList = userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getId());
         
         if (userBeanList != null)
             userBeanList.forEach(userBean -> {

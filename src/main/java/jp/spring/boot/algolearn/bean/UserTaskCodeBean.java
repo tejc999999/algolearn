@@ -42,12 +42,6 @@ public class UserTaskCodeBean {
     @Column(name = "status")
     private byte status;
     
-    @Column(name = "front_code")
-    private String frontCode;
-    
-    @Column(name = "back_code")
-    private String backCode;
-    
     @Column(name = "code")
     private String code;
 }

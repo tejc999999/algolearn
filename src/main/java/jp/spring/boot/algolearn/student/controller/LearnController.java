@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import jp.spring.boot.algolearn.config.PrgLanguage;
+import jp.spring.boot.algolearn.config.PrgLanguageCode;
 import jp.spring.boot.algolearn.config.PrgLanguageProperties;
 import jp.spring.boot.algolearn.config.PrgLanguagePropertiesDetail;
 import jp.spring.boot.algolearn.config.ServerProperties;
@@ -79,12 +79,12 @@ public class LearnController {
 
         String lineFeedCode = System.getProperty("line.separator");
 
-        if (PrgLanguage.JAVA.toString().equals(plCode)) {
+        if (PrgLanguageCode.JAVA.toString().equals(plCode)) {
             // Javaの場合
 
             // List<PrgLanguagePropertyDetail> plList = prgBuildProperties.getList();
             PrgLanguagePropertiesDetail prgLanguagePropertiesDetail = prgLanguageProperties
-                    .getMap().get(PrgLanguage.JAVA.toString());
+                    .getMap().get(PrgLanguageCode.JAVA.toString());
 
             try {
                 BufferedReader reader = new BufferedReader(new StringReader(code));
@@ -162,10 +162,10 @@ public class LearnController {
                 e.printStackTrace();
             }
 
-        } else if (PrgLanguage.CCPP.toString().equals(plCode)) {
+        } else if (PrgLanguageCode.CCPP.toString().equals(plCode)) {
             // Cの場合
 
-        } else if (PrgLanguage.PYTHON.toString().equals(plCode)) {
+        } else if (PrgLanguageCode.PYTHON.toString().equals(plCode)) {
             // Pythonの場合
 
         } else {

@@ -80,19 +80,19 @@ public class CourseControllerTest {
     public static final Operation INSERT_STUDENT_DATA1 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
                     "user01", "password", "テストユーザー１", RoleCode.ROLE_STUDENT
-                            .getString()).build();
+                            .getId()).build();
     public static final Operation INSERT_STUDENT_DATA2 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
                     "user02", "password", "テストユーザー２", RoleCode.ROLE_STUDENT
-                            .getString()).build();
+                            .getId()).build();
     public static final Operation INSERT_TEACHER_DATA1 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
                     "user03", "password", "テストユーザー３", RoleCode.ROLE_TEACHER
-                            .getString()).build();
+                            .getId()).build();
     public static final Operation INSERT_ADMIN_DATA1 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
                     "user04", "password", "テストユーザー４", RoleCode.ROLE_ADMIN
-                            .getString()).build();
+                            .getId()).build();
 
     // テスト用学生-クラス関連データ作成
     public static final Operation INSERT_USER_CLASS_DATA1 = Operations

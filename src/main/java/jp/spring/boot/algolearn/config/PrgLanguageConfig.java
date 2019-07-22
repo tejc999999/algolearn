@@ -114,7 +114,7 @@ public class PrgLanguageConfig {
 
         Map<String, PrgLanguagePropertiesDetail> map = new HashMap<String, PrgLanguagePropertiesDetail>();
         PrgLanguagePropertiesDetail java = new PrgLanguagePropertiesDetail();
-        java.setName(PrgLanguage.JAVA.toString());
+        java.setName(PrgLanguageCode.JAVA.toString());
         java.setFileName(javaFileName);
         java.setBuildFileName(javaBuildFileName);
         java.setBuildCmdPath(javaBuildCmdPath);
@@ -122,7 +122,7 @@ public class PrgLanguageConfig {
         java.setWorkFolderPath(javaWorkFolderPath);
 
         PrgLanguagePropertiesDetail ccpp = new PrgLanguagePropertiesDetail();
-        ccpp.setName(PrgLanguage.CCPP.toString());
+        ccpp.setName(PrgLanguageCode.CCPP.toString());
         ccpp.setFileName(cCppFileName);
         ccpp.setBuildFileName(cCppBuildFileName);
         ccpp.setBuildCmdPath(cCppBuildCmdPath);
@@ -130,7 +130,7 @@ public class PrgLanguageConfig {
         ccpp.setWorkFolderPath(cCppWorkFolderPath);
 
         PrgLanguagePropertiesDetail python = new PrgLanguagePropertiesDetail();
-        python.setName(PrgLanguage.PYTHON.toString());
+        python.setName(PrgLanguageCode.PYTHON.toString());
         python.setFileName(pythonFileName);
         python.setBuildFileName(pythonBuildFileName);
         python.setBuildCmdPath(pythonBuildCmdPath);

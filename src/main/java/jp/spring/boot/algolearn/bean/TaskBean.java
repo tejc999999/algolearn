@@ -62,28 +62,22 @@ public class TaskBean {
     private Long questionId;
 
     /**
-     * 追加プログラムコード
+     * プログラムコード前部
      */
-    @Column(name = "additional_code")
-    private String additionalCode;
+    @Column(name = "front_code")
+    private String frontCode;
 
     /**
-     * プログラムコード例
+     * プログラムコード中部
      */
-    @Column(name = "sample_code")
-    private String sampleCode;
+    @Column(name = "middle_code")
+    private String middleCode;
 
     /**
-     * 採点プログラムコード
+     * プログラムコード後部
      */
-    @Column(name = "check_code")
-    private String checkCode;
-
-    /**
-     * プログラム言語
-     */
-    @ManyToOne
-    private LanguageBean languageBean;
+    @Column(name = "back_code")
+    private String backCode;
     
     /**
      * コンストラクタ

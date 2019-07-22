@@ -36,7 +36,7 @@ public class StudentService {
 
         List<StudentForm> studentFormList = new ArrayList<StudentForm>();
 
-        for (UserBean userBean : userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getString())) {
+        for (UserBean userBean : userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getId())) {
             StudentForm userForm = new StudentForm();
             userForm.setId(userBean.getId());
             userForm.setPassword(userBean.getPassword());

@@ -13,7 +13,27 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class TaskAddCodeForm {
+    
+    /**
+     * 課題ID(task id)
+     */
+    public String id;
 
+    /**
+     * タイトル(title)
+     */
+    public String title;
+    
+    /**
+     * 説明文(description)
+     */
+    public String description;
+
+    /**
+     * プログラム言語
+     */
+    public String languageId;
+    
     /**
      * コード前部(front code)
      */

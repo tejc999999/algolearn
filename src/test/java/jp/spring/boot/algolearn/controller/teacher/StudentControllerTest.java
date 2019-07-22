@@ -59,15 +59,15 @@ public class StudentControllerTest {
     public static final Operation INSERT_STUDENT_DATA1 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
                     "user01", "password", "テストユーザー１", RoleCode.ROLE_STUDENT
-                            .getString()).build();
+                            .getId()).build();
     public static final Operation INSERT_STUDENT_DATA2 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
                     "user02", "password", "テストユーザー２", RoleCode.ROLE_STUDENT
-                            .getString()).build();
+                            .getId()).build();
     public static final Operation INSERT_STUDENT_DATA3 = Operations.insertInto(
             "t_user").columns("id", "password", "name", "role_id").values(
                     "teacherid", "password", "テスト先生", RoleCode.ROLE_TEACHER
-                            .getString()).build();
+                            .getId()).build();
 
     // テスト用クラスデータ作成
     public static final Operation INSERT_CLASS_DATA1 = Operations.insertInto(
@@ -204,7 +204,7 @@ public class StudentControllerTest {
             assertEquals(bean.getId(), form.getId());
             assertEquals(bean.getPassword(), form.getPassword());
             assertEquals(bean.getName(), form.getName());
-            assertEquals(bean.getRoleId(), RoleCode.ROLE_STUDENT.getString());
+            assertEquals(bean.getRoleId(), RoleCode.ROLE_STUDENT.getId());
         });
         opt.orElseThrow(() -> new Exception("bean not found."));
     }
@@ -237,7 +237,7 @@ public class StudentControllerTest {
         assertEquals(resultForm.getId(), "user01");
         assertEquals(resultForm.getPassword(), "password");
         assertEquals(resultForm.getName(), "テストユーザー１");
-        assertEquals(resultForm.getRoleId(), RoleCode.ROLE_STUDENT.getString());
+        assertEquals(resultForm.getRoleId(), RoleCode.ROLE_STUDENT.getId());
     }
 
     /**
@@ -264,7 +264,7 @@ public class StudentControllerTest {
         assertEquals(resultForm.getId(), "user01");
         assertEquals(resultForm.getPassword(), "password");
         assertEquals(resultForm.getName(), "テストユーザー１");
-        assertEquals(resultForm.getRoleId(), RoleCode.ROLE_STUDENT.getString());
+        assertEquals(resultForm.getRoleId(), RoleCode.ROLE_STUDENT.getId());
     }
 
     /**
@@ -298,7 +298,7 @@ public class StudentControllerTest {
             assertEquals(userBean.getPassword(), "password2");
             assertEquals(userBean.getName(), "テストユーザー１－２");
             assertEquals(userBean.getRoleId(), RoleCode.ROLE_STUDENT
-                    .getString());
+                    .getId());
             List<String> classIdList = userBean.getClassIdList();
             assertEquals(classIdList.size(), 1);
             classIdList.forEach(classId -> {
@@ -338,7 +338,7 @@ public class StudentControllerTest {
             assertEquals(userBean.getPassword(), "password2");
             assertEquals(userBean.getName(), "テストユーザー１－２");
             assertEquals(userBean.getRoleId(), RoleCode.ROLE_STUDENT
-                    .getString());
+                    .getId());
             List<String> classIdList = userBean.getClassIdList();
             assertEquals(classIdList.size(), 0);
         });
