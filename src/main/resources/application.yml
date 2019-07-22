@@ -18,8 +18,10 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
 prglanguage: 
   java: 
-    fileName: Test.java
-    buildFileName: Test
+    fileName: TestClass.java
+    buildFileName: TestClass
+    checkFileName: CheckClass.java
+    buildCheckFileName: CheckClass
     buildCmdPath: F:\\dev\\AdoptOpenJDK\\jdk-8.0.202.08\\bin\\javac
     executeCmdPath: F:\\dev\\AdoptOpenJDK\\jdk-8.0.202.08\\bin\\java
     workFolderPath: F:\\workfolder

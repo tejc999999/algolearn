@@ -24,6 +24,18 @@ public class PrgLanguagePropertiesDetail {
      */
     private String buildFileName;
 
+
+    /**
+     * チェック用ファイル名(Check File name)
+     */
+    private String checkFileName;
+
+
+    /**
+     * チェック用ファイル名(Check File name)
+     */
+    private String buildCheckFileName;
+
     /**
      * ビルドコマンドパス(build command path)
      */

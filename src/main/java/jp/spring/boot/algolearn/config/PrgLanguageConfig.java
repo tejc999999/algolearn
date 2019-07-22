@@ -34,7 +34,7 @@ public class PrgLanguageConfig {
     private String javaWorkFolderPath;
 
     /**
-     * Java ファイル名(java file name)
+     * Java ファイル名(Java file name)
      */
     @Value("${prglanguage.java.fileName}")
     private String javaFileName;
@@ -45,6 +45,18 @@ public class PrgLanguageConfig {
     @Value("${prglanguage.java.buildFileName}")
     private String javaBuildFileName;
 
+    /**
+     * 確認用Java ファイル名(check Java file name)
+     */
+    @Value("${prglanguage.java.checkFileName}")
+    private String javaCheckFileName;
+
+    /**
+     * 確認用Java ビルド後ファイル名(check Java file name after build)
+     */
+    @Value("${prglanguage.java.buildCheckFileName}")
+    private String javaBuildCheckFileName;
+    
     /**
      * C/C++ ビルドコマンドパス(c/c++ build command path)
      */
@@ -117,6 +129,8 @@ public class PrgLanguageConfig {
         java.setName(PrgLanguageCode.JAVA.toString());
         java.setFileName(javaFileName);
         java.setBuildFileName(javaBuildFileName);
+        java.setCheckFileName(javaCheckFileName);
+        java.setBuildCheckFileName(javaBuildCheckFileName);
         java.setBuildCmdPath(javaBuildCmdPath);
         java.setExecuteCmdPath(javaExecuteCmdPath);
         java.setWorkFolderPath(javaWorkFolderPath);

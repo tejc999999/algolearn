@@ -53,7 +53,7 @@ public class LearnController {
 
             String lineFeedCode = System.getProperty("line.separator");
 
-            model.addAttribute("code", "public class Test {" + lineFeedCode
+            model.addAttribute("code", "public class TestClass {" + lineFeedCode
                     + "    public static void main(String[] args) {"
                     + lineFeedCode + "        System.out.println(\"TEST\");"
                     + lineFeedCode + "    }" + lineFeedCode + "}"

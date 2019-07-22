@@ -35,38 +35,42 @@
 	<div th:replace="layout :: header"></div>
 
 	■課題登録
-	  <div class="row">
-    <form name="form1">
-      font-size:<input type="number" name="text1" value="12" maxlength="5" onChange="changeFontSize(this)">px
-      theme:<select id="sel1" onChange="changeTheme()"></select>
-    </form>
-  </div>
 	
+	<p th:text="${result}"></p>
 	
 	<div class="container-fluid no-gutters pb-5">
 
 		<form th:action="@{/teacher/task/add}"
-			th:object="${questionForm}" method="post">
+			th:object="${taskAddCodeForm}" method="post" id="taskAddCodeForm">
 
 			<div class="form-row">
 				<div class="form-group col-md-12">
-					<label for="frontCode" class="col-form-label" >コード前部(学生操作不可)</label>
+					<label for="editor1" class="col-form-label" >コード前部(学生操作不可)</label>
 				</div>
 				<div id="editor1" class="col-md-12"></div>
 			</div>
 
 			<div class="form-row">
 				<div class="form-group col-md-12">
-					<label for="middleCode" class="col-form-label">コード中部(学生操作可)</label>
+					<label for="editor2" class="col-form-label">コード中部(学生操作可)</label>
     			</div>
 				<div id="editor2" class="col-md-12"></div>
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-12">
-					<label for="backCode" class="col-form-label" >コード後部(学生操作不可)</label>
+					<label for="editor3" class="col-form-label" >コード後部(学生操作不可)</label>
 				</div>
 				<div id="editor3" class="col-md-12"></div>
 			</div>
+			<div class="form-row">
+				<div class="col-md-12">
+		        	<input type="button" class="btn btn-info btn-block" th:value="実行" onClick="setCode()"/> 
+		        </div>
+	       	</div>
+          <input type="hidden" name="frontCode" id="frontCode" />
+          <input type="hidden" name="middleCode" id="middleCode" />
+          <input type="hidden" name="backCode" id="backCode" />
+          <input type="hidden" name="languageId" value="002"/>
 		</form>
 	</div>
 
@@ -87,69 +91,17 @@ function init() {
     var editor3 = ace.edit("editor3");
     editor3.setTheme("ace/theme/eclipse");
     editor3.session.setMode("ace/mode/java");
-	
-	var themeArray = [
-		"chaos",
-		"chrome",
-		"clouds",
-		"clouds_midnight",
-		"cobalt",
-		"crimson_editor",
-		"down",
-		"dracula",
-		"dreamweaver",
-		"eclipse",
-		"github",
-		"gob",
-		"gruvbox",
-		"idle_finger",
-		"iplastic",
-		"katzenmilch",
-		"kr_theme",
-		"kuroir",
-		"merbivore",
-		"merbivore_soft",
-		"mono_industrial",
-		"monokai",
-		"pestel_on_dark",
-		"solarized_dark",
-		"solarized_light",
-		"sqlserver",
-		"terminal",
-		"textmeta",
-		"tomorrow",
-		"tomorrow_night",
-		"tomorrow_night_blue",
-		"tomorrow_night_bright",
-		"tomorrow_night_eighties",
-		"twilight",
-		"vibrant_ink",
-		"xcode"
-		];
-	for(var i=0;i<themeArray.length;i++){
-	  let op = document.createElement("option");
-	  op.value = themeArray[i];  //value値
-	  op.text = themeArray[i];   //テキスト値
-	  document.getElementById("sel1").appendChild(op);
-	}
 }
 
-function changeFontSize($this) {
-    document.getElementById('editor1').style.fontSize= $this.value + 'px';
-    document.getElementById('editor2').style.fontSize= $this.value + 'px';
-    document.getElementById('editor3').style.fontSize= $this.value + 'px';
-}
-function changeTheme() {
-    editor.setTheme("ace/theme/" + document.getElementById("sel1").value);
-}
 function setCode() {
 	var editor1 = ace.edit("editor1");
-	document.getElementById("code1").value = editor1.getValue();
+	document.getElementById("frontCode").value = editor1.getValue();
 	var editor2 = ace.edit("editor2");
-	document.getElementById("code2").value = editor2.getValue();
+	document.getElementById("middleCode").value = editor2.getValue();
 	var editor3 = ace.edit("editor3");
-	document.getElementById("code3").value = editor3.getValue();
-    var form = document.getElementById('learnForm'); 
+	document.getElementById("backCode").value = editor3.getValue();
+	
+    var form = document.getElementById('taskAddCodeForm'); 
     form.submit();
 }
 	  

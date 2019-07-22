@@ -102,13 +102,13 @@ public class TaskService {
      * @param code
      * @return
      */
-    private boolean codeCompileCheck(String code, String plCode) {
+    private StringBuilder codeCompileCheck(String code, String plCode) {
         
         StringBuilder sb = new StringBuilder();
 
         String lineFeedCode = System.getProperty("line.separator");
 
-        if (PrgLanguageCode.JAVA.toString().equals(plCode)) {
+        if (PrgLanguageCode.JAVA.getId().equals(plCode)) {
             // Javaの場合
 
             // List<PrgLanguagePropertyDetail> plList = prgBuildProperties.getList();
@@ -122,7 +122,7 @@ public class TaskService {
                 // close処理を正しくする
                 FileOutputStream fos = new FileOutputStream(prgLanguagePropertiesDetail
                         .getWorkFolderPath() + java.io.File.separator
-                        + prgLanguagePropertiesDetail.getFileName());
+                        + prgLanguagePropertiesDetail.getCheckFileName());
                 OutputStreamWriter osw = new OutputStreamWriter(fos, serverProperties
                         .getCharacterCode());
                 String line2 = null;
@@ -139,7 +139,7 @@ public class TaskService {
                         + prgLanguagePropertiesDetail.getBuildCmdPath()
                         + "\" \"" + prgLanguagePropertiesDetail
                                 .getWorkFolderPath() + java.io.File.separator
-                        + prgLanguagePropertiesDetail.getFileName() + "\"");
+                        + prgLanguagePropertiesDetail.getCheckFileName() + "\"");
                 InputStream is = p.getInputStream();
                 InputStream es = p.getErrorStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(is, serverProperties
@@ -162,11 +162,16 @@ public class TaskService {
                 if (sb.toString() == null || sb.toString().equals("")) {
                     // エラーが発生していない場合のみ、実行
 
+                    System.out.println("\""
+                            + prgLanguagePropertiesDetail.getExecuteCmdPath()
+                            + "\" -cp  \"" + prgLanguagePropertiesDetail
+                                    .getWorkFolderPath() + "\" "
+                            + prgLanguagePropertiesDetail.getBuildCheckFileName());
                     p = Runtime.getRuntime().exec("\""
                             + prgLanguagePropertiesDetail.getExecuteCmdPath()
                             + "\" -cp  \"" + prgLanguagePropertiesDetail
                                     .getWorkFolderPath() + "\" "
-                            + prgLanguagePropertiesDetail.getBuildFileName());
+                            + prgLanguagePropertiesDetail.getBuildCheckFileName());
                     is = p.getInputStream();
                     es = p.getErrorStream();
                     br = new BufferedReader(new InputStreamReader(is, serverProperties
@@ -181,6 +186,7 @@ public class TaskService {
                         sb.append(line);
                         sb.append(lineFeedCode);
                     }
+                    
                     p.waitFor(); // プロセスが終了するまで待機する
                     p.destroy();
                 }
@@ -202,13 +208,7 @@ public class TaskService {
             sb.append("予期せぬエラーが発生しました。");
         }
         
-        
-        
-        
-        
-        
-        
-        return false;
+        return sb;
     }
 
     /**
@@ -216,35 +216,34 @@ public class TaskService {
      * @param form
      * @return
      */
-    public TaskAddCodeForm save(TaskAddCodeForm form) {
+    public String save(TaskAddCodeForm form) {
         TaskAddCodeForm resultForm = new TaskAddCodeForm();
         String lineFeedCode = System.getProperty("line.separator");
-        if (codeCompileCheck(form.getFrontCode() + lineFeedCode + form
+        StringBuilder sb = codeCompileCheck(form.getFrontCode() + lineFeedCode + form
                 .getMiddleCode() + lineFeedCode + form.getBackCode(), form
-                        .getLanguageId())) {
+                        .getLanguageId());
 
-            TaskBean taskBean = new TaskBean();
-            if (form.getId() != null && !form.getId().contentEquals("")) {
-                taskBean.setId(Long.valueOf(form.getId()));
-            }
-            taskBean.setTitle(form.getTitle());
-            taskBean.setDescription(form.getDescription());
-            taskBean.setLanguageId(form.getLanguageId());
-            taskBean.setFrontCode(form.getFrontCode());
-            taskBean.setMiddleCode(form.getMiddleCode());
-            taskBean.setBackCode(form.getBackCode());
-            
-            taskBean = taskRepository.save(taskBean);
-            
-            resultForm.setId(String.valueOf(taskBean.getId()));
-            resultForm.setTitle(taskBean.getTitle());
-            resultForm.setDescription(taskBean.getDescription());
-            resultForm.setLanguageId(taskBean.getLanguageId());
-            resultForm.setFrontCode(taskBean.getFrontCode());
-            resultForm.setMiddleCode(taskBean.getMiddleCode());
-            resultForm.setBackCode(taskBean.getBackCode());
-        }
+//            TaskBean taskBean = new TaskBean();
+//            if (form.getId() != null && !form.getId().contentEquals("")) {
+//                taskBean.setId(Long.valueOf(form.getId()));
+//            }
+//            taskBean.setTitle(form.getTitle());
+//            taskBean.setDescription(form.getDescription());
+//            taskBean.setLanguageId(form.getLanguageId());
+//            taskBean.setFrontCode(form.getFrontCode());
+//            taskBean.setMiddleCode(form.getMiddleCode());
+//            taskBean.setBackCode(form.getBackCode());
+//            
+//            taskBean = taskRepository.save(taskBean);
+//            
+//            resultForm.setId(String.valueOf(taskBean.getId()));
+//            resultForm.setTitle(taskBean.getTitle());
+//            resultForm.setDescription(taskBean.getDescription());
+//            resultForm.setLanguageId(taskBean.getLanguageId());
+//            resultForm.setFrontCode(taskBean.getFrontCode());
+//            resultForm.setMiddleCode(taskBean.getMiddleCode());
+//            resultForm.setBackCode(taskBean.getBackCode());
 
-        return resultForm;
+            return sb.toString();
     }
 }

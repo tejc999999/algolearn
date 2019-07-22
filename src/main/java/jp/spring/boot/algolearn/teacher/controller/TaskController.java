@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jp.spring.boot.algolearn.config.PrgLanguageCode;
 import jp.spring.boot.algolearn.teacher.form.QuestionForm;
 import jp.spring.boot.algolearn.teacher.form.StudentForm;
 import jp.spring.boot.algolearn.teacher.form.TaskAddCodeForm;
@@ -97,9 +98,13 @@ public class TaskController {
     public String addProcess(@Validated TaskAddCodeForm form, BindingResult result,
             Model model) {
 
-        taskService.save(form);
+            model.addAttribute("result", taskService.save(form));
 
-        return "redirect:/teacher/question";
+            return "/teacher/task/addcode";
+//        } else {
+//
+//            return "/teacher/task/addcode";
+//        }
     }
 
     /**
