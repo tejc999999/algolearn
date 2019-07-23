@@ -93,6 +93,7 @@ public class QuestionControllerTest {
      * 先生用問題一覧ページ表示_問題あり
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用問題一覧ページ表示_問題あり() throws Exception {
 
@@ -107,7 +108,7 @@ public class QuestionControllerTest {
                 status().isOk()).andExpect(view().name("teacher/question/list"))
                 .andReturn();
 
-        List<QuestionForm> list = (List) result.getModelAndView().getModel().get("questions");
+        List<QuestionForm> list = (List<QuestionForm>) result.getModelAndView().getModel().get("questions");
 
         QuestionForm form1 = new QuestionForm();
         form1.setId("1");
@@ -128,6 +129,7 @@ public class QuestionControllerTest {
      * 先生用問題一覧ページ表示_問題なし
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用問題一覧ページ表示_問題なし() throws Exception {
 
@@ -136,7 +138,7 @@ public class QuestionControllerTest {
                 .andExpect(view().name("teacher/question/list"))
                 .andReturn();
 
-        List<QuestionForm> list = (List) result.getModelAndView().getModel().get("questions");
+        List<QuestionForm> list = (List<QuestionForm>) result.getModelAndView().getModel().get("questions");
         if (list != null)
             assertEquals(list.size(), 0);
     }

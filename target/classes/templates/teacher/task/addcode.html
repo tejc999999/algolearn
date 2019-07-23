@@ -19,18 +19,10 @@
 <script th:src="@{/webjars/bootstrap/4.3.0/js/bootstrap.bundle.min.js}"
 	type="text/javascript" charset="utf-8"></script>
 
-
-
 <script th:src="@{/webjars/ace/1.3.3/src-noconflict/ace.js}" type="text/javascript" charset="utf-8"></script>
 
-
-
-
-
-
-
 </head>
-<body onload="init()">
+<body>
 
 	<div th:replace="layout :: header"></div>
 
@@ -70,28 +62,45 @@
           <input type="hidden" name="frontCode" id="frontCode" />
           <input type="hidden" name="middleCode" id="middleCode" />
           <input type="hidden" name="backCode" id="backCode" />
-          <input type="hidden" name="languageId" value="002"/>
+          <input type="hidden" name="languageId" id="languageId" value="002"/>
 		</form>
 	</div>
 
 <script th:inline="javascript">
 
-function init() {
-	
+window.addEventListener('DOMContentLoaded', function() {
+	 
     var editor1 = ace.edit("editor1");
-    editor1.setTheme("ace/theme/eclipse");
-    editor1.session.setMode("ace/mode/java");
-	document.getElementById('editor1').style.fontSize='12px';
-	
     var editor2 = ace.edit("editor2");
-    editor2.setTheme("ace/theme/eclipse");
-    editor2.session.setMode("ace/mode/java");
-	document.getElementById('editor2').style.fontSize='12px';
-	
     var editor3 = ace.edit("editor3");
+
+    var languageId = document.getElementById('languageId').value;
+    if(languageId == "001") {
+    	
+        editor1.session.setMode("ace/mode/c_cpp");
+        editor2.session.setMode("ace/mode/c_cpp");
+        editor3.session.setMode("ace/mode/c_cpp");
+    } else if(languageId = "002") {
+    	
+        editor1.session.setMode("ace/mode/java");
+        editor2.session.setMode("ace/mode/java");
+        editor3.session.setMode("ace/mode/java");
+    } else if(languageId = "003") {
+    	
+        editor1.session.setMode("ace/mode/python");
+        editor2.session.setMode("ace/mode/python");
+        editor3.session.setMode("ace/mode/python");
+	}
+    
+    editor1.setTheme("ace/theme/eclipse");
+    editor2.setTheme("ace/theme/eclipse");
     editor3.setTheme("ace/theme/eclipse");
-    editor3.session.setMode("ace/mode/java");
-}
+
+	document.getElementById('editor1').style.fontSize='12px';
+	document.getElementById('editor2').style.fontSize='12px';
+	document.getElementById('editor3').style.fontSize='12px';
+ 
+})
 
 function setCode() {
 	var editor1 = ace.edit("editor1");

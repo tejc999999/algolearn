@@ -150,6 +150,7 @@ public class CourseControllerTest {
      * 先生用コース一覧ページ表示_コースあり
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用コース一覧ページ表示_コースあり() throws Exception {
 
@@ -166,7 +167,7 @@ public class CourseControllerTest {
                 .andExpect(view().name("teacher/course/list"))
                 .andReturn();
 
-        List<CourseForm> list = (List) result.getModelAndView().getModel().get("courses");
+        List<CourseForm> list = (List<CourseForm>) result.getModelAndView().getModel().get("courses");
 
         CourseForm form1 = new CourseForm();
         form1.setId("1");
@@ -183,6 +184,7 @@ public class CourseControllerTest {
      * 先生用コース一覧ページ表示_コースなし
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用コース一覧ページ表示_コースなし() throws Exception {
 
@@ -190,7 +192,7 @@ public class CourseControllerTest {
                 status().isOk()).andExpect(view().name("teacher/course/list"))
                 .andReturn();
 
-        List<CourseForm> list = (List) result.getModelAndView().getModel().get("courses");
+        List<CourseForm> list = (List<CourseForm>) result.getModelAndView().getModel().get("courses");
         if (list != null)
             assertEquals(list.size(), 0);
     }
@@ -199,6 +201,7 @@ public class CourseControllerTest {
      * 先生用コース登録ページ表示_クラスあり_ユーザーあり
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用コース登録ページ表示_クラスあり_ユーザーあり() throws Exception {
 
@@ -229,9 +232,9 @@ public class CourseControllerTest {
         
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 2);
     }
 
@@ -239,6 +242,7 @@ public class CourseControllerTest {
      * 先生用コース登録ページ表示_クラスなし_ユーザーなし
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用コース登録ページ表示_クラスなし_ユーザーなし() throws Exception {
 
@@ -260,6 +264,7 @@ public class CourseControllerTest {
      * 先生用コース登録ページ内クラス所属ユーザ除外_所属ユーザあり
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用コース登録ページ内クラス所属ユーザ除外_所属ユーザあり() throws Exception {
 
@@ -295,9 +300,9 @@ public class CourseControllerTest {
 
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 1);
         
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel().get("courseForm");
@@ -310,6 +315,7 @@ public class CourseControllerTest {
      * 先生用コース登録ページ内クラス所属ユーザ除外_所属ユーザなし
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用コース登録ページ内クラス所属ユーザ除外_所属ユーザなし() throws Exception {
 
@@ -347,9 +353,9 @@ public class CourseControllerTest {
 
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 2);
 
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel().get("courseForm");
@@ -575,6 +581,7 @@ public class CourseControllerTest {
      * 先生用コース編集ページ表示_ユーザーあり_クラスあり_ユーザー重複なし
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用コース編集ページ表示_ユーザーあり_クラスあり_ユーザー重複なし() throws Exception {
 
@@ -607,9 +614,9 @@ public class CourseControllerTest {
 
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 2);
         
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
@@ -627,6 +634,7 @@ public class CourseControllerTest {
      * 先生用コース編集ページ表示_ユーザーあり_クラスあり_ユーザー重複あり
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用コース編集ページ表示_ユーザーあり_クラスあり_ユーザー重複あり() throws Exception {
 
@@ -659,9 +667,9 @@ public class CourseControllerTest {
 
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 2);
         
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
@@ -679,6 +687,7 @@ public class CourseControllerTest {
      * 先生用コース編集ページ表示_ユーザーなし_クラスなし
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用コース編集ページ表示_ユーザーなし_クラスなし() throws Exception {
 
@@ -710,9 +719,9 @@ public class CourseControllerTest {
 
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 2);
         
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
@@ -729,6 +738,7 @@ public class CourseControllerTest {
      * 先生用コース編集ページ内クラス所属ユーザ除外_所属ユーザあり
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用コース編集ページ内クラス所属ユーザ除外_所属ユーザあり() throws Exception {
 
@@ -768,9 +778,9 @@ public class CourseControllerTest {
                 .andReturn();
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 1);
         
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
@@ -786,6 +796,7 @@ public class CourseControllerTest {
      * 先生用コース編集ページ内クラス所属ユーザ除外_所属ユーザなし
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用コース編集ページ内クラス所属ユーザ除外_所属ユーザなし() throws Exception {
 
@@ -819,9 +830,9 @@ public class CourseControllerTest {
 
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 2);
         
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()

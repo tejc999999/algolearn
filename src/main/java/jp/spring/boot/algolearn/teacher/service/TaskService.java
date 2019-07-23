@@ -10,12 +10,10 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jp.spring.boot.algolearn.bean.QuestionBean;
-import jp.spring.boot.algolearn.bean.TaskBean;
 import jp.spring.boot.algolearn.config.PrgLanguageCode;
 import jp.spring.boot.algolearn.config.PrgLanguageProperties;
 import jp.spring.boot.algolearn.config.PrgLanguagePropertiesDetail;
@@ -24,7 +22,6 @@ import jp.spring.boot.algolearn.repository.QuestionRepository;
 import jp.spring.boot.algolearn.repository.TaskRepository;
 import jp.spring.boot.algolearn.teacher.form.QuestionForm;
 import jp.spring.boot.algolearn.teacher.form.TaskAddCodeForm;
-import jp.spring.boot.algolearn.teacher.form.TaskForm;
 
 /**
  * 先生用課題Serviceクラス（teacher task Service Class）

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -133,6 +132,7 @@ public class ClassControllerTest {
      * 先生用クラス一覧ページ表示_クラスあり
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用クラス一覧ページ表示_クラスあり() throws Exception {
 
@@ -152,7 +152,7 @@ public class ClassControllerTest {
                 .andExpect(view().name("teacher/class/list"))
                 .andReturn();
 
-        List<ClassForm> list = (List) result.getModelAndView().getModel().get("classes");
+        List<ClassForm> list = (List<ClassForm>) result.getModelAndView().getModel().get("classes");
 
         ClassForm form1 = new ClassForm();
         form1.setId("1");
@@ -173,6 +173,7 @@ public class ClassControllerTest {
      * 先生用クラス一覧ページ表示_クラスなし
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用クラス一覧ページ表示_クラスなし() throws Exception {
 
@@ -180,7 +181,7 @@ public class ClassControllerTest {
                 status().isOk()).andExpect(view().name("teacher/class/list"))
                 .andReturn();
 
-        List<ClassForm> list = (List) result.getModelAndView().getModel().get("classes");
+        List<ClassForm> list = (List<ClassForm>) result.getModelAndView().getModel().get("classes");
 
         if (list != null) assertEquals(list.size(), 0);
     }
@@ -189,6 +190,7 @@ public class ClassControllerTest {
      * 先生用クラス登録ページ表示_ユーザーあり
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用クラス登録ページ表示_ユーザーあり() throws Exception {
 
@@ -221,6 +223,7 @@ public class ClassControllerTest {
      * 先生用クラス登録ページ表示_ユーザーなし
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用クラス登録ページ表示_ユーザーなし() throws Exception {
 
@@ -262,10 +265,8 @@ public class ClassControllerTest {
             assertEquals(classBean.getName(), form.getName());
             List<String> userIdList = classBean.getUserIdList();
             assertEquals(userIdList.size(), 1);
-            if (userIdList != null) {
-                String userId = userIdList.get(0);
-                assertEquals(userId, "user01");
-            }
+            String userId = userIdList.get(0);
+            assertEquals(userId, "user01");
         });
         opt.orElseThrow(() -> new Exception("bean not found."));
     }
@@ -298,6 +299,7 @@ public class ClassControllerTest {
      * 先生用クラス編集ページ表示
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用クラス編集ページ表示() throws Exception {
 

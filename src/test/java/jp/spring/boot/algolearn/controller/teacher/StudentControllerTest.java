@@ -121,6 +121,7 @@ public class StudentControllerTest {
      * 先生用学生一覧ページ表示_ユーザーあり
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用学生一覧ページ表示_ユーザーあり() throws Exception {
 
@@ -137,8 +138,7 @@ public class StudentControllerTest {
                 .andExpect(view().name("teacher/student/list"))
                 .andReturn();
 
-        List<StudentForm> list = (List) result.getModelAndView().getModel().get("students");
-
+        List<StudentForm> list = (List<StudentForm>) result.getModelAndView().getModel().get("students");
         assertEquals(list.size(), 2);
         
         StudentForm form1 = new StudentForm();
@@ -158,6 +158,7 @@ public class StudentControllerTest {
      * 先生用学生一覧ページ表示_ユーザーなし
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void 先生用学生一覧ページ表示_ユーザーなし() throws Exception {
 
@@ -165,7 +166,7 @@ public class StudentControllerTest {
                 status().isOk()).andExpect(view().name("teacher/student/list"))
                 .andReturn();
 
-        List<StudentForm> list = (List) result.getModelAndView().getModel().get("students");
+        List<StudentForm> list = (List<StudentForm>) result.getModelAndView().getModel().get("students");
         if(list != null) assertEquals(list.size(), 0);
     }
 

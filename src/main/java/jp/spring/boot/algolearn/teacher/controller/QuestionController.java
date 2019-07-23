@@ -1,10 +1,7 @@
 package jp.spring.boot.algolearn.teacher.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,8 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jp.spring.boot.algolearn.bean.QuestionBean;
-import jp.spring.boot.algolearn.repository.QuestionRepository;
 import jp.spring.boot.algolearn.teacher.form.QuestionForm;
 import jp.spring.boot.algolearn.teacher.service.QuestionService;
 
