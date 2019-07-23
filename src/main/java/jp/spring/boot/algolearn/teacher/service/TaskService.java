@@ -10,9 +10,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import jp.spring.boot.algolearn.bean.QuestionBean;
 import jp.spring.boot.algolearn.config.PrgLanguageCode;
 import jp.spring.boot.algolearn.config.PrgLanguageProperties;
@@ -23,44 +20,49 @@ import jp.spring.boot.algolearn.repository.TaskRepository;
 import jp.spring.boot.algolearn.teacher.form.QuestionForm;
 import jp.spring.boot.algolearn.teacher.form.TaskAddCodeForm;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 /**
- * 先生用課題Serviceクラス（teacher task Service Class）
+ * 先生用課題Serviceクラス（teacher task Service Class）.
  * @author tejc999999
- *
  */
 @Service
 public class TaskService {
 
     /**
-     * 課題リポジトリ(task repository)
+     * 課題リポジトリ(task repository).
      */
     @Autowired
     TaskRepository taskRepository;
     
+    /**
+     * 問題Repository(question repository).
+     */
     @Autowired
     QuestionRepository questionRepository;
     
     
     /**
-     * 
+     * プログラム言語プロパティ.
      */
     @Autowired
     PrgLanguageProperties prgLanguageProperties;
 
     /**
-     * 
+     * サーバー設定プロパティ.
      */
     @Autowired
     ServerProperties serverProperties;
     
     /**
-     * 全ての問題を取得する
+     * 全ての問題を取得する.
      * @return 全ての問題Formリスト
      */
     public List<QuestionForm> findAll() {
         List<QuestionForm> list = new ArrayList<>();
 
-        for(QuestionBean questionBean : questionRepository.findAll()) {
+        for (QuestionBean questionBean : questionRepository.findAll()) {
             QuestionForm questionForm = new QuestionForm();
             questionForm.setId(String.valueOf(questionBean.getId()));
             questionForm.setTitle(questionBean.getTitle());
@@ -74,7 +76,7 @@ public class TaskService {
     
     
     /**
-     * 検索文字列をタイトルか説明文に含む問題を取得する
+     * 検索文字列をタイトルか説明文に含む問題を取得する.
      * @param searchStr 検索文字列
      * @return 合致する問題Formリスト
      */
@@ -82,7 +84,8 @@ public class TaskService {
         List<QuestionForm> list = new ArrayList<>();
         
 
-        for(QuestionBean questionBean : questionRepository.findByTitleLikeOrDescriptionLike(searchStr, searchStr)) {
+        for (QuestionBean questionBean :
+                    questionRepository.findByTitleLikeOrDescriptionLike(searchStr, searchStr)) {
             QuestionForm questionForm = new QuestionForm();
             questionForm.setId(String.valueOf(questionBean.getId()));
             questionForm.setTitle(questionBean.getTitle());
@@ -95,8 +98,9 @@ public class TaskService {
     }
     
     /**
-     * プログラムコードのコンパイルエラーチェック
-     * @param code
+     * プログラムコードのコンパイルエラーチェック.
+     * @param code プログラムコード
+     * @param plCode プログラム言語種別コード
      * @return
      */
     private StringBuilder codeCompileCheck(String code, String plCode) {
@@ -127,7 +131,8 @@ public class TaskService {
                     osw.write(line2 + "\n");
                 }
                 osw.close();
-                // FileWriter fw = new FileWriter(prgLanguagePropertiesDetail.getWorkFolderPath() + java.io.File.separator +
+                // FileWriter fw = new FileWriter(prgLanguagePropertiesDetail.getWorkFolderPath()
+                //         + java.io.File.separator +
                 // prgLanguagePropertiesDetail.getFileName());
                 // fw.write(code);
                 // fw.close();
@@ -209,38 +214,38 @@ public class TaskService {
     }
 
     /**
-     * プログラムコード登録
-     * @param form
-     * @return
+     * プログラムコード登録.
+     * @param form 課題追加コードForm
+     * @return 実行結果
      */
     public String save(TaskAddCodeForm form) {
-        TaskAddCodeForm resultForm = new TaskAddCodeForm();
+        // TaskAddCodeForm resultForm = new TaskAddCodeForm();
         String lineFeedCode = System.getProperty("line.separator");
-        StringBuilder sb = codeCompileCheck(form.getFrontCode() + lineFeedCode + form
-                .getMiddleCode() + lineFeedCode + form.getBackCode(), form
+        StringBuilder sb = codeCompileCheck(form.getFrontCode() + lineFeedCode
+                + form.getMiddleCode() + lineFeedCode + form.getBackCode(), form
                         .getLanguageId());
 
-//            TaskBean taskBean = new TaskBean();
-//            if (form.getId() != null && !form.getId().contentEquals("")) {
-//                taskBean.setId(Long.valueOf(form.getId()));
-//            }
-//            taskBean.setTitle(form.getTitle());
-//            taskBean.setDescription(form.getDescription());
-//            taskBean.setLanguageId(form.getLanguageId());
-//            taskBean.setFrontCode(form.getFrontCode());
-//            taskBean.setMiddleCode(form.getMiddleCode());
-//            taskBean.setBackCode(form.getBackCode());
-//            
-//            taskBean = taskRepository.save(taskBean);
-//            
-//            resultForm.setId(String.valueOf(taskBean.getId()));
-//            resultForm.setTitle(taskBean.getTitle());
-//            resultForm.setDescription(taskBean.getDescription());
-//            resultForm.setLanguageId(taskBean.getLanguageId());
-//            resultForm.setFrontCode(taskBean.getFrontCode());
-//            resultForm.setMiddleCode(taskBean.getMiddleCode());
-//            resultForm.setBackCode(taskBean.getBackCode());
+        // TaskBean taskBean = new TaskBean();
+        // if (form.getId() != null && !form.getId().contentEquals("")) {
+        // taskBean.setId(Long.valueOf(form.getId()));
+        // }
+        // taskBean.setTitle(form.getTitle());
+        // taskBean.setDescription(form.getDescription());
+        // taskBean.setLanguageId(form.getLanguageId());
+        // taskBean.setFrontCode(form.getFrontCode());
+        // taskBean.setMiddleCode(form.getMiddleCode());
+        // taskBean.setBackCode(form.getBackCode());
+        //
+        // taskBean = taskRepository.save(taskBean);
+        //
+        // resultForm.setId(String.valueOf(taskBean.getId()));
+        // resultForm.setTitle(taskBean.getTitle());
+        // resultForm.setDescription(taskBean.getDescription());
+        // resultForm.setLanguageId(taskBean.getLanguageId());
+        // resultForm.setFrontCode(taskBean.getFrontCode());
+        // resultForm.setMiddleCode(taskBean.getMiddleCode());
+        // resultForm.setBackCode(taskBean.getBackCode());
 
-            return sb.toString();
+        return sb.toString();
     }
 }

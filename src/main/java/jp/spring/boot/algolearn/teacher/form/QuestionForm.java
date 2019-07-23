@@ -4,33 +4,30 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 
- * 先生用問題Form(question form for teacher)
- * 
+ * 先生用問題Form(question form for teacher).
  * @author tejc999999
- *
  */
 @Data
 @NoArgsConstructor
 public class QuestionForm {
 
-	/**
-	 * 問題ID(question id)
-	 */
-	private String id;
-	
-	/**
-	 * タイトル(title)
-	 */
-	private String title;
+    /**
+     * 問題ID(question id).
+     */
+    private String id;
 
-	/**
-	 * 説明文(description)
-	 */
-	private String description;
+    /**
+     * タイトル(title).
+     */
+    private String title;
 
-	/**
-	 * 入力値個数(number of input param)
-	 */
-	private int inputNum;
+    /**
+     * 説明文(description).
+     */
+    private String description;
+
+    /**
+     * 入力値個数(number of input param).
+     */
+    private int inputNum;
 }

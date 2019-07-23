@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import jp.spring.boot.algolearn.bean.QuestionBean;
 import jp.spring.boot.algolearn.repository.QuestionRepository;
 import jp.spring.boot.algolearn.teacher.form.QuestionForm;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+
 /**
- * 先生用問題Serviceクラス（teacher question Service Class）
+ * 先生用問題Serviceクラス（teacher question Service Class）.
  * @author tejc999999
  *
  */
@@ -20,13 +21,13 @@ import jp.spring.boot.algolearn.teacher.form.QuestionForm;
 public class QuestionService {
 
     /**
-     * 問題リポジトリ(question repository)
+     * 問題リポジトリ(question repository).
      */
     @Autowired
     QuestionRepository questionRepository;
     
     /**
-     * 全ての問題を取得する
+     * 全ての問題を取得する.
      * @return 全ての問題Formリスト
      */
     public List<QuestionForm> findAll() {
@@ -45,7 +46,7 @@ public class QuestionService {
     }
     
     /**
-     * 問題を取得する
+     * 問題を取得する.
      * @param id 問題ID
      * @return 問題Form
      */
@@ -65,7 +66,7 @@ public class QuestionService {
     }
     
     /**
-     * 問題を登録する
+     * 問題を登録する.
      * @param form 問題Form
      * @return 登録済み問題Form
      */
@@ -73,7 +74,7 @@ public class QuestionService {
 
         QuestionBean questionBean = new QuestionBean();
         String questionId = form.getId();
-        if(questionId != null && !questionId.equals("")) {
+        if (questionId != null && !questionId.equals("")) {
             questionBean.setId(Long.parseLong(questionId));
         }
         questionBean.setTitle(form.getTitle());
@@ -92,7 +93,7 @@ public class QuestionService {
     }
     
     /**
-     * 問題削除
+     * 問題削除.
      * @param id 問題ID
      */
     public void delete(String id) {

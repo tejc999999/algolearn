@@ -3,23 +3,25 @@ package jp.spring.boot.algolearn.teacher.controller;
 import java.util.List;
 import java.util.Map;
 
+import jp.spring.boot.algolearn.teacher.form.ClassForm;
+import jp.spring.boot.algolearn.teacher.service.ClassService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jp.spring.boot.algolearn.teacher.form.ClassForm;
-import jp.spring.boot.algolearn.teacher.service.ClassService;
-
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 
 /**
- * 先生用クラスContollerクラス（teacher class Controller Class）
+ * 先生用クラスContollerクラス（teacher class Controller Class）.
  * @author tejc999999
  */
 @Controller
@@ -27,13 +29,13 @@ import org.springframework.validation.annotation.Validated;
 public class ClassController {
 
     /**
-     * クラス用サービス(class service)
+     * クラス用サービス(class service).
      */
     @Autowired
     ClassService classService;
     
     /**
-     * モデルにフォームをセット(set form the model)
+     * モデルにフォームをセット(set form the model).
      * @return クラスForm(class form)
      */
     @ModelAttribute
@@ -42,7 +44,7 @@ public class ClassController {
     }
 
     /**
-     * クラス一覧ページ表示(show class list page)
+     * クラス一覧ページ表示(show class list page).
      * @param model クラス一覧保存用モデル(model to save class list)
      * @return クラス一覧ページビュー(class list page view)
      */
@@ -57,7 +59,7 @@ public class ClassController {
     }
 
     /**
-     * クラス登録ページ表示(show add class page)
+     * クラス登録ページ表示(show add class page).
      * @return クラス登録ページビュー(add class page view)
      */
     @GetMapping(path = "add")
@@ -71,7 +73,7 @@ public class ClassController {
     }
 
     /**
-     * クラス登録処理(add process for class)
+     * クラス登録処理(add process for class).
      * @return クラス一覧ページリダイレクト(redirect class list page)
      */
     @PostMapping(path = "add")
@@ -84,7 +86,7 @@ public class ClassController {
     }
 
     /**
-     * クラス編集ページ表示(show edit class page)
+     * クラス編集ページ表示(show edit class page).
      * @return クラス編集ページビュー(edit class page view)
      */
     @PostMapping(path = "edit")
@@ -103,7 +105,7 @@ public class ClassController {
     }
 
     /**
-     * クラス編集処理(edit process for class)
+     * クラス編集処理(edit process for class).
      * @return クラス一覧ページリダイレクト(class list page redirect)
      */
     @PostMapping(path = "editprocess")
@@ -115,7 +117,7 @@ public class ClassController {
     }
 
     /**
-     * クラス削除処理(delete process for class)
+     * クラス削除処理(delete process for class).
      * @return クラス一覧ページリダイレクト(redirect class list page)
      */
     @PostMapping(path = "delete")

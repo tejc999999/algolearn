@@ -18,7 +18,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * ユーザーBean(user Bean)
+ * ユーザーBean(user Bean).
  * @author tejc999999
  */
 @Setter
@@ -28,59 +28,59 @@ import lombok.Setter;
 public class UserBean {
 
     /**
-     * ユーザーID(user id)
+     * ユーザーID(user id).
      */
     @Id
     @Column(name = "id")
     private String id;
 
     /**
-     * パスワード(password)
+     * パスワード(password).
      */
     @Column(name = "password", nullable = false)
     private String password;
 
     /**
-     * ユーザー名(user name)
+     * ユーザー名(user name).
      */
     @Column(name = "name")
     private String name;
 
     /**
-     * 権限ID(role id)
+     * 権限ID(role id).
      */
     @Column(name = "role_id", nullable = false, length = 3)
     private String roleId;
 
     /**
-     * ユーザー所属クラス：相互参照オブジェクト(user belonging class：cross reference object)
+     * ユーザー所属クラス：相互参照オブジェクト(user belonging class：cross reference object).
      */
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="user_id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
     private Set<UserClassBean> userClassBeans;
 
     /**
-     * ユーザー所属コース：相互参照オブジェクト(user belonging course：cross reference object)
+     * ユーザー所属コース：相互参照オブジェクト(user belonging course：cross reference object).
      */
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="user_id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
     private Set<UserCourseBean> userCourseBeans;
     
     /**
-     * ユーザー、課題コードBean：相互参照オブジェクト(user・task：cross reference object)
+     * ユーザー、課題コードBean：相互参照オブジェクト(user・task：cross reference object).
      */
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="user_id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
     private Set<UserTaskCodeBean> userTaskCodeBeans;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public UserBean() {
         userClassBeans = new HashSet<>();
@@ -89,7 +89,7 @@ public class UserBean {
     }
     
     /**
-     * クラスIDリストを取得する
+     * クラスIDリストを取得する.
      * @return クラスIDリスト
      */
     public List<String> getClassIdList() {
@@ -101,7 +101,7 @@ public class UserBean {
     }
     
     /**
-     * コースIDリストを取得する
+     * コースIDリストを取得する.
      * @return コースIDリスト
      */
     public List<String> getCourseIdList() {

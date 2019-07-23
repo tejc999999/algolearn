@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * コースBean(course Bean)
+ * コースBean(course Bean).
  * @author tejc999999
  */
 @Entity
@@ -30,7 +30,7 @@ import lombok.Setter;
 public class CourseBean {
 
     /**
-     * コースコード(course code)
+     * コースコード(course code).
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,13 +38,13 @@ public class CourseBean {
     private Long id;
 
     /**
-     * コース名(course name)
+     * コース名(course name).
      */
     @Column(name = "name")
     private String name;
     
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public CourseBean() {
         userCourseBeans = new HashSet<>();
@@ -54,57 +54,57 @@ public class CourseBean {
     }
 
     /**
-     * ユーザ所属コース：相互参照オブジェクト(user belonging course：cross reference object)
+     * ユーザ所属コース：相互参照オブジェクト(user belonging course：cross reference object).
      */
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="course_id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "course_id")
     Set<UserCourseBean> userCourseBeans;
     
     /**
-     * クラス所属コース：相互参照オブジェクト(class belonging course：cross reference object)
+     * クラス所属コース：相互参照オブジェクト(class belonging course：cross reference object).
      */
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="course_id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "course_id")
     Set<ClassCourseBean> classCourseBeans;
 
     /**
-     * 課題・コース：相互参照オブジェクト(task・course：cross reference object)
+     * 課題・コース：相互参照オブジェクト(task・course：cross reference object).
      */
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="course_id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "course_id")
     Set<TaskCourseBean> taskCourseBeans;
 
     /**
-     * ユーザー・課題：相互参照オブジェクト(user・task：cross reference object)
+     * ユーザー・課題：相互参照オブジェクト(user・task：cross reference object).
      */
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="course_id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "course_id")
     Set<UserTaskCodeBean> userTaskCodeBeans;
 
     /**
-     * ユーザ・コース情報クリア
+     * ユーザ・コース情報クリア.
      */
     public void clearUserCourseBean() {
         userCourseBeans.clear();
     }
     
     /**
-     * クラス・コース情報クリア
+     * クラス・コース情報クリア.
      */
     public void clearClassCourseBean() {
         classCourseBeans.clear();
     }
 
     /**
-     * ユーザー・コース情報を追加する
+     * ユーザー・コース情報を追加する.
      * @param userCourseBean ユーザー・コースBean
      */
     public void addUserCourseBean(UserCourseBean userCourseBean) {
@@ -112,7 +112,7 @@ public class CourseBean {
     }
     
     /**
-     * クラス・コース情報を追加する
+     * クラス・コース情報を追加する.
      * @param classCourseBean クラス・コースBean
      */
     public void addClassCourseBean(ClassCourseBean classCourseBean) {
@@ -120,7 +120,7 @@ public class CourseBean {
     }
     
     /**
-     * コースに紐づくユーザーIDリストを取得する
+     * コースに紐づくユーザーIDリストを取得する.
      * @return ユーザーIDリスト
      */
     public List<String> getUserIdList() {
@@ -132,7 +132,7 @@ public class CourseBean {
     }
     
     /**
-     * コースに紐づくクラスIDリストを取得する
+     * コースに紐づくクラスIDリストを取得する.
      * @return クラスIDリスト
      */
     public List<String> getClassIdList() {

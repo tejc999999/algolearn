@@ -1,9 +1,9 @@
 package jp.spring.boot.algolearn.controller.teacher;
 
-
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -11,7 +11,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.Operations;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import com.ninja_squad.dbsetup.destination.Destination;
+import com.ninja_squad.dbsetup.operation.Operation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +24,15 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.sql.DataSource;
+
+import jp.spring.boot.algolearn.bean.ClassBean;
+import jp.spring.boot.algolearn.bean.CourseBean;
+import jp.spring.boot.algolearn.bean.UserBean;
+import jp.spring.boot.algolearn.config.RoleCode;
+import jp.spring.boot.algolearn.repository.ClassRepository;
+import jp.spring.boot.algolearn.repository.CourseRepository;
+import jp.spring.boot.algolearn.repository.UserRepository;
+import jp.spring.boot.algolearn.teacher.form.CourseForm;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,23 +50,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import com.ninja_squad.dbsetup.destination.Destination;
-import com.ninja_squad.dbsetup.operation.Operation;
 
-import jp.spring.boot.algolearn.bean.ClassBean;
-import jp.spring.boot.algolearn.bean.CourseBean;
-import jp.spring.boot.algolearn.bean.UserBean;
-import jp.spring.boot.algolearn.config.RoleCode;
-import jp.spring.boot.algolearn.repository.ClassRepository;
-import jp.spring.boot.algolearn.repository.CourseRepository;
-import jp.spring.boot.algolearn.repository.UserRepository;
-import jp.spring.boot.algolearn.teacher.form.CourseForm;
 
 /**
- * コースControllerテスト(test class controller)
+ * コースControllerテスト(test class controller).
  * @author tejc999999
  *
  */
@@ -131,24 +132,24 @@ public class CourseControllerTest {
     private DataSource dataSource;
 
     /**
-     * テスト前処理
-     * @throws Exception
+     * テスト前処理.
      */
     @Before
-    public void テスト前処理() throws Exception {
+    public void テスト前処理()  {
         // Thymeleafを使用していることがテスト時に認識されない様子
         // 循環ビューが発生しないことを明示するためにViewResolverを使用
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/templates");
         viewResolver.setSuffix(".html");
         // StandaloneSetupの場合、ControllerでAutowiredしているオブジェクトのMockが必要。後日時間あれば対応
-        // mockMvc = MockMvcBuilders.standaloneSetup(new StudentLearnController()).setViewResolvers(viewResolver).build();
+        // mockMvc = MockMvcBuilders.standaloneSetup(new StudentLearnController())
+        //          .setViewResolvers(viewResolver).build();
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
     /**
-     * 先生用コース一覧ページ表示_コースあり
-     * @throws Exception
+     * 先生用コース一覧ページ表示_コースあり.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -162,13 +163,6 @@ public class CourseControllerTest {
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
-        MvcResult result = mockMvc.perform(get("/teacher/course"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("teacher/course/list"))
-                .andReturn();
-
-        List<CourseForm> list = (List<CourseForm>) result.getModelAndView().getModel().get("courses");
-
         CourseForm form1 = new CourseForm();
         form1.setId("1");
         form1.setName("コース１");
@@ -177,12 +171,20 @@ public class CourseControllerTest {
         form2.setId("2");
         form2.setName("コース２");
 
+        MvcResult result = mockMvc.perform(get("/teacher/course"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/course/list"))
+                .andReturn();
+
+        List<CourseForm> list
+                = (List<CourseForm>) result.getModelAndView().getModel().get("courses");
+
         assertThat(list, hasItems(form1, form2));
     }
 
     /**
-     * 先生用コース一覧ページ表示_コースなし
-     * @throws Exception
+     * 先生用コース一覧ページ表示_コースなし.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -192,14 +194,16 @@ public class CourseControllerTest {
                 status().isOk()).andExpect(view().name("teacher/course/list"))
                 .andReturn();
 
-        List<CourseForm> list = (List<CourseForm>) result.getModelAndView().getModel().get("courses");
-        if (list != null)
+        List<CourseForm> list
+                = (List<CourseForm>) result.getModelAndView().getModel().get("courses");
+        if (list != null) {
             assertEquals(list.size(), 0);
+        }
     }
     
     /**
-     * 先生用コース登録ページ表示_クラスあり_ユーザーあり
-     * @throws Exception
+     * 先生用コース登録ページ表示_クラスあり_ユーザーあり.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -232,15 +236,17 @@ public class CourseControllerTest {
         
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 2);
     }
 
     /**
-     * 先生用コース登録ページ表示_クラスなし_ユーザーなし
-     * @throws Exception
+     * 先生用コース登録ページ表示_クラスなし_ユーザーなし.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -253,16 +259,22 @@ public class CourseControllerTest {
                 .andExpect(view().name("teacher/course/add"))
                 .andReturn();
         
-        Map<String, String> classMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
-        if(classMap != null) assertEquals(classMap.size(), 0);
+        Map<String, String> classMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
+        if (classMap != null) {
+            assertEquals(classMap.size(), 0);
+        }
 
-        Map<String, String> userMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
-        if(userMap != null) assertEquals(userMap.size(), 0);
+        Map<String, String> userMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
+        if (userMap != null) {
+            assertEquals(userMap.size(), 0);
+        }
     }
     
     /**
-     * 先生用コース登録ページ内クラス所属ユーザ除外_所属ユーザあり
-     * @throws Exception
+     * 先生用コース登録ページ内クラス所属ユーザ除外_所属ユーザあり.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -300,9 +312,11 @@ public class CourseControllerTest {
 
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 1);
         
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel().get("courseForm");
@@ -312,8 +326,8 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用コース登録ページ内クラス所属ユーザ除外_所属ユーザなし
-     * @throws Exception
+     * 先生用コース登録ページ内クラス所属ユーザ除外_所属ユーザなし.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -353,9 +367,11 @@ public class CourseControllerTest {
 
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 2);
 
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel().get("courseForm");
@@ -366,8 +382,8 @@ public class CourseControllerTest {
     }
 
     /**
-     * 先生用コース登録処理_ユーザーあり_クラスあり
-     * @throws Exception
+     * 先生用コース登録処理_ユーザーあり_クラスあり.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース登録処理_ユーザーあり_クラスあり() throws Exception {
@@ -411,8 +427,8 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用コース登録処理_ユーザーあり_クラスあり_ユーザ重複
-     * @throws Exception
+     * 先生用コース登録処理_ユーザーあり_クラスあり_ユーザ重複.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース登録処理_ユーザーあり_クラスあり_ユーザ重複() throws Exception {
@@ -458,8 +474,8 @@ public class CourseControllerTest {
     
     
     /**
-     * 先生用コース登録処理_ユーザーあり_クラスなし
-     * @throws Exception
+     * 先生用コース登録処理_ユーザーあり_クラスなし.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース登録処理_ユーザーあり_クラスなし() throws Exception {
@@ -499,8 +515,8 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用コース登録処理_ユーザーなし_クラスあり
-     * @throws Exception
+     * 先生用コース登録処理_ユーザーなし_クラスあり.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース登録処理_ユーザーなし_クラスあり() throws Exception {
@@ -540,8 +556,8 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用コース登録処理_ユーザーなし_クラスなし
-     * @throws Exception
+     * 先生用コース登録処理_ユーザーなし_クラスなし.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース登録処理_ユーザーなし_クラスなし() throws Exception {
@@ -578,8 +594,8 @@ public class CourseControllerTest {
     }
 
     /**
-     * 先生用コース編集ページ表示_ユーザーあり_クラスあり_ユーザー重複なし
-     * @throws Exception
+     * 先生用コース編集ページ表示_ユーザーあり_クラスあり_ユーザー重複なし.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -614,9 +630,11 @@ public class CourseControllerTest {
 
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 2);
         
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
@@ -631,8 +649,8 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用コース編集ページ表示_ユーザーあり_クラスあり_ユーザー重複あり
-     * @throws Exception
+     * 先生用コース編集ページ表示_ユーザーあり_クラスあり_ユーザー重複あり.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -667,9 +685,11 @@ public class CourseControllerTest {
 
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 2);
         
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
@@ -684,8 +704,8 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用コース編集ページ表示_ユーザーなし_クラスなし
-     * @throws Exception
+     * 先生用コース編集ページ表示_ユーザーなし_クラスなし.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -719,9 +739,11 @@ public class CourseControllerTest {
 
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 2);
         
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
@@ -735,8 +757,8 @@ public class CourseControllerTest {
 
     
     /**
-     * 先生用コース編集ページ内クラス所属ユーザ除外_所属ユーザあり
-     * @throws Exception
+     * 先生用コース編集ページ内クラス所属ユーザ除外_所属ユーザあり.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -778,9 +800,11 @@ public class CourseControllerTest {
                 .andReturn();
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 1);
         
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
@@ -792,12 +816,13 @@ public class CourseControllerTest {
         assertEquals(courseForm.getClassCheckedList().get(0), "1");
         assertEquals(courseForm.getUserCheckedList(), null);
     }
+
     /**
-     * 先生用コース編集ページ内クラス所属ユーザ除外_所属ユーザなし
-     * @throws Exception
+     * 先生用コース編集ページ内クラス所属ユーザ除外_所属ユーザなし.
+     * @throws Exception MockMVCの処理失敗例外
      */
-    @SuppressWarnings("unchecked")
     @Test
+    @SuppressWarnings("unchecked")
     public void 先生用コース編集ページ内クラス所属ユーザ除外_所属ユーザなし() throws Exception {
 
         // DB状態
@@ -830,9 +855,11 @@ public class CourseControllerTest {
 
         // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
         // Mvcresultでチェック
-        Map<String, String> classCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
+        Map<String, String> classCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
         assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
+        Map<String, String> userCheckMap
+                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
         assertEquals(userCheckMap.size(), 2);
         
         CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
@@ -846,8 +873,8 @@ public class CourseControllerTest {
     }
 
     /**
-     * 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーあり_クラスなし
-     * @throws Exception
+     * 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーあり_クラスなし.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーあり_クラスなし() throws Exception {
@@ -875,8 +902,8 @@ public class CourseControllerTest {
         list.add("user02");
         courseForm.setUserCheckedList(list);
 
-        mockMvc.perform(post("/teacher/course/editprocess").
-                flashAttr("courseForm", courseForm))
+        mockMvc.perform(post("/teacher/course/editprocess")
+                .flashAttr("courseForm", courseForm))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/teacher/course"));
 
@@ -892,8 +919,8 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスあり
-     * @throws Exception
+     * 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスあり.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスあり() throws Exception {
@@ -921,8 +948,8 @@ public class CourseControllerTest {
         checkClassIdList.add("1");
         courseForm.setClassCheckedList(checkClassIdList);
 
-        mockMvc.perform(post("/teacher/course/editprocess").
-                flashAttr("courseForm", courseForm))
+        mockMvc.perform(post("/teacher/course/editprocess")
+                .flashAttr("courseForm", courseForm))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/teacher/course"));
 
@@ -938,8 +965,8 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスなし
-     * @throws Exception
+     * 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスなし.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース編集処理_ユーザーあり_クラスあり_変更後_ユーザーなし_クラスなし() throws Exception {
@@ -964,8 +991,8 @@ public class CourseControllerTest {
         courseForm.setId("1");
         courseForm.setName("コース１－２");
 
-        mockMvc.perform(post("/teacher/course/editprocess").
-                flashAttr("courseForm", courseForm))
+        mockMvc.perform(post("/teacher/course/editprocess")
+                .flashAttr("courseForm", courseForm))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/teacher/course"));
 
@@ -980,8 +1007,8 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用コース編集処理_ユーザーあり_クラスなし_変更後_ユーザーなし_クラスあり
-     * @throws Exception
+     * 先生用コース編集処理_ユーザーあり_クラスなし_変更後_ユーザーなし_クラスあり.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース編集処理_ユーザーあり_クラスなし_変更後_ユーザーなし_クラスあり() throws Exception {
@@ -1008,8 +1035,8 @@ public class CourseControllerTest {
         checkClassIdList.add("1");
         courseForm.setClassCheckedList(checkClassIdList);
 
-        mockMvc.perform(post("/teacher/course/editprocess").
-                flashAttr("courseForm", courseForm))
+        mockMvc.perform(post("/teacher/course/editprocess")
+                .flashAttr("courseForm", courseForm))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/teacher/course"));
 
@@ -1026,8 +1053,8 @@ public class CourseControllerTest {
     }
 
     /**
-     * 先生用コース編集処理_ユーザーなし_クラスなし_変更後_ユーザーあり_クラスあり
-     * @throws Exception
+     * 先生用コース編集処理_ユーザーなし_クラスなし_変更後_ユーザーあり_クラスあり.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース編集処理_ユーザーなし_クラスなし_変更後_ユーザーあり_クラスあり() throws Exception {
@@ -1056,8 +1083,8 @@ public class CourseControllerTest {
         checkUserIdList.add("user02");
         courseForm.setUserCheckedList(checkUserIdList);
 
-        mockMvc.perform(post("/teacher/course/editprocess").
-                flashAttr("courseForm", courseForm))
+        mockMvc.perform(post("/teacher/course/editprocess")
+                .flashAttr("courseForm", courseForm))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/teacher/course"));
 
@@ -1076,8 +1103,8 @@ public class CourseControllerTest {
     
  
     /**
-     * 先生用コース削除処理_ユーザーあり_クラスあり
-     * @throws Exception
+     * 先生用コース削除処理_ユーザーあり_クラスあり.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース削除処理_ユーザーあり_クラスあり() throws Exception {
@@ -1100,7 +1127,9 @@ public class CourseControllerTest {
                 .andExpect(view().name("redirect:/teacher/course"));
 
         List<CourseBean> courseList = courseRepository.findAll();
-        if(courseList != null) assertEquals(courseList.size(), 0);
+        if (courseList != null) {
+            assertEquals(courseList.size(), 0);
+        }
         
         Optional<UserBean> userOpt1 = userRepository.findById("user01");
         userOpt1.ifPresent(userBean -> {
@@ -1138,8 +1167,8 @@ public class CourseControllerTest {
     }
 
     /**
-     * 先生用コース削除処理_ユーザーあり_クラスなし
-     * @throws Exception
+     * 先生用コース削除処理_ユーザーあり_クラスなし.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース削除処理_ユーザーあり_クラスなし() throws Exception {
@@ -1162,7 +1191,9 @@ public class CourseControllerTest {
                 .andExpect(view().name("redirect:/teacher/course"));
 
         List<CourseBean> courseList = courseRepository.findAll();
-        if(courseList != null) assertEquals(courseList.size(), 0);
+        if (courseList != null) {
+            assertEquals(courseList.size(), 0);
+        }
         
         Optional<UserBean> opt = userRepository.findById("user02");
         opt.ifPresent(userBean -> {
@@ -1178,12 +1209,12 @@ public class CourseControllerTest {
     }
     
     /**
-     * 先生用コース削除処理_ユーザーなし_クラスあり
-     * @throws Exception
+     * 先生用コース削除処理_ユーザーなし_クラスあり.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース削除処理_ユーザーなし_クラスあり() throws Exception {
-
+        
         // DB状態
         // クラス：クラス１（user01), クラス２（学生なし）
         // ユーザー：user01(学生), user02(学生)
@@ -1202,7 +1233,9 @@ public class CourseControllerTest {
                 .andExpect(view().name("redirect:/teacher/course"));
 
         List<CourseBean> courseList = courseRepository.findAll();
-        if(courseList != null) assertEquals(courseList.size(), 0);
+        if (courseList != null) {
+            assertEquals(courseList.size(), 0);
+        }
         
         Optional<UserBean> userOpt = userRepository.findById("user01");
         userOpt.ifPresent(userBean -> {
@@ -1231,8 +1264,8 @@ public class CourseControllerTest {
     
     
     /**
-     * 先生用コース削除処理_ユーザーなし_クラスなし
-     * @throws Exception
+     * 先生用コース削除処理_ユーザーなし_クラスなし.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @Test
     public void 先生用コース削除処理_ユーザーなし_クラスなし() throws Exception {
@@ -1254,7 +1287,9 @@ public class CourseControllerTest {
                 .andExpect(view().name("redirect:/teacher/course"));
 
         List<CourseBean> courseList = courseRepository.findAll();
-        if(courseList != null) assertEquals(courseList.size(), 0);
+        if (courseList != null) {
+            assertEquals(courseList.size(), 0);
+        }
         
         Optional<UserBean> userOpt1 = userRepository.findById("user01");
         userOpt1.ifPresent(userBean -> {

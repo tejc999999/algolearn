@@ -6,13 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import jp.spring.boot.algolearn.repository.ClassRepository;
-import jp.spring.boot.algolearn.repository.CourseRepository;
-import jp.spring.boot.algolearn.repository.UserRepository;
-import jp.spring.boot.algolearn.teacher.form.CourseForm;
 import jp.spring.boot.algolearn.bean.ClassBean;
 import jp.spring.boot.algolearn.bean.ClassCourseBean;
 import jp.spring.boot.algolearn.bean.CourseBean;
@@ -20,35 +13,41 @@ import jp.spring.boot.algolearn.bean.UserBean;
 import jp.spring.boot.algolearn.bean.UserCourseBean;
 import jp.spring.boot.algolearn.config.RoleCode;
 
+import jp.spring.boot.algolearn.repository.ClassRepository;
+import jp.spring.boot.algolearn.repository.CourseRepository;
+import jp.spring.boot.algolearn.repository.UserRepository;
+import jp.spring.boot.algolearn.teacher.form.CourseForm;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 /**
- * 先生用コースerviceクラス（teacher course Service Class）
- * 
+ * 先生用コースerviceクラス（teacher course Service Class）.
  * @author tejc999999
- *
  */
 @Service
 public class CourseService {
 
     /**
-     * コース用リポジトリ(course repository)
+     * コース用リポジトリ(course repository).
      */
     @Autowired
     CourseRepository courseRepository;
 
     /**
-     * クラス用リポジトリ(class repository)
+     * クラス用リポジトリ(class repository).
      */
     @Autowired
     ClassRepository classRepository;
 
     /**
-     * ユーザー用リポジトリ(user repository)
+     * ユーザー用リポジトリ(user repository).
      */
     @Autowired
     UserRepository userRepository;
 
     /**
-     * 全てのコースを取得
+     * 全てのコースを取得.
      * @return 全コースのリスト
      */
     public List<CourseForm> findAll() {
@@ -67,7 +66,7 @@ public class CourseService {
     }
     
     /**
-     * 全てのクラスを取得
+     * 全てのクラスを取得.
      * @return 全クラスのマップ
      */
     public Map<String, String> findAllClass() {
@@ -75,26 +74,31 @@ public class CourseService {
         // 全てのクラスBeanを取得する
         List<ClassBean> classBeanList = classRepository.findAll();
         // 全てのクラスBeanの、クラスIDとクラス名の対応マップを作成する
-        if (classBeanList != null) classBeanList.forEach(bean -> classMap.put(String.valueOf(bean.getId()), bean.getName()));
+        if (classBeanList != null) {
+            classBeanList.forEach(bean -> classMap
+                        .put(String.valueOf(bean.getId()), bean.getName()));
+        }
         
         return classMap;
     }
 
     /**
-     * 全ての学生を取得
+     * 全ての学生を取得.
      * @return 全学生のマップ
      */
     public Map<String, String> findAllStudent() {
         Map<String, String> userMap = new HashMap<>();
         // 全ての学生のユーザーBeanを取得する
         List<UserBean> userBeanList = userRepository.findByRoleId(RoleCode.ROLE_STUDENT.getId());
-        if (userBeanList != null) userBeanList.forEach(bean -> userMap.put(bean.getId(), bean.getName()));
+        if (userBeanList != null) {
+            userBeanList.forEach(bean -> userMap.put(bean.getId(), bean.getName()));
+        }
         
         return userMap;
     }
     
     /**
-     * 全ての学生を取得（クラス所属ユーザを除外する）
+     * 全ての学生を取得（クラス所属ユーザを除外する）.
      * @return 全学生のマップ
      */
     public Map<String, String> findAllStudent(List<String> classIdList) {
@@ -105,20 +109,23 @@ public class CourseService {
         // クラスに所属するユーザをマップから削除する
         if (classIdList != null) {
             List<String> removeUserLlist = new ArrayList<>();
-            if (classIdList != null)
+            if (classIdList != null) {
                 classIdList.forEach(classId -> {
                     Optional<ClassBean> opt = classRepository.findById(Long.parseLong(classId));
                     opt.ifPresent(classBean -> removeUserLlist.addAll(classBean.getUserIdList()));
                 });
+            }
             // 選択済みクラス所属ユーザを除外
-            if (removeUserLlist != null && userMap != null) removeUserLlist.forEach(userId -> userMap.remove(userId));
+            if (removeUserLlist != null && userMap != null) {
+                removeUserLlist.forEach(userId -> userMap.remove(userId));
+            }
         }
         
         return userMap;
     }
     
     /**
-     * コースを保存する
+     * コースを保存する.
      * @param form コースForm
      * @return 保存済みコースForm
      */
@@ -127,7 +134,7 @@ public class CourseService {
         CourseBean courseBean = new CourseBean();
         // ID、名前をBeanに設定する
         String courseId = form.getId();
-        if(courseId != null && !courseId.equals("")) {
+        if (courseId != null && !courseId.equals("")) {
             courseBean.setId(Long.parseLong(courseId));
         }
         courseBean.setName(form.getName());
@@ -135,15 +142,16 @@ public class CourseService {
         // クラス、コース中間情報をBeanに設定する
         courseBean.clearClassCourseBean();
         List<String> classIdList = form.getClassCheckedList();
-        if(classIdList != null) {
-            for(int i = 0; i < classIdList.size(); i++ ) {
-                Optional<ClassBean> optClass = classRepository.findById(Long.parseLong(classIdList.get(i)));
+        if (classIdList != null) {
+            for (int i = 0; i < classIdList.size(); i++) {
+                Optional<ClassBean> optClass
+                        = classRepository.findById(Long.parseLong(classIdList.get(i)));
                 List<Long> idList = new ArrayList<>();
                 optClass.ifPresent(classBean -> {
                     idList.add(classBean.getId());
                 });
                 ClassCourseBean classCourseBean = new ClassCourseBean();
-                if(courseId != null && !courseId.equals("")) {
+                if (courseId != null && !courseId.equals("")) {
                     classCourseBean.setCourseId(Long.parseLong(courseId));
                 }
                 classCourseBean.setClassId(idList.get(0));
@@ -153,15 +161,15 @@ public class CourseService {
 
         // ユーザー、コース中間情報をBeanに設定する
         List<String> userIdList = form.getUserCheckedList();
-        if(userIdList != null) {
-            for(int i = 0; i < userIdList.size(); i++ ) {
+        if (userIdList != null) {
+            for (int i = 0; i < userIdList.size(); i++) {
                 Optional<UserBean> optClass = userRepository.findById(userIdList.get(i));
                 List<String> idList = new ArrayList<>();
                 optClass.ifPresent(userBean -> {
                     idList.add(userBean.getId());
                 });
                 UserCourseBean userCourseBean = new UserCourseBean();
-                if(courseId != null && !courseId.equals("")) {
+                if (courseId != null && !courseId.equals("")) {
                     userCourseBean.setCourseId(Long.parseLong(courseId));
                 }
                 userCourseBean.setUserId(idList.get(0));
@@ -183,7 +191,7 @@ public class CourseService {
     }
 
     /**
-     * 選択済みのクラス、ユーザーの情報を設定する
+     * 選択済みのクラス、ユーザーの情報を設定する.
      * @param id コースID
      * @return コースForm
      */
@@ -202,7 +210,7 @@ public class CourseService {
     }
     
     /**
-     * コースを削除する
+     * コースを削除する.
      * @param id コースID
      */
     public void delete(String id) {

@@ -11,22 +11,22 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * ユーザー、課題・連関エンティティ兼コードBean
+ * ユーザー、課題・連関エンティティ兼コードBean.
  * @author tejc999999
  *
  */
 @Setter
 @Getter
 @Entity
-@Table(name="t_user_task_code")
+@Table(name = "t_user_task_code")
 public class UserTaskCodeBean {
 
     /**
-     * サロゲートキー
+     * サロゲートキー.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "user_id")

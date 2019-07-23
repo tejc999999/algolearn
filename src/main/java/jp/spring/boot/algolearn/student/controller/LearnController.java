@@ -8,22 +8,21 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import jp.spring.boot.algolearn.config.PrgLanguageCode;
 import jp.spring.boot.algolearn.config.PrgLanguageProperties;
 import jp.spring.boot.algolearn.config.PrgLanguagePropertiesDetail;
 import jp.spring.boot.algolearn.config.ServerProperties;
 import jp.spring.boot.algolearn.student.form.LearnForm;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * 学生用学習Contollerクラス(lean controller)
+ * 学生用学習Contollerクラス(lean controller).
  * @author tejc999999
  */
 @Controller
@@ -31,19 +30,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class LearnController {
 
     /**
-     * 
+     * プログラム言語プロパティ.
      */
     @Autowired
     PrgLanguageProperties prgLanguageProperties;
 
     /**
-     * 
+     * サーバープロパティ.
      */
     @Autowired
     ServerProperties serverProperties;
 
     /**
-     * 学習ページ表示
+     * 学習ページ表示.
      * @return 学習ページパス
      */
     @GetMapping(path = "learn")
@@ -64,7 +63,7 @@ public class LearnController {
     }
 
     /**
-     * ビルド・実行処理
+     * ビルド・実行処理.
      * @param form 学生用学習ページForm
      * @param model モデル
      * @return 遷移先view
@@ -101,7 +100,9 @@ public class LearnController {
                     osw.write(line2 + "\n");
                 }
                 osw.close();
-                // FileWriter fw = new FileWriter(prgLanguagePropertiesDetail.getWorkFolderPath() + java.io.File.separator +
+                // FileWriter fw = new FileWriter(
+                //         prgLanguagePropertiesDetail.getWorkFolderPath()
+                //         + java.io.File.separator +
                 // prgLanguagePropertiesDetail.getFileName());
                 // fw.write(code);
                 // fw.close();

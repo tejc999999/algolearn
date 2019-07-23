@@ -2,6 +2,12 @@ package jp.spring.boot.algolearn.teacher.controller;
 
 import java.util.List;
 
+import jp.spring.boot.algolearn.teacher.form.QuestionForm;
+import jp.spring.boot.algolearn.teacher.form.StudentForm;
+import jp.spring.boot.algolearn.teacher.form.TaskAddCodeForm;
+import jp.spring.boot.algolearn.teacher.form.TaskAddSearchForm;
+import jp.spring.boot.algolearn.teacher.service.TaskService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,14 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jp.spring.boot.algolearn.teacher.form.QuestionForm;
-import jp.spring.boot.algolearn.teacher.form.StudentForm;
-import jp.spring.boot.algolearn.teacher.form.TaskAddCodeForm;
-import jp.spring.boot.algolearn.teacher.form.TaskAddSearchForm;
-import jp.spring.boot.algolearn.teacher.service.TaskService;
-
 /**
- * 先生用課題Contollerクラス（teacher task Controller Class）
+ * 先生用課題Contollerクラス（teacher task Controller Class）.
  * @author tejc999999
  */
 @Controller
@@ -30,23 +30,23 @@ public class TaskController {
     TaskService taskService;
 
     /**
-     * 課題登録用問題一覧ページ表示(show question list page for task add)
+     * 課題登録用問題一覧ページ表示(show question list page for task add).
      * @param model 問題一覧保存用モデル(model to save question list)
      * @return 課題登録用問題一覧ページビュー(question list page view for task add)
      */
-    @GetMapping(path="addlist")
+    @GetMapping(path = "addlist")
     String addlist(Model model) {
 
-        // TODO:あとで作成者ごとに登録        
-         List<QuestionForm> list = taskService.findAll();
-        
-         model.addAttribute("questions", list);
+        // TODO:あとで作成者ごとに登録
+        List<QuestionForm> list = taskService.findAll();
+
+        model.addAttribute("questions", list);
 
         return "teacher/task/addlist";
     }
     
     /**
-     * 課題登録用問題検索(question search for task add)
+     * 課題登録用問題検索(question search for task add).
      * @param form 検索Form(serach form)
      * @param result エラーチェック結果(error validate result)
      * @param model 問題一覧保存用モデル(model to save question list)
@@ -57,7 +57,8 @@ public class TaskController {
             Model model) {
 
         // TODO:あとで作成者ごとに登録        
-        List<QuestionForm> list = taskService.findByTitleLikeOrDescriptionLike("%" + form.getSearchWord() + "%");
+        List<QuestionForm> list = taskService
+                .findByTitleLikeOrDescriptionLike("%" + form.getSearchWord() + "%");
        
         model.addAttribute("questions", list);
 
@@ -65,7 +66,7 @@ public class TaskController {
     }
 
     /**
-     * 課題自動作成画面表示(question list page view for task add)
+     * 課題自動作成画面表示(question list page view for task add).
      * @return 課題自動作成ページビュー(auto create task page view)
      */
     @PostMapping(path = "addauto")
@@ -77,7 +78,7 @@ public class TaskController {
     }
 
     /**
-     * 学生登録処理(add process for student)
+     * 学生登録処理(add process for student).
      * @return 学生一覧ページリダイレクト(redirect student list page)
      */
     @PostMapping(path = "addcode")
@@ -88,24 +89,24 @@ public class TaskController {
     }
     
     /**
-     * 課題登録処理(add process for task)
+     * 課題登録処理(add process for task).
      * @return 課題一覧ページリダイレクト(redirect task list page)
      */
     @PostMapping(path = "add")
-    public String addProcess(@Validated TaskAddCodeForm form, BindingResult result,
-            Model model) {
+    public String addProcess(@Validated TaskAddCodeForm form,
+            BindingResult result, Model model) {
 
-            model.addAttribute("result", taskService.save(form));
+        model.addAttribute("result", taskService.save(form));
 
-            return "/teacher/task/addcode";
-//        } else {
-//
-//            return "/teacher/task/addcode";
-//        }
+        return "/teacher/task/addcode";
+        // } else {
+        //
+        // return "/teacher/task/addcode";
+        // }
     }
 
     /**
-     * 学生編集ページ表示(show edit student page)
+     * 学生編集ページ表示(show edit student page).
      * @return 学生編集ページビュー(edit student page view)
      */
     @PostMapping(path = "edit")
@@ -123,7 +124,7 @@ public class TaskController {
     }
 
     /**
-     * 学生編集処理(edit process for student)
+     * 学生編集処理(edit process for student).
      * @return 学生一覧ページリダイレクト(student list page redirect)
      */
     @PostMapping(path = "editprocess")
@@ -138,7 +139,7 @@ public class TaskController {
     }
 
     /**
-     * 学生削除処理(delete student for question)
+     * 学生削除処理(delete student for question).
      * @return 学生一覧ページリダイレクト(redirect student list page)
      */
     @PostMapping(path = "delete")

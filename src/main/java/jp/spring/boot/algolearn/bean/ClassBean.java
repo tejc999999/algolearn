@@ -15,12 +15,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.AccessLevel;
 
 /**
- * クラスBean(class Bean)
+ * クラスBean(class Bean).
  * @author tejc999999
  */
 @Entity
@@ -30,7 +30,7 @@ import lombok.AccessLevel;
 public class ClassBean {
 
     /**
-     * クラスコード(class code)
+     * クラスコード(class code).
      */
     @Id
     @Column(name = "id")
@@ -38,13 +38,13 @@ public class ClassBean {
     private Long id;
 
     /**
-     * クラス名(class name)
+     * クラス名(class name).
      */
     @Column(name = "name")
     private String name;
     
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public ClassBean() {
         userClassBeans = new HashSet<>();
@@ -52,25 +52,25 @@ public class ClassBean {
     }
 
     /**
-     * ユーザー所属クラス：相互参照オブジェクト(user belonging class：cross reference object)
+     * ユーザー所属クラス：相互参照オブジェクト(user belonging class：cross reference object).
      */
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="class_id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "class_id")
     private Set<UserClassBean> userClassBeans;
     
     /**
-     * コース所属クラス：相互参照オブジェクト(class belonging course：cross reference object)
+     * コース所属クラス：相互参照オブジェクト(class belonging course：cross reference object).
      */
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="class_id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "class_id")
     private Set<ClassCourseBean> classCourseBeans;
     
     /**
-     * ユーザー所属クラス：相互参照オブジェクトを追加する
+     * ユーザー所属クラス：相互参照オブジェクトを追加する.
      * @param userClassBean ユーザ所属クラスBean
      */
     public void addUserClassBean(UserClassBean userClassBean) {
@@ -78,14 +78,14 @@ public class ClassBean {
     }
 
     /**
-     * ユーザー所属クラス：相互参照オブジェクトを削除する
+     * ユーザー所属クラス：相互参照オブジェクトを削除する.
      */
     public void clearUserClassBean() {
         userClassBeans.clear();
     }
     
     /**
-     * ユーザIDリストを取得する
+     * ユーザIDリストを取得する.
      * @return ユーザIDリスト
      */
     public List<String> getUserIdList() {
@@ -97,7 +97,7 @@ public class ClassBean {
     }
 
     /**
-     * コース所属クラス：相互参照オブジェクトを追加する
+     * コース所属クラス：相互参照オブジェクトを追加する.
      * @param classCourseBean コース所属クラスBean
      */
     public void addClassCourseBean(ClassCourseBean classCourseBean) {
@@ -105,14 +105,14 @@ public class ClassBean {
     }
 
     /**
-     * コース所属クラス：相互参照オブジェクトを削除する
+     * コース所属クラス：相互参照オブジェクトを削除する.
      */
     public void clearClassCourseBean() {
         classCourseBeans.clear();
     }
 
     /**
-     * コースIDリストを取得する
+     * コースIDリストを取得する.
      * @return コースIDリスト
      */
     public List<String> getCourseIdList() {

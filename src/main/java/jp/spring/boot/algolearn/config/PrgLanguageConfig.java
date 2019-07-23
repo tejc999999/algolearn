@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * サーバー関連設定ファイル読み込み(Load server related configuration file)
+ * サーバー関連設定ファイル読み込み(Load server related configuration file).
  * @author tejc999999
  */
 @Configuration
@@ -16,115 +16,114 @@ import org.springframework.context.annotation.Configuration;
 public class PrgLanguageConfig {
 
     /**
-     * Java ビルドコマンドパス(java build command path)
+     * Java ビルドコマンドパス(java build command path).
      */
     @Value("${prglanguage.java.buildCmdPath}")
     private String javaBuildCmdPath;
 
     /**
-     * Java 実行コマンドパス(java execute command path)
+     * Java 実行コマンドパス(java execute command path).
      */
     @Value("${prglanguage.java.executeCmdPath}")
     private String javaExecuteCmdPath;
 
     /**
-     * Java 作業フォルダパス(java work folder path)
+     * Java 作業フォルダパス(java work folder path).
      */
     @Value("${prglanguage.java.workFolderPath}")
     private String javaWorkFolderPath;
 
     /**
-     * Java ファイル名(Java file name)
+     * Java ファイル名(Java file name).
      */
     @Value("${prglanguage.java.fileName}")
     private String javaFileName;
 
     /**
-     * Java ビルド後ファイル名(Java file name after build)
+     * Java ビルド後ファイル名(Java file name after build).
      */
     @Value("${prglanguage.java.buildFileName}")
     private String javaBuildFileName;
 
     /**
-     * 確認用Java ファイル名(check Java file name)
+     * 確認用Java ファイル名(check Java file name).
      */
     @Value("${prglanguage.java.checkFileName}")
     private String javaCheckFileName;
 
     /**
-     * 確認用Java ビルド後ファイル名(check Java file name after build)
+     * 確認用Java ビルド後ファイル名(check Java file name after build).
      */
     @Value("${prglanguage.java.buildCheckFileName}")
     private String javaBuildCheckFileName;
     
     /**
-     * C/C++ ビルドコマンドパス(c/c++ build command path)
+     * C/C++ ビルドコマンドパス(c/c++ build command path).
      */
     @Value("${prglanguage.ccpp.buildCmdPath}")
-    private String cCppBuildCmdPath;
+    private String ccppBuildCmdPath;
 
     /**
-     * C/C++ 実行コマンドパス(c/c++ execute command path)
+     * C/C++ 実行コマンドパス(c/c++ execute command path).
      */
     @Value("${prglanguage.ccpp.executeCmdPath}")
-    private String cCppExecuteCmdPath;
+    private String ccppExecuteCmdPath;
 
     /**
-     * C/C++ 作業フォルダパス(c/c++ work folder path)
+     * C/C++ 作業フォルダパス(c/c++ work folder path).
      */
     @Value("${prglanguage.ccpp.workFolderPath}")
-    private String cCppWorkFolderPath;
+    private String ccppWorkFolderPath;
 
     /**
-     * C/C++ ファイル名(C/C++ file name)
+     * C/C++ ファイル名(C/C++ file name).
      */
     @Value("${prglanguage.ccpp.fileName}")
-    private String cCppFileName;
+    private String ccppFileName;
 
     /**
-     * C/C++ ビルド後ファイル名(c,/c++ file name after build)
+     * C/C++ ビルド後ファイル名(c,/c++ file name after build).
      */
     @Value("${prglanguage.ccpp.buildFileName}")
-    private String cCppBuildFileName;
+    private String ccppBuildFileName;
 
     /**
-     * Python ビルドコマンドパス(Python build command path)
+     * Python ビルドコマンドパス(Python build command path).
      */
     @Value("${prglanguage.python.buildCmdPath}")
     private String pythonBuildCmdPath;
 
     /**
-     * Python 実行コマンドパス(Python execute command path)
+     * Python 実行コマンドパス(Python execute command path).
      */
     @Value("${prglanguage.python.executeCmdPath}")
     private String pythonExecuteCmdPath;
 
     /**
-     * Python 作業フォルダパス(Python work folder path)
+     * Python 作業フォルダパス(Python work folder path).
      */
     @Value("${prglanguage.python.workFolderPath}")
     private String pythonWorkFolderPath;
 
     /**
-     * Python ファイル名(Python file name)
+     * Python ファイル名(Python file name).
      */
     @Value("${prglanguage.python.fileName}")
     private String pythonFileName;
 
     /**
-     * Python ビルド後ファイル名(Python file name after build)
+     * Python ビルド後ファイル名(Python file name after build).
      */
     @Value("${prglanguage.python.buildFileName}")
     private String pythonBuildFileName;
 
     /**
-     * プロパティを取得する(get the property)
+     * プロパティを取得する(get the property).
      * @return プロパティ(property)
      */
     @Bean
     public PrgLanguageProperties prgLanguageProperties() {
 
-        Map<String, PrgLanguagePropertiesDetail> map = new HashMap<String, PrgLanguagePropertiesDetail>();
         PrgLanguagePropertiesDetail java = new PrgLanguagePropertiesDetail();
         java.setName(PrgLanguageCode.JAVA.toString());
         java.setFileName(javaFileName);
@@ -137,11 +136,11 @@ public class PrgLanguageConfig {
 
         PrgLanguagePropertiesDetail ccpp = new PrgLanguagePropertiesDetail();
         ccpp.setName(PrgLanguageCode.CCPP.toString());
-        ccpp.setFileName(cCppFileName);
-        ccpp.setBuildFileName(cCppBuildFileName);
-        ccpp.setBuildCmdPath(cCppBuildCmdPath);
-        ccpp.setExecuteCmdPath(cCppExecuteCmdPath);
-        ccpp.setWorkFolderPath(cCppWorkFolderPath);
+        ccpp.setFileName(ccppFileName);
+        ccpp.setBuildFileName(ccppBuildFileName);
+        ccpp.setBuildCmdPath(ccppBuildCmdPath);
+        ccpp.setExecuteCmdPath(ccppExecuteCmdPath);
+        ccpp.setWorkFolderPath(ccppWorkFolderPath);
 
         PrgLanguagePropertiesDetail python = new PrgLanguagePropertiesDetail();
         python.setName(PrgLanguageCode.PYTHON.toString());
@@ -151,6 +150,9 @@ public class PrgLanguageConfig {
         python.setExecuteCmdPath(pythonExecuteCmdPath);
         python.setWorkFolderPath(pythonWorkFolderPath);
 
+        Map<String, PrgLanguagePropertiesDetail> map
+                = new HashMap<String, PrgLanguagePropertiesDetail>();
+
         map.put(java.getName(), java);
         map.put(ccpp.getName(), ccpp);
         map.put(python.getName(), python);
@@ -159,13 +161,13 @@ public class PrgLanguageConfig {
     }
 
     /**
-     * サーバー文字コード(server character code)
+     * サーバー文字コード(server character code).
      */
     @Value("${server.charactercode}")
     private String characterCode;
 
     /**
-     * プロパティを取得する(get the property)
+     * プロパティを取得する(get the property).
      * @return プロパティ(property)
      */
     @Bean

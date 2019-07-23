@@ -11,32 +11,32 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * ユーザー、クラス・連関エンティティBean
+ * ユーザー、クラス・連関エンティティBean.
  * @author tejc999999
  *
  */
 @Entity
 @Setter
 @Getter
-@Table(name="t_user_class")
+@Table(name = "t_user_class")
 public class UserClassBean {
     
     /**
-     * サロゲートキー
+     * サロゲートキー.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Long id;
     
     /**
-     * ユーザーID
+     * ユーザーID.
      */
     @Column(name = "user_id")
     private String userId;
     
     /**
-     * クラスID
+     * クラスID.
      */
     @Column(name = "class_id")
     private Long classId;

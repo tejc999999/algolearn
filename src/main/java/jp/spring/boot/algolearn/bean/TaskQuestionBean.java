@@ -11,33 +11,33 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 課題、問題・連関エンティティBean
+ * 課題、問題・連関エンティティBean.
  * @author tejc999999
  *
  */
 @Entity
 @Setter
 @Getter
-@Table(name="t_task_question")
+@Table(name = "t_task_question")
 public class TaskQuestionBean {
 
     /**
-     * サロゲートキー
+     * サロゲートキー.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Long id;
 
     /**
-     * 課題ID
+     * 課題ID.
      */
-    @Column(name="task_id")
+    @Column(name = "task_id")
     private Long taskId;
 
     /**
-     * 問題ID
+     * 問題ID.
      */
-    @Column(name="question_id")
+    @Column(name = "question_id")
     private Long questionId;
 }

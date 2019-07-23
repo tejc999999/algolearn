@@ -11,33 +11,33 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * クラス、コース・連関エンティティBean
+ * クラス、コース・連関エンティティBean.
  * @author tejc999999
  *
  */
 @Entity
-@Table(name="t_class_course")
+@Table(name = "t_class_course")
 @Setter
 @Getter
 public class ClassCourseBean {
     
     /**
-     * サロゲートキー
+     * サロゲートキー.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Long id;
 
     /**
-     * クラスID
+     * クラスID.
      */
-    @Column(name="class_id")
+    @Column(name = "class_id")
     private Long classId;
 
     /**
-     * コースID
+     * コースID.
      */
-    @Column(name="course_id")
+    @Column(name = "course_id")
     private Long courseId;    
 }

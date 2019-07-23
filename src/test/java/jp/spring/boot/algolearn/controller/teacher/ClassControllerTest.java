@@ -3,6 +3,7 @@ package jp.spring.boot.algolearn.controller.teacher;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,7 +11,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.Operations;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import com.ninja_squad.dbsetup.destination.Destination;
+import com.ninja_squad.dbsetup.operation.Operation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +24,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.sql.DataSource;
+
+import jp.spring.boot.algolearn.bean.ClassBean;
+import jp.spring.boot.algolearn.config.RoleCode;
+import jp.spring.boot.algolearn.repository.ClassRepository;
+import jp.spring.boot.algolearn.repository.UserRepository;
+import jp.spring.boot.algolearn.teacher.form.ClassForm;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,20 +47,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import com.ninja_squad.dbsetup.destination.Destination;
-import com.ninja_squad.dbsetup.operation.Operation;
-
-import jp.spring.boot.algolearn.bean.ClassBean;
-import jp.spring.boot.algolearn.config.RoleCode;
-import jp.spring.boot.algolearn.repository.ClassRepository;
-import jp.spring.boot.algolearn.repository.UserRepository;
-import jp.spring.boot.algolearn.teacher.form.ClassForm;
-
 /**
- * クラスControllerテスト(test class controller)
+ * クラスControllerテスト(test class controller).
  * @author tejc999999
  *
  */
@@ -97,40 +97,55 @@ public class ClassControllerTest {
             .insertInto("t_user_class").columns("id", "user_id", "class_id").values(
                     3, "user01", 2).build();
 
+    /**
+     * SpringMVCモックオブジェクト.
+     */
     @Autowired
     MockMvc mockMvc;
 
+    /**
+     * クラスRepository.
+     */
     @Autowired
     ClassRepository classRepository;
 
+    /**
+     * ユーザーRepository.
+     */
     @Autowired
     UserRepository userRepository;
 
+    /**
+     * WEBアプリに設定を提供する.
+     */
     @Autowired
     WebApplicationContext wac;
 
+    /**
+     * データソース.
+     */
     @Autowired
     private DataSource dataSource;
 
     /**
-     * テスト前処理
-     * @throws Exception
+     * テスト前処理.
      */
     @Before
-    public void テスト前処理() throws Exception {
+    public void テスト前処理() {
         // Thymeleafを使用していることがテスト時に認識されない様子
         // 循環ビューが発生しないことを明示するためにViewResolverを使用
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/templates");
         viewResolver.setSuffix(".html");
         // StandaloneSetupの場合、ControllerでAutowiredしているオブジェクトのMockが必要。後日時間あれば対応
-        // mockMvc = MockMvcBuilders.standaloneSetup(new StudentLearnController()).setViewResolvers(viewResolver).build();
+        // mockMvc = MockMvcBuilders.standaloneSetup(new StudentLearnController())
+        //         .setViewResolvers(viewResolver).build();
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
     /**
-     * 先生用クラス一覧ページ表示_クラスあり
-     * @throws Exception
+     * 先生用クラス一覧ページ表示_クラスあり.
+     * @throws Exception MockMVC失敗時例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -147,13 +162,6 @@ public class ClassControllerTest {
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
 
-        MvcResult result = mockMvc.perform(get("/teacher/class"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("teacher/class/list"))
-                .andReturn();
-
-        List<ClassForm> list = (List<ClassForm>) result.getModelAndView().getModel().get("classes");
-
         ClassForm form1 = new ClassForm();
         form1.setId("1");
         form1.setName("クラス１");
@@ -166,12 +174,20 @@ public class ClassControllerTest {
         form3.setId("3");
         form3.setName("クラス３");
 
+        MvcResult result = mockMvc.perform(get("/teacher/class"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/class/list"))
+                .andReturn();
+
+        List<ClassForm> list = (List<ClassForm>) result
+                    .getModelAndView().getModel().get("classes");
+
         assertThat(list, hasItems(form1, form2, form3));
     }
 
     /**
-     * 先生用クラス一覧ページ表示_クラスなし
-     * @throws Exception
+     * 先生用クラス一覧ページ表示_クラスなし.
+     * @throws Exception MockMVC失敗時例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -183,12 +199,14 @@ public class ClassControllerTest {
 
         List<ClassForm> list = (List<ClassForm>) result.getModelAndView().getModel().get("classes");
 
-        if (list != null) assertEquals(list.size(), 0);
+        if (list != null) {
+            assertEquals(list.size(), 0);
+        }
     }
 
     /**
-     * 先生用クラス登録ページ表示_ユーザーあり
-     * @throws Exception
+     * 先生用クラス登録ページ表示_ユーザーあり.
+     * @throws Exception MockMVC失敗時例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -220,8 +238,8 @@ public class ClassControllerTest {
     }
     
     /**
-     * 先生用クラス登録ページ表示_ユーザーなし
-     * @throws Exception
+     * 先生用クラス登録ページ表示_ユーザーなし.
+     * @throws Exception MockMVC失敗時例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -234,12 +252,14 @@ public class ClassControllerTest {
         Map<String, String> userMap = (Map<String, String>) result.getModelAndView().getModel()
                 .get("userCheckItems");
 
-        if(userMap != null) assertEquals(userMap.size(), 0);
+        if (userMap != null) {
+            assertEquals(userMap.size(), 0);
+        }
     }
 
     /**
-     * 先生用クラス登録処理_ユーザーあり
-     * @throws Exception
+     * 先生用クラス登録処理_ユーザーあり.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用クラス登録処理_ユーザーあり() throws Exception {
@@ -272,8 +292,8 @@ public class ClassControllerTest {
     }
 
     /**
-     * 先生用クラス登録処理_ユーザーなし
-     * @throws Exception
+     * 先生用クラス登録処理_ユーザーなし.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用クラス登録処理_ユーザーなし() throws Exception {
@@ -296,8 +316,8 @@ public class ClassControllerTest {
     }
 
     /**
-     * 先生用クラス編集ページ表示
-     * @throws Exception
+     * 先生用クラス編集ページ表示.
+     * @throws Exception MockMVC失敗時例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -342,8 +362,8 @@ public class ClassControllerTest {
     }
 
     /**
-     * 先生用クラス編集処理_ユーザーあり_減らす
-     * @throws Exception
+     * 先生用クラス編集処理_ユーザーあり_減らす.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用クラス編集処理_ユーザーあり_減らす() throws Exception {
@@ -384,8 +404,8 @@ public class ClassControllerTest {
     }
     
     /**
-     * 先生用クラス編集処理_ユーザーあり_なし
-     * @throws Exception
+     * 先生用クラス編集処理_ユーザーあり_なし.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用クラス編集処理_ユーザーあり_なし() throws Exception {
@@ -423,8 +443,8 @@ public class ClassControllerTest {
     }
 
     /**
-     * 先生用クラス編集処理_ユーザーなし_あり
-     * @throws Exception
+     * 先生用クラス編集処理_ユーザーなし_あり.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用クラス編集処理_ユーザーなし_あり() throws Exception {
@@ -464,8 +484,8 @@ public class ClassControllerTest {
     }
     
     /**
-     * 先生用クラス編集処理_ユーザーなし
-     * @throws Exception
+     * 先生用クラス編集処理_ユーザーなし.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用クラス編集処理_ユーザーなし() throws Exception {
@@ -498,8 +518,8 @@ public class ClassControllerTest {
     }
 
     /**
-     * 先生用クラス削除処理_ユーザーあり
-     * @throws Exception
+     * 先生用クラス削除処理_ユーザーあり.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用クラス削除処理_ユーザーあり() throws Exception {
@@ -518,7 +538,7 @@ public class ClassControllerTest {
 
         List<ClassBean> classList = classRepository.findAll();
         assertEquals(classList.size(), 1);
-        if (classList != null)
+        if (classList != null) {
             classList.forEach(classBean -> {
                 assertEquals(classBean.getName(), "クラス２");
                 List<String> userIdList = classBean.getUserIdList();
@@ -526,11 +546,12 @@ public class ClassControllerTest {
                 String userId = userIdList.get(0);
                 assertEquals(userId, "user01");
             });
+        }
     }
 
     /**
-     * 先生用クラス削除処理_ユーザーなし
-     * @throws Exception
+     * 先生用クラス削除処理_ユーザーなし.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用クラス削除処理_ユーザーなし() throws Exception {
@@ -545,7 +566,8 @@ public class ClassControllerTest {
                         "redirect:/teacher/class"));
 
         List<ClassBean> classList = classRepository.findAll();
-        if (classList != null)
+        if (classList != null) {
             assertEquals(classList.size(), 0);
+        }
     }
 }

@@ -19,7 +19,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 /**
- * 学習Controllerテスト
+ * 学習Controllerテスト.
  * @author t.kawana
  *
  */
@@ -29,32 +29,50 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @ActiveProfiles("test")
 public class LearnControllerTest {
 
+    /**
+     * SpringMVCモックオブジェクト.
+     */
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * WEBアプリに設定を提供する.
+     */
     @Autowired
     WebApplicationContext wac;
 
+    /**
+     * テスト前処理.
+     */
     @Before
-    public void before() throws Exception {
+    public void テスト前処理()  {
         // Thymeleafを使用していることがテスト時に認識されない様子
         // 循環ビューが発生しないことを明示するためにViewResolverを使用
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/templates");
         viewResolver.setSuffix(".html");
         // StandaloneSetupの場合、ControllerでAutowiredしているオブジェクトのMockが必要。後日時間あれば対応
-        // mockMvc = MockMvcBuilders.standaloneSetup(new StudentLearnController()).setViewResolvers(viewResolver).build();
+        // mockMvc = MockMvcBuilders.standaloneSetup(
+        //         new StudentLearnController()).setViewResolvers(viewResolver).build();
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
+    /**
+     * 学生用学習ページGET要求正常.
+     * @throws Exception MockMVC失敗時例外
+     */
     @Test
-    public void 学生用学習ページGET要求正常() throws Exception {
+    public void 学生用学習ページGet要求正常() throws Exception {
 
         mockMvc.perform(get("/student/learn")).andExpect(status().isOk());
     }
 
+    /**
+     * 学生用学習ページGET要求時view確認.
+     * @throws Exception MockMVC失敗時例外
+     */
     @Test
-    public void 学生用学習ページGET要求時view確認() throws Exception {
+    public void 学生用学習ページGet要求時view確認() throws Exception {
 
         mockMvc.perform(get("/student/learn")).andExpect(status().isOk())
                 .andExpect(view().name(is("student/learn")));

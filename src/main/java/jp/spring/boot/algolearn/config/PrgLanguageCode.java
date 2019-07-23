@@ -1,7 +1,7 @@
 package jp.spring.boot.algolearn.config;
 
 /**
- * プログラミング言語種別Enum(Programming language type enum)
+ * プログラミング言語種別Enum(Programming language type enum).
  * @author tejc999999
  */
 public enum PrgLanguageCode {
@@ -12,18 +12,18 @@ public enum PrgLanguageCode {
     ;
     
     /**
-     * プログラム言語ID(programing language)
+     * プログラム言語ID(programing language).
      */
     private final String id;
     
     /**
-     * プログラム言語名(programing language name)
+     * プログラム言語名(programing language name).
      */
     private final String name;
     
     /**
-     * コンストラクタ(constructor)
-     * @param id プログラム言語ID(proguraming language id)
+     * コンストラクタ(constructor).
+     * @param id プログラム言語ID(proguraming language id).
      * @param name プログラム言語名(programing language name)
      */
     private PrgLanguageCode(String id, String name) {
@@ -32,7 +32,7 @@ public enum PrgLanguageCode {
     }
     
     /**
-     * プログラム言語ＩＤ取得(get programing language id)
+     * プログラム言語ＩＤ取得(get programing language id).
      * @return プログラム言語ID(programing language id)
      */
     public String getId() {
@@ -40,7 +40,7 @@ public enum PrgLanguageCode {
     }
     
     /**
-     * プログラム言語名取得(get programing language name)
+     * プログラム言語名取得(get programing language name).
      * @return プログラム言語名(programing language name)
      */
     public String getName() {

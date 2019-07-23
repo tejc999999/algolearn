@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import jp.spring.boot.algolearn.bean.UserBean;
 import jp.spring.boot.algolearn.config.RoleCode;
 import jp.spring.boot.algolearn.repository.UserRepository;
 import jp.spring.boot.algolearn.teacher.form.StudentForm;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 /**
- * 先生用学生Serviceクラス（teacher student Service Class）
+ * 先生用学生Serviceクラス（teacher student Service Class）.
  * 
  * @author tejc999999
  *
@@ -22,13 +22,13 @@ import jp.spring.boot.algolearn.teacher.form.StudentForm;
 public class StudentService {
 
     /**
-     * ユーザー用リポジトリ(class repository)
+     * ユーザー用リポジトリ(class repository).
      */
     @Autowired
     UserRepository userRepository;
 
     /**
-     * 全ての学生を取得する
+     * 全ての学生を取得する.
      * @return 全ての学生Formリスト
      */
     public List<StudentForm> findAll() {
@@ -47,7 +47,7 @@ public class StudentService {
     }
     
     /**
-     * 学生を保存する
+     * 学生を保存する.
      * @param form 学生Form
      * @return 登録済み学生Form
      */
@@ -56,13 +56,13 @@ public class StudentService {
         UserBean saveUserBean;
         String userId = form.getId();
         List<UserBean> userBeanList = new ArrayList<>();
-        if(userId != null) {
+        if (userId != null) {
             Optional<UserBean> opt = userRepository.findById(userId);
             opt.ifPresent(userBean -> {
                 userBeanList.add(userBean);
             });
         }
-        if(userBeanList.size() > 0) {
+        if (userBeanList.size() > 0) {
             saveUserBean = userBeanList.get(0);
         } else {
             saveUserBean = new UserBean();
@@ -82,7 +82,7 @@ public class StudentService {
     }
     
     /**
-     * 学生を取得する
+     * 学生を取得する.
      * @param id ユーザーID
      * @return 学生Form
      */
@@ -101,7 +101,7 @@ public class StudentService {
     }
     
     /**
-     * 学生を削除する
+     * 学生を削除する.
      * @param id ユーザーID
      */
     public void delete(String id) {

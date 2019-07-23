@@ -1,12 +1,12 @@
 
 package jp.spring.boot.algolearn.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import jp.spring.boot.algolearn.bean.ClassBean;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 /**
- * 問題用リポジトリ(question repository)
+ * 問題用リポジトリ(question repository).
  * 
  * @author tejc999999
  *

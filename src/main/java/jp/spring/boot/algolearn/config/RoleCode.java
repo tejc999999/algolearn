@@ -1,7 +1,7 @@
 package jp.spring.boot.algolearn.config;
 
 /**
- * 権限コードEnum(role code enum)
+ * 権限コードEnum(role code enum).
  * @author tejc999999
  */
 public enum RoleCode {
@@ -10,17 +10,17 @@ public enum RoleCode {
     ROLE_STUDENT("003", "学生");
 
     /**
-     * 権限ID(Role id)
+     * 権限ID(Role id).
      */
     private final String id;
 
     /**
-     * 権限名(Role name)
+     * 権限名(Role name).
      */
     private final String name;
 
     /**
-     * コンストラクタ(Constructor)
+     * コンストラクタ(Constructor).
      * @param id 権限ID
      * @param name 権限名(Role name)
      */
@@ -30,7 +30,7 @@ public enum RoleCode {
     }
 
     /**
-     * 権限ID取得(Get role id)
+     * 権限ID取得(Get role id).
      * @return 権限ID(Role id)
      */
     public String getId() {
@@ -38,7 +38,7 @@ public enum RoleCode {
     }
     
     /**
-     * 権限名取得(Get role name)
+     * 権限名取得(Get role name).
      * @return 権限名(Role name)
      */
     public String getName() {

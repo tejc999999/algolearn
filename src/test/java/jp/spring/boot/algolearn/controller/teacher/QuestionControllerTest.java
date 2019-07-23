@@ -8,14 +8,25 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.Operations;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import com.ninja_squad.dbsetup.destination.Destination;
+import com.ninja_squad.dbsetup.operation.Operation;
+
 import java.util.List;
 import java.util.Optional;
 
 import javax.sql.DataSource;
 
+import jp.spring.boot.algolearn.bean.QuestionBean;
+import jp.spring.boot.algolearn.repository.QuestionRepository;
+import jp.spring.boot.algolearn.teacher.form.QuestionForm;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,18 +40,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import com.ninja_squad.dbsetup.destination.Destination;
-import com.ninja_squad.dbsetup.operation.Operation;
-
-import jp.spring.boot.algolearn.bean.QuestionBean;
-import jp.spring.boot.algolearn.repository.QuestionRepository;
-import jp.spring.boot.algolearn.teacher.form.QuestionForm;
-
 /**
- * 問題Controllerテスト(question class controller)
+ * 問題Controllerテスト(question class controller).
  * @author tejc999999
  *
  */
@@ -61,37 +62,49 @@ public class QuestionControllerTest {
             "t_question").columns("id", "title", "description", "input_num")
             .values(2, "問題タイトル２", "問題説明２", 3).build();
 
+    /**
+     * SpringMVCのMockオブジェクト.
+     */
     @Autowired
     MockMvc mockMvc;
 
+    /**
+     * 問題Repository.
+     */
     @Autowired
     QuestionRepository questionRepository;
 
+    /**
+     * WEBアプリに設定を提供する.
+     */
     @Autowired
     WebApplicationContext wac;
 
+    /**
+     * データソース(datasource).
+     */
     @Autowired
     private DataSource dataSource;
 
     /**
-     * テスト前処理
-     * @throws Exception
+     * テスト前処理.
      */
     @Before
-    public void テスト前処理() throws Exception {
+    public void テスト前処理() {
         // Thymeleafを使用していることがテスト時に認識されない様子
         // 循環ビューが発生しないことを明示するためにViewResolverを使用
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/templates");
         viewResolver.setSuffix(".html");
         // StandaloneSetupの場合、ControllerでAutowiredしているオブジェクトのMockが必要。後日時間あれば対応
-        // mockMvc = MockMvcBuilders.standaloneSetup(new StudentLearnController()).setViewResolvers(viewResolver).build();
+        // mockMvc = MockMvcBuilders.standaloneSetup(new StudentLearnController())
+        //         .setViewResolvers(viewResolver).build();
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
     /**
-     * 先生用問題一覧ページ表示_問題あり
-     * @throws Exception
+     * 先生用問題一覧ページ表示_問題あり.
+     * @throws Exception MockMVCの処理失敗例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -103,12 +116,6 @@ public class QuestionControllerTest {
         Operation ops = Operations.sequenceOf(INSERT_DATA1, INSERT_DATA2);
         DbSetup dbSetup = new DbSetup(dest, ops);
         dbSetup.launch();
-
-        MvcResult result = mockMvc.perform(get("/teacher/question")).andExpect(
-                status().isOk()).andExpect(view().name("teacher/question/list"))
-                .andReturn();
-
-        List<QuestionForm> list = (List<QuestionForm>) result.getModelAndView().getModel().get("questions");
 
         QuestionForm form1 = new QuestionForm();
         form1.setId("1");
@@ -122,12 +129,19 @@ public class QuestionControllerTest {
         form2.setDescription("問題説明２");
         form2.setInputNum(3);
 
+        MvcResult result = mockMvc.perform(get("/teacher/question")).andExpect(
+                status().isOk()).andExpect(view().name("teacher/question/list"))
+                .andReturn();
+
+        List<QuestionForm> list
+                = (List<QuestionForm>) result.getModelAndView().getModel().get("questions");
+
         assertThat(list, hasItems(form1, form2));
     }
 
     /**
-     * 先生用問題一覧ページ表示_問題なし
-     * @throws Exception
+     * 先生用問題一覧ページ表示_問題なし.
+     * @throws Exception MockMVC失敗時例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -138,14 +152,16 @@ public class QuestionControllerTest {
                 .andExpect(view().name("teacher/question/list"))
                 .andReturn();
 
-        List<QuestionForm> list = (List<QuestionForm>) result.getModelAndView().getModel().get("questions");
-        if (list != null)
+        List<QuestionForm> list = (List<QuestionForm>) result
+                    .getModelAndView().getModel().get("questions");
+        if (list != null) {
             assertEquals(list.size(), 0);
+        }
     }
 
     /**
-     * 先生用問題登録ページ表示
-     * @throws Exception
+     * 先生用問題登録ページ表示.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用問題登録ページ表示() throws Exception {
@@ -156,8 +172,8 @@ public class QuestionControllerTest {
     }
 
     /**
-     * 先生用問題登録処理
-     * @throws Exception
+     * 先生用問題登録処理.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用問題登録処理() throws Exception {
@@ -183,8 +199,8 @@ public class QuestionControllerTest {
     }
 
     /**
-     * 先生用問題編集ページ表示
-     * @throws Exception
+     * 先生用問題編集ページ表示.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用問題編集ページ表示() throws Exception {
@@ -212,8 +228,8 @@ public class QuestionControllerTest {
     }
 
     /**
-     * 先生用問題編集処理
-     * @throws Exception
+     * 先生用問題編集処理.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用問題編集処理() throws Exception {
@@ -248,8 +264,8 @@ public class QuestionControllerTest {
     }
 
     /**
-     * 先生用問題削除処理
-     * @throws Exception
+     * 先生用問題削除処理.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用問題削除処理() throws Exception {

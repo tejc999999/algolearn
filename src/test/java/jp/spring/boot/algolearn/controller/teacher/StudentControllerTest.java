@@ -8,10 +8,23 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.Operations;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import com.ninja_squad.dbsetup.destination.Destination;
+import com.ninja_squad.dbsetup.operation.Operation;
+
 import java.util.List;
 import java.util.Optional;
 
 import javax.sql.DataSource;
+
+import jp.spring.boot.algolearn.bean.ClassBean;
+import jp.spring.boot.algolearn.bean.UserBean;
+import jp.spring.boot.algolearn.config.RoleCode;
+import jp.spring.boot.algolearn.repository.ClassRepository;
+import jp.spring.boot.algolearn.repository.UserRepository;
+import jp.spring.boot.algolearn.teacher.form.StudentForm;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,21 +42,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import com.ninja_squad.dbsetup.destination.Destination;
-import com.ninja_squad.dbsetup.operation.Operation;
-
-import jp.spring.boot.algolearn.bean.ClassBean;
-import jp.spring.boot.algolearn.bean.UserBean;
-import jp.spring.boot.algolearn.config.RoleCode;
-import jp.spring.boot.algolearn.repository.ClassRepository;
-import jp.spring.boot.algolearn.repository.UserRepository;
-import jp.spring.boot.algolearn.teacher.form.StudentForm;
-
 /**
- * 学生Controllerテスト(question class controller)
+ * 学生Controllerテスト(question class controller).
  * @author t.kawana
  *
  */
@@ -86,40 +86,55 @@ public class StudentControllerTest {
             .insertInto("t_user_class").columns("id", "user_id", "class_id").values(
                     3, "user01", 2).build();
 
+    /**
+     * SpringMVCモックオブジェクト.
+     */
     @Autowired
     MockMvc mockMvc;
 
+    /**
+     * ユーザーRepository.
+     */
     @Autowired
     UserRepository userRepository;
     
+    /**
+     * クラスRepository.
+     */
     @Autowired
     ClassRepository classRepository;
 
+    /**
+     * WEBアプリに設定を提供する.
+     */
     @Autowired
     WebApplicationContext wac;
 
+    /**
+     * データソース(datasource).
+     */
     @Autowired
     private DataSource dataSource;
 
     /**
-     * テスト前処理
-     * @throws Exception
+     * テスト前処理.
      */
     @Before
-    public void テスト前処理() throws Exception {
+    public void テスト前処理() {
         // Thymeleafを使用していることがテスト時に認識されない様子
         // 循環ビューが発生しないことを明示するためにViewResolverを使用
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/templates");
         viewResolver.setSuffix(".html");
         // StandaloneSetupの場合、ControllerでAutowiredしているオブジェクトのMockが必要。後日時間あれば対応
-        // mockMvc = MockMvcBuilders.standaloneSetup(new StudentLearnController()).setViewResolvers(viewResolver).build();
+        // mockMvc = MockMvcBuilders.standaloneSetup(new StudentLearnController())
+        //         .setViewResolvers(viewResolver).build();
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
     /**
-     * 先生用学生一覧ページ表示_ユーザーあり
-     * @throws Exception
+     * 先生用学生一覧ページ表示_ユーザーあり.
+     * @throws Exception MockMVC失敗時例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -138,7 +153,8 @@ public class StudentControllerTest {
                 .andExpect(view().name("teacher/student/list"))
                 .andReturn();
 
-        List<StudentForm> list = (List<StudentForm>) result.getModelAndView().getModel().get("students");
+        List<StudentForm> list
+                = (List<StudentForm>) result.getModelAndView().getModel().get("students");
         assertEquals(list.size(), 2);
         
         StudentForm form1 = new StudentForm();
@@ -155,8 +171,8 @@ public class StudentControllerTest {
     }
     
     /**
-     * 先生用学生一覧ページ表示_ユーザーなし
-     * @throws Exception
+     * 先生用学生一覧ページ表示_ユーザーなし.
+     * @throws Exception MockMVC失敗時例外
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -166,13 +182,16 @@ public class StudentControllerTest {
                 status().isOk()).andExpect(view().name("teacher/student/list"))
                 .andReturn();
 
-        List<StudentForm> list = (List<StudentForm>) result.getModelAndView().getModel().get("students");
-        if(list != null) assertEquals(list.size(), 0);
+        List<StudentForm> list = (List<StudentForm>) result
+                .getModelAndView().getModel().get("students");
+        if (list != null) {
+            assertEquals(list.size(), 0);
+        }
     }
 
     /**
-     * 先生用学生登録ページ表示
-     * @throws Exception
+     * 先生用学生登録ページ表示.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用学生登録ページ表示() throws Exception {
@@ -182,8 +201,8 @@ public class StudentControllerTest {
     }
 
     /**
-     * 先生用学生登録処理
-     * @throws Exception
+     * 先生用学生登録処理.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用学生登録処理() throws Exception {
@@ -211,8 +230,8 @@ public class StudentControllerTest {
     }
 
     /**
-     * 先生用学生編集ページ表示_クラスあり
-     * @throws Exception
+     * 先生用学生編集ページ表示_クラスあり.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用学生編集ページ表示_クラスあり() throws Exception {
@@ -242,8 +261,8 @@ public class StudentControllerTest {
     }
 
     /**
-     * 先生用学生編集ページ表示_クラスなし
-     * @throws Exception
+     * 先生用学生編集ページ表示_クラスなし.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用学生編集ページ表示_クラスなし() throws Exception {
@@ -269,8 +288,8 @@ public class StudentControllerTest {
     }
 
     /**
-     * 先生用学生編集処理_クラスあり
-     * @throws Exception
+     * 先生用学生編集処理_クラスあり.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用学生編集処理_クラスあり() throws Exception {
@@ -310,8 +329,8 @@ public class StudentControllerTest {
     }
     
     /**
-     * 先生用学生編集処理_クラスなし
-     * @throws Exception
+     * 先生用学生編集処理_クラスなし.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用学生編集処理_クラスなし() throws Exception {
@@ -347,8 +366,8 @@ public class StudentControllerTest {
     }
 
     /**
-     * 先生用学生削除処理_クラスあり
-     * @throws Exception
+     * 先生用学生削除処理_クラスあり.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用学生削除処理_クラスあり() throws Exception {
@@ -371,19 +390,19 @@ public class StudentControllerTest {
                 .andExpect(view().name("redirect:/teacher/student"));
         
         List<ClassBean> classList = classRepository.findAll();
-        assertEquals(classList.size() , 2);
+        assertEquals(classList.size(), 2);
         classList.forEach(classBean -> {
-            if(classBean.getId() == 1) {
+            if (classBean.getId() == 1) {
                 assertEquals(classBean.getName(), "クラス１");
-            } else if(classBean.getId() == 2) {
+            } else if (classBean.getId() == 2) {
                 assertEquals(classBean.getName(), "クラス２");
             }
         });
     }
     
     /**
-     * 先生用学生削除処理_クラスなし
-     * @throws Exception
+     * 先生用学生削除処理_クラスなし.
+     * @throws Exception MockMVC失敗時例外
      */
     @Test
     public void 先生用学生削除処理_クラスなし() throws Exception {

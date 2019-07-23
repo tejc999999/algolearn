@@ -18,7 +18,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 課題Bean(task Bean)
+ * 課題Bean(task Bean).
  * @author tejc999999
  */
 @Entity
@@ -28,7 +28,7 @@ import lombok.Setter;
 public class TaskBean {
 
     /**
-     * 課題コード(task code)
+     * 課題コード(task code).
      */
     @Id
     @Column(name = "id")
@@ -36,49 +36,49 @@ public class TaskBean {
     private Long id;
 
     /**
-     * 課題タイトル
+     * 課題タイトル.
      */
     @Column(name = "title")
     private String title;
 
     /**
-     * 課題説明文
+     * 課題説明文.
      */
     @Column(name = "description")
     private String description;
 
     /**
-     * プログラム言語種別
+     * プログラム言語種別.
      */
     @Column(name = "language_id")
     private String languageId;
 
     /**
-     * 問題ID(question id)
+     * 問題ID(question id).
      */
     @Column(name = "question_id")
     private Long questionId;
 
     /**
-     * プログラムコード前部
+     * プログラムコード前部.
      */
     @Column(name = "front_code")
     private String frontCode;
 
     /**
-     * プログラムコード中部
+     * プログラムコード中部.
      */
     @Column(name = "middle_code")
     private String middleCode;
 
     /**
-     * プログラムコード後部
+     * プログラムコード後部.
      */
     @Column(name = "back_code")
     private String backCode;
     
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public TaskBean() {
         taskCourseBeans = new HashSet<>();
@@ -87,30 +87,30 @@ public class TaskBean {
     }
     
     /**
-     * 課題・コース：相互参照オブジェクト(task・course：cross reference object)
+     * 課題・コース：相互参照オブジェクト(task・course：cross reference object).
      */
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="task_id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "task_id")
     private Set<TaskCourseBean> taskCourseBeans;
 
     /**
-     * 課題・問題：相互参照オブジェクト(task・question：cross reference object)
+     * 課題・問題：相互参照オブジェクト(task・question：cross reference object).
      */
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="task_id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "task_id")
     private Set<TaskQuestionBean> taskQuestionBeans;
     
     /**
-     * 課題・コース：相互参照オブジェクト(task・course：cross reference object)
+     * 課題・コース：相互参照オブジェクト(task・course：cross reference object).
      */
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="task_id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "task_id")
     private Set<UserTaskCodeBean> userTaskCodeBeans;
 
 }

@@ -3,51 +3,51 @@ package jp.spring.boot.algolearn.config;
 import lombok.Data;
 
 /**
- * プログラミング言語設定情報(Programming language setting information)
+ * プログラミング言語設定情報(Programming language setting information).
  * @author tejc999999
  */
 @Data
 public class PrgLanguagePropertiesDetail {
 
     /**
-     * プログラミング言語名前(Programming language name)
+     * プログラミング言語名前(Programming language name).
      */
     private String name;
 
     /**
-     * ファイル名(File name)
+     * ファイル名(File name).
      */
     private String fileName;
 
     /**
-     * ビルド後ファイル名(File name after build)
+     * ビルド後ファイル名(File name after build).
      */
     private String buildFileName;
 
 
     /**
-     * チェック用ファイル名(Check File name)
+     * チェック用ファイル名(Check File name).
      */
     private String checkFileName;
 
 
     /**
-     * チェック用ファイル名(Check File name)
+     * チェック用ファイル名(Check File name).
      */
     private String buildCheckFileName;
 
     /**
-     * ビルドコマンドパス(build command path)
+     * ビルドコマンドパス(build command path).
      */
     private String buildCmdPath;
 
     /**
-     * 実行コマンドパス(execute command path)
+     * 実行コマンドパス(execute command path).
      */
     private String executeCmdPath;
 
     /**
-     * 作業フォルダパス(work folder path)
+     * 作業フォルダパス(work folder path).
      */
     private String workFolderPath;
 }

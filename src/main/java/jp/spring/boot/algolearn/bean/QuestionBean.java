@@ -18,7 +18,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 問題Bean(question Bean)
+ * 問題Bean(question Bean).
  * 
  * @author tejc999999
  *
@@ -28,46 +28,46 @@ import lombok.Setter;
 @Getter
 @Table(name = "t_question")
 public class QuestionBean {
-	
-	/**
-	 * 問題コード(question code)
-	 */
-	@Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id")
-	private Long id;
-	
-	/**
-	 * タイトル(title)
-	 */
-	@Column(name="title")
-	private String title;
-	
-	/**
-	 * 説明文(description)
-	 */
-	@Column(name="description")
-	private String description;
-	
-	/**
-	 * 入力値個数(number of input)
-	 */
-	@Column(name="input_num")
-	private byte inputNum;
 
-	/**
-	 * コンストラクタ
-	 */
-	public QuestionBean() {
-	    taskQuestionBeans = new HashSet<>();
-	}
-	
     /**
-     * 課題・問題：相互参照オブジェクト(task・question：cross reference object)
+     * 問題コード(question code).
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    /**
+     * タイトル(title).
+     */
+    @Column(name = "title")
+    private String title;
+
+    /**
+     * 説明文(description).
+     */
+    @Column(name = "description")
+    private String description;
+
+    /**
+     * 入力値個数(number of input).
+     */
+    @Column(name = "input_num")
+    private byte inputNum;
+
+    /**
+     * コンストラクタ.
+     */
+    public QuestionBean() {
+        taskQuestionBeans = new HashSet<>();
+    }
+
+    /**
+     * 課題・問題：相互参照オブジェクト(task・question：cross reference object).
      */
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    @OneToMany(orphanRemoval=true, cascade = CascadeType.ALL )
-    @JoinColumn(name="question_id")
-	private Set<TaskQuestionBean> taskQuestionBeans;
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "question_id")
+    private Set<TaskQuestionBean> taskQuestionBeans;
 }
