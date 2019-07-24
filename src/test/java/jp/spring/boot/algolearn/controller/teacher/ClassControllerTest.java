@@ -179,10 +179,14 @@ public class ClassControllerTest {
                 .andExpect(view().name("teacher/class/list"))
                 .andReturn();
 
-        List<ClassForm> list = (List<ClassForm>) result
-                    .getModelAndView().getModel().get("classes");
-
-        assertThat(list, hasItems(form1, form2, form3));
+        try {
+            List<ClassForm> list = (List<ClassForm>) result
+                        .getModelAndView().getModel().get("classes");
+    
+            assertThat(list, hasItems(form1, form2, form3));
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
 
     /**
@@ -197,10 +201,15 @@ public class ClassControllerTest {
                 status().isOk()).andExpect(view().name("teacher/class/list"))
                 .andReturn();
 
-        List<ClassForm> list = (List<ClassForm>) result.getModelAndView().getModel().get("classes");
-
-        if (list != null) {
-            assertEquals(list.size(), 0);
+        try {
+            List<ClassForm> list
+                    = (List<ClassForm>) result.getModelAndView().getModel().get("classes");
+            
+            if (list != null) {
+                assertEquals(list.size(), 0);
+            }
+        } catch (NullPointerException e) {
+            throw new Exception(e);
         }
     }
 
@@ -227,14 +236,18 @@ public class ClassControllerTest {
         MvcResult result = mockMvc.perform(get("/teacher/class/add")).andExpect(status().isOk())
                 .andExpect(model().attributeExists("userCheckItems")).andExpect(
                         view().name("teacher/class/add")).andReturn();
-        
-        Map<String, String> userMap = (Map<String, String>) result.getModelAndView().getModel()
-                .get("userCheckItems");
 
-        // 学生のみ存在する（先生、管理者は存在しない）
-        assertEquals(userMap.size(), 2);
-        assertThat(userMap, hasEntry("user01", "テストユーザー１"));
-        assertThat(userMap, hasEntry("user02", "テストユーザー２"));
+        try {
+            Map<String, String> userMap = (Map<String, String>) result.getModelAndView().getModel()
+                    .get("userCheckItems");
+    
+            // 学生のみ存在する（先生、管理者は存在しない）
+            assertEquals(userMap.size(), 2);
+            assertThat(userMap, hasEntry("user01", "テストユーザー１"));
+            assertThat(userMap, hasEntry("user02", "テストユーザー２"));
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
     
     /**
@@ -248,12 +261,16 @@ public class ClassControllerTest {
         MvcResult result = mockMvc.perform(get("/teacher/class/add")).andExpect(status().isOk())
                 .andExpect(model().attributeExists("userCheckItems")).andExpect(
                         view().name("teacher/class/add")).andReturn();
-        
-        Map<String, String> userMap = (Map<String, String>) result.getModelAndView().getModel()
-                .get("userCheckItems");
 
-        if (userMap != null) {
-            assertEquals(userMap.size(), 0);
+        try {
+            Map<String, String> userMap = (Map<String, String>) result.getModelAndView().getModel()
+                    .get("userCheckItems");
+    
+            if (userMap != null) {
+                assertEquals(userMap.size(), 0);
+            }
+        } catch (NullPointerException e) {
+            throw new Exception(e);
         }
     }
 
@@ -344,21 +361,26 @@ public class ClassControllerTest {
                                 hasEntry("user02","テストユーザー２"))))
                 .andReturn();
 
-        ClassForm classForm = (ClassForm) result.getModelAndView().getModel()
-                .get("classForm");
-
-        assertEquals(classForm.getId(), "1");
-        assertEquals(classForm.getName(), "クラス１");
-        assertEquals(classForm.getUserCheckedList().size(), 2);
-        assertThat(classForm.getUserCheckedList(), containsInAnyOrder(
-                "user01", "user02"));
-        
-        Map<String, String> userMap = (Map<String, String>) result
-                .getModelAndView().getModel().get("userCheckItems");
-
-        assertEquals(userMap.size(), 2);
-        assertThat(userMap, hasEntry("user01", "テストユーザー１"));
-        assertThat(userMap, hasEntry("user02", "テストユーザー２"));
+        try {
+            ClassForm classForm = (ClassForm) result.getModelAndView().getModel()
+                    .get("classForm");
+    
+            assertEquals(classForm.getId(), "1");
+            assertEquals(classForm.getName(), "クラス１");
+            assertEquals(classForm.getUserCheckedList().size(), 2);
+            assertThat(classForm.getUserCheckedList(), containsInAnyOrder(
+                    "user01", "user02"));
+            
+            Map<String, String> userMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("userCheckItems");
+    
+            assertEquals(userMap.size(), 2);
+            assertThat(userMap, hasEntry("user01", "テストユーザー１"));
+            assertThat(userMap, hasEntry("user02", "テストユーザー２"));
+            
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
 
     /**

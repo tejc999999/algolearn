@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.spring.boot.algolearn.bean.QuestionBean;
+import jp.spring.boot.algolearn.code.CcppCheckCodeFactory;
+import jp.spring.boot.algolearn.code.CheckCode;
+import jp.spring.boot.algolearn.code.CheckCodeFactory;
+import jp.spring.boot.algolearn.code.JavaCheckCodeFactory;
+import jp.spring.boot.algolearn.code.PythonCheckCodeFactory;
 import jp.spring.boot.algolearn.config.PrgLanguageCode;
 import jp.spring.boot.algolearn.config.PrgLanguageProperties;
 import jp.spring.boot.algolearn.config.PrgLanguagePropertiesDetail;
@@ -95,6 +100,69 @@ public class TaskService {
         }
         
         return list;
+    }
+
+    /**
+     * プログラム採点用コードをFormにセットする.
+     * @param form 先生用課題登録時コード作成Form
+     * @return 先生用課題登録時コード作成Form
+     */
+    public TaskAddCodeForm getTaskCode(TaskAddCodeForm form) throws Exception {
+        
+        CheckCodeFactory checkCodeFactory = null;
+        if (form.getLanguageId().equals(PrgLanguageCode.CCPP.getId())) {
+            checkCodeFactory = new CcppCheckCodeFactory();
+        } else if (form.getLanguageId().equals(PrgLanguageCode.JAVA.getId())) {
+            checkCodeFactory = new JavaCheckCodeFactory();
+        } else if (form.getLanguageId().equals(PrgLanguageCode.PYTHON.getId())) {
+            checkCodeFactory = new PythonCheckCodeFactory();
+        } else {
+            throw new Exception("プログラム言語コード取得失敗.");
+        }
+        CheckCode checkCode = checkCodeFactory.getInstance();
+        
+        TaskAddCodeForm resultForm = new TaskAddCodeForm();
+        resultForm.setFrontCode(checkCode.getFrontCode());
+        resultForm.setMiddleCode(checkCode.getMiddleCode());
+        resultForm.setBackCode(checkCode.getBackCode());
+        
+        return resultForm;
+    }
+    
+    /**
+     * プログラムコード登録.
+     * @param form 課題追加コードForm
+     * @return 実行結果
+     */
+    public String save(TaskAddCodeForm form) {
+        // TaskAddCodeForm resultForm = new TaskAddCodeForm();
+        String lineFeedCode = System.getProperty("line.separator");
+        StringBuilder sb = codeCompileCheck(form.getFrontCode() + lineFeedCode
+                + form.getMiddleCode() + lineFeedCode + form.getBackCode(), form
+                        .getLanguageId());
+
+        // TaskBean taskBean = new TaskBean();
+        // if (form.getId() != null && !form.getId().contentEquals("")) {
+        // taskBean.setId(Long.valueOf(form.getId()));
+        // }
+        // taskBean.setTitle(form.getTitle());
+        // taskBean.setDescription(form.getDescription());
+        // taskBean.setLanguageId(form.getLanguageId());
+        // taskBean.setFrontCode(form.getFrontCode());
+        // taskBean.setMiddleCode(form.getMiddleCode());
+        // taskBean.setBackCode(form.getBackCode());
+        //
+        // taskBean = taskRepository.save(taskBean);
+        //
+        // resultForm.setId(String.valueOf(taskBean.getId()));
+        // resultForm.setTitle(taskBean.getTitle());
+        // resultForm.setDescription(taskBean.getDescription());
+        // resultForm.setLanguageId(taskBean.getLanguageId());
+        // resultForm.setFrontCode(taskBean.getFrontCode());
+        // resultForm.setMiddleCode(taskBean.getMiddleCode());
+        // resultForm.setBackCode(taskBean.getBackCode());
+
+        return sb.toString();
     }
     
     /**
@@ -213,39 +281,4 @@ public class TaskService {
         return sb;
     }
 
-    /**
-     * プログラムコード登録.
-     * @param form 課題追加コードForm
-     * @return 実行結果
-     */
-    public String save(TaskAddCodeForm form) {
-        // TaskAddCodeForm resultForm = new TaskAddCodeForm();
-        String lineFeedCode = System.getProperty("line.separator");
-        StringBuilder sb = codeCompileCheck(form.getFrontCode() + lineFeedCode
-                + form.getMiddleCode() + lineFeedCode + form.getBackCode(), form
-                        .getLanguageId());
-
-        // TaskBean taskBean = new TaskBean();
-        // if (form.getId() != null && !form.getId().contentEquals("")) {
-        // taskBean.setId(Long.valueOf(form.getId()));
-        // }
-        // taskBean.setTitle(form.getTitle());
-        // taskBean.setDescription(form.getDescription());
-        // taskBean.setLanguageId(form.getLanguageId());
-        // taskBean.setFrontCode(form.getFrontCode());
-        // taskBean.setMiddleCode(form.getMiddleCode());
-        // taskBean.setBackCode(form.getBackCode());
-        //
-        // taskBean = taskRepository.save(taskBean);
-        //
-        // resultForm.setId(String.valueOf(taskBean.getId()));
-        // resultForm.setTitle(taskBean.getTitle());
-        // resultForm.setDescription(taskBean.getDescription());
-        // resultForm.setLanguageId(taskBean.getLanguageId());
-        // resultForm.setFrontCode(taskBean.getFrontCode());
-        // resultForm.setMiddleCode(taskBean.getMiddleCode());
-        // resultForm.setBackCode(taskBean.getBackCode());
-
-        return sb.toString();
-    }
 }

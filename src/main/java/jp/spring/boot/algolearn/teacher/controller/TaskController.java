@@ -82,8 +82,9 @@ public class TaskController {
      * @return 学生一覧ページリダイレクト(redirect student list page)
      */
     @PostMapping(path = "addcode")
-    public String addCode(@Validated StudentForm form, BindingResult result,
-            Model model) {
+    public String addCode(@RequestParam String id, Model model) {
+        
+        model.addAttribute("", "");
 
         return "/teacher/task/addcode";
     }

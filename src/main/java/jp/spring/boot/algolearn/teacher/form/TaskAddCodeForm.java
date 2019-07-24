@@ -1,5 +1,8 @@
 package jp.spring.boot.algolearn.teacher.form;
 
+import java.util.List;
+
+import jp.spring.boot.algolearn.code.VariableType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,40 +13,70 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class TaskAddCodeForm {
-    
-    /**
-     * 課題ID(task id).
-     */
-    public String id;
 
     /**
-     * タイトル(title).
+     * 問題タイトル(question title).
      */
-    public String title;
+    private String questionTitle;
     
     /**
-     * 説明文(description).
+     * 問題説明文(question description).
      */
-    public String description;
+    private String questionDescription;
+
+    /**
+     * 課題タイトル(task title).
+     */
+    private String title;
+    
+    /**
+     * 課題説明文(task description).
+     */
+    private String description;
 
     /**
      * プログラム言語(programing language).
      */
-    public String languageId;
+    private String languageId;
     
     /**
      * コード前部(front code).
      */
-    public String frontCode;
+    private String frontCode;
 
     /**
      * コード中部(middle code).
      */
-    public String middleCode;
+    private String middleCode;
 
     /**
      * コード後部(back code).
      */
-    public String backCode;
+    private String backCode;
     
+    /**
+     * コード自動生成フラグ(code auto generate flg).
+     */
+    private boolean autoCodeFlg;
+    
+    /**
+     * プログラム採点コード用正解個数.
+     */
+    private int answerCnt;
+    
+    /**
+     * プログラム採点コード用正解型リスト.
+     */
+    private List<VariableType> answerCodeTypeList;
+
+    /**
+     * プログラム採点コード用引数個数.
+     */
+    private int inputCnt;
+    
+    /**
+     * プログラム採点コード用引数型リスト.
+     */
+    private List<VariableType> inputCodeTypeList;
+
 }

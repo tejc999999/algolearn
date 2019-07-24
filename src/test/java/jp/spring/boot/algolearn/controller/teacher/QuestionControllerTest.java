@@ -133,10 +133,14 @@ public class QuestionControllerTest {
                 status().isOk()).andExpect(view().name("teacher/question/list"))
                 .andReturn();
 
-        List<QuestionForm> list
-                = (List<QuestionForm>) result.getModelAndView().getModel().get("questions");
+        try {
+            List<QuestionForm> list
+                    = (List<QuestionForm>) result.getModelAndView().getModel().get("questions");
 
-        assertThat(list, hasItems(form1, form2));
+            assertThat(list, hasItems(form1, form2));
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
 
     /**
@@ -152,10 +156,14 @@ public class QuestionControllerTest {
                 .andExpect(view().name("teacher/question/list"))
                 .andReturn();
 
-        List<QuestionForm> list = (List<QuestionForm>) result
-                    .getModelAndView().getModel().get("questions");
-        if (list != null) {
-            assertEquals(list.size(), 0);
+        try {
+            List<QuestionForm> list = (List<QuestionForm>) result
+                        .getModelAndView().getModel().get("questions");
+            if (list != null) {
+                assertEquals(list.size(), 0);
+            }
+        } catch (NullPointerException e) {
+            throw new Exception(e);
         }
     }
 
@@ -218,13 +226,17 @@ public class QuestionControllerTest {
                 .andExpect(view().name("teacher/question/edit"))
                 .andReturn();
 
-        QuestionForm resultForm = (QuestionForm) result.getModelAndView()
-                .getModel().get("questionForm");
-
-        assertEquals(resultForm.getId(), "1");
-        assertEquals(resultForm.getTitle(), "問題タイトル１");
-        assertEquals(resultForm.getDescription(), "問題説明１");
-        assertEquals(resultForm.getInputNum(), 2);
+        try {
+            QuestionForm resultForm = (QuestionForm) result.getModelAndView()
+                    .getModel().get("questionForm");
+    
+            assertEquals(resultForm.getId(), "1");
+            assertEquals(resultForm.getTitle(), "問題タイトル１");
+            assertEquals(resultForm.getDescription(), "問題説明１");
+            assertEquals(resultForm.getInputNum(), 2);
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
 
     /**

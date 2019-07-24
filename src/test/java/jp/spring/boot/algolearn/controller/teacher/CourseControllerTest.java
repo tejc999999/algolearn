@@ -176,10 +176,14 @@ public class CourseControllerTest {
                 .andExpect(view().name("teacher/course/list"))
                 .andReturn();
 
-        List<CourseForm> list
-                = (List<CourseForm>) result.getModelAndView().getModel().get("courses");
-
-        assertThat(list, hasItems(form1, form2));
+        try {
+            List<CourseForm> list
+                    = (List<CourseForm>) result.getModelAndView().getModel().get("courses");
+    
+            assertThat(list, hasItems(form1, form2));
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
 
     /**
@@ -194,10 +198,14 @@ public class CourseControllerTest {
                 status().isOk()).andExpect(view().name("teacher/course/list"))
                 .andReturn();
 
-        List<CourseForm> list
-                = (List<CourseForm>) result.getModelAndView().getModel().get("courses");
-        if (list != null) {
-            assertEquals(list.size(), 0);
+        try {
+            List<CourseForm> list
+                    = (List<CourseForm>) result.getModelAndView().getModel().get("courses");
+            if (list != null) {
+                assertEquals(list.size(), 0);
+            }
+        } catch (NullPointerException e) {
+            throw new Exception(e);
         }
     }
     
@@ -234,14 +242,18 @@ public class CourseControllerTest {
                 .andExpect(view().name("teacher/course/add"))
                 .andReturn();
         
-        // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
-        // Mvcresultでチェック
-        Map<String, String> classCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
-        assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
-        assertEquals(userCheckMap.size(), 2);
+        try {
+            // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
+            // Mvcresultでチェック
+            Map<String, String> classCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("classCheckItems");
+            assertEquals(classCheckMap.size(), 2);
+            Map<String, String> userCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("userCheckItems");
+            assertEquals(userCheckMap.size(), 2);
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
 
     /**
@@ -258,17 +270,21 @@ public class CourseControllerTest {
                 .andExpect(model().attributeExists("userCheckItems"))
                 .andExpect(view().name("teacher/course/add"))
                 .andReturn();
-        
-        Map<String, String> classMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
-        if (classMap != null) {
-            assertEquals(classMap.size(), 0);
-        }
-
-        Map<String, String> userMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
-        if (userMap != null) {
-            assertEquals(userMap.size(), 0);
+        try {
+            Map<String, String> classMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("classCheckItems");
+            if (classMap != null) {
+                assertEquals(classMap.size(), 0);
+            }
+    
+            Map<String, String> userMap
+                    = (Map<String, String>) result
+                    .getModelAndView().getModel().get("userCheckItems");
+            if (userMap != null) {
+                assertEquals(userMap.size(), 0);
+            }
+        } catch (NullPointerException e) {
+            throw new Exception(e);
         }
     }
     
@@ -310,19 +326,24 @@ public class CourseControllerTest {
                 .andExpect(view().name("teacher/course/add"))
                 .andReturn();
 
-        // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
-        // Mvcresultでチェック
-        Map<String, String> classCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
-        assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
-        assertEquals(userCheckMap.size(), 1);
-        
-        CourseForm courseForm = (CourseForm) result.getModelAndView().getModel().get("courseForm");
-        assertEquals(courseForm.getClassCheckedList().size(), 1);
-        assertEquals(courseForm.getClassCheckedList().get(0), "1");
-        assertEquals(courseForm.getUserCheckedList(), null);
+        try {
+            // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
+            // Mvcresultでチェック
+            Map<String, String> classCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("classCheckItems");
+            assertEquals(classCheckMap.size(), 2);
+            Map<String, String> userCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("userCheckItems");
+            assertEquals(userCheckMap.size(), 1);
+            
+            CourseForm courseForm = (CourseForm) result
+                    .getModelAndView().getModel().get("courseForm");
+            assertEquals(courseForm.getClassCheckedList().size(), 1);
+            assertEquals(courseForm.getClassCheckedList().get(0), "1");
+            assertEquals(courseForm.getUserCheckedList(), null);
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
     
     /**
@@ -365,20 +386,24 @@ public class CourseControllerTest {
                 .andExpect(view().name("teacher/course/add"))
                 .andReturn();
 
-        // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
-        // Mvcresultでチェック
-        Map<String, String> classCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
-        assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
-        assertEquals(userCheckMap.size(), 2);
-
-        CourseForm courseForm = (CourseForm) result.getModelAndView().getModel().get("courseForm");
-
-        assertEquals(courseForm.getClassCheckedList().size(), 1);
-        assertThat(courseForm.getClassCheckedList(), containsInAnyOrder("2"));
-        assertEquals(courseForm.getUserCheckedList(), null);
+        try {
+            // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
+            // Mvcresultでチェック
+            Map<String, String> classCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("classCheckItems");
+            assertEquals(classCheckMap.size(), 2);
+            Map<String, String> userCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("userCheckItems");
+            assertEquals(userCheckMap.size(), 2);
+    
+            CourseForm courseForm = (CourseForm) result
+                    .getModelAndView().getModel().get("courseForm");
+            assertEquals(courseForm.getClassCheckedList().size(), 1);
+            assertThat(courseForm.getClassCheckedList(), containsInAnyOrder("2"));
+            assertEquals(courseForm.getUserCheckedList(), null);
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
 
     /**
@@ -628,24 +653,28 @@ public class CourseControllerTest {
                                 hasEntry("user02","テストユーザー２"))))
                 .andReturn();
 
-        // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
-        // Mvcresultでチェック
-        Map<String, String> classCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
-        assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
-        assertEquals(userCheckMap.size(), 2);
-        
-        CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
-                .get("courseForm");
-
-        assertEquals(courseForm.getId(), "1");
-        assertEquals(courseForm.getName(), "コース１");
-        assertEquals(courseForm.getClassCheckedList().size(), 1);
-        assertThat(courseForm.getClassCheckedList(), containsInAnyOrder("1"));
-        assertEquals(courseForm.getUserCheckedList().size(), 1);
-        assertThat(courseForm.getUserCheckedList(), containsInAnyOrder("user02"));
+        try {
+            // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
+            // Mvcresultでチェック
+            Map<String, String> classCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("classCheckItems");
+            assertEquals(classCheckMap.size(), 2);
+            Map<String, String> userCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("userCheckItems");
+            assertEquals(userCheckMap.size(), 2);
+            
+            CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
+                    .get("courseForm");
+    
+            assertEquals(courseForm.getId(), "1");
+            assertEquals(courseForm.getName(), "コース１");
+            assertEquals(courseForm.getClassCheckedList().size(), 1);
+            assertThat(courseForm.getClassCheckedList(), containsInAnyOrder("1"));
+            assertEquals(courseForm.getUserCheckedList().size(), 1);
+            assertThat(courseForm.getUserCheckedList(), containsInAnyOrder("user02"));
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
     
     /**
@@ -683,24 +712,28 @@ public class CourseControllerTest {
                                 hasEntry("user02","テストユーザー２"))))
                 .andReturn();
 
-        // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
-        // Mvcresultでチェック
-        Map<String, String> classCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
-        assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
-        assertEquals(userCheckMap.size(), 2);
-        
-        CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
-                .get("courseForm");
-
-        assertEquals(courseForm.getId(), "1");
-        assertEquals(courseForm.getName(), "コース１");
-        assertEquals(courseForm.getClassCheckedList().size(), 1);
-        assertThat(courseForm.getClassCheckedList(), containsInAnyOrder("1"));
-        assertEquals(courseForm.getUserCheckedList().size(), 2);
-        assertThat(courseForm.getUserCheckedList(), containsInAnyOrder("user01", "user02"));
+        try {
+            // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
+            // Mvcresultでチェック
+            Map<String, String> classCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("classCheckItems");
+            assertEquals(classCheckMap.size(), 2);
+            Map<String, String> userCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("userCheckItems");
+            assertEquals(userCheckMap.size(), 2);
+            
+            CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
+                    .get("courseForm");
+    
+            assertEquals(courseForm.getId(), "1");
+            assertEquals(courseForm.getName(), "コース１");
+            assertEquals(courseForm.getClassCheckedList().size(), 1);
+            assertThat(courseForm.getClassCheckedList(), containsInAnyOrder("1"));
+            assertEquals(courseForm.getUserCheckedList().size(), 2);
+            assertThat(courseForm.getUserCheckedList(), containsInAnyOrder("user01", "user02"));
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
     
     /**
@@ -737,22 +770,25 @@ public class CourseControllerTest {
                                hasEntry("user02","テストユーザー２"))))
                 .andReturn();
 
-        // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
-        // Mvcresultでチェック
-        Map<String, String> classCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
-        assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
-        assertEquals(userCheckMap.size(), 2);
-        
-        CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
-                .get("courseForm");
-
-        assertEquals(courseForm.getId(), "1");
-        assertEquals(courseForm.getName(), "コース１");
-        assertEquals(courseForm.getClassCheckedList().size(), 0);
-        assertEquals(courseForm.getUserCheckedList().size(), 0);
+        try {
+            // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
+            // Mvcresultでチェック
+            Map<String, String> classCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("classCheckItems");
+            assertEquals(classCheckMap.size(), 2);
+            Map<String, String> userCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("userCheckItems");
+            assertEquals(userCheckMap.size(), 2);
+            
+            CourseForm courseForm = (CourseForm) result
+                    .getModelAndView().getModel().get("courseForm");
+            assertEquals(courseForm.getId(), "1");
+            assertEquals(courseForm.getName(), "コース１");
+            assertEquals(courseForm.getClassCheckedList().size(), 0);
+            assertEquals(courseForm.getUserCheckedList().size(), 0);
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
 
     
@@ -798,23 +834,27 @@ public class CourseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("teacher/course/edit"))
                 .andReturn();
-        // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
-        // Mvcresultでチェック
-        Map<String, String> classCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
-        assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
-        assertEquals(userCheckMap.size(), 1);
         
-        CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
-                .get("courseForm");
-
-        assertEquals(courseForm.getId(), "1");
-        assertEquals(courseForm.getName(), "コース１");
-        assertEquals(courseForm.getClassCheckedList().size(), 1);
-        assertEquals(courseForm.getClassCheckedList().get(0), "1");
-        assertEquals(courseForm.getUserCheckedList(), null);
+        try {
+            // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
+            // Mvcresultでチェック
+            Map<String, String> classCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("classCheckItems");
+            assertEquals(classCheckMap.size(), 2);
+            Map<String, String> userCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("userCheckItems");
+            assertEquals(userCheckMap.size(), 1);
+            
+            CourseForm courseForm = (CourseForm) result
+                    .getModelAndView().getModel().get("courseForm");
+            assertEquals(courseForm.getId(), "1");
+            assertEquals(courseForm.getName(), "コース１");
+            assertEquals(courseForm.getClassCheckedList().size(), 1);
+            assertEquals(courseForm.getClassCheckedList().get(0), "1");
+            assertEquals(courseForm.getUserCheckedList(), null);
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
 
     /**
@@ -853,23 +893,26 @@ public class CourseControllerTest {
                 .andExpect(view().name("teacher/course/edit"))
                 .andReturn();
 
-        // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
-        // Mvcresultでチェック
-        Map<String, String> classCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("classCheckItems");
-        assertEquals(classCheckMap.size(), 2);
-        Map<String, String> userCheckMap
-                = (Map<String, String>) result.getModelAndView().getModel().get("userCheckItems");
-        assertEquals(userCheckMap.size(), 2);
-        
-        CourseForm courseForm = (CourseForm) result.getModelAndView().getModel()
-                .get("courseForm");
-
-        assertEquals(courseForm.getId(), "1");
-        assertEquals(courseForm.getName(), "コース１");
-        assertEquals(courseForm.getClassCheckedList().size(), 1);
-        assertEquals(courseForm.getClassCheckedList().get(0), "2");
-        assertEquals(courseForm.getUserCheckedList(), null);
+        try {
+            // Maven対応のHamcrestバージョンではCollection系のサイズチェックができないため、andExpectではチェックできない
+            // Mvcresultでチェック
+            Map<String, String> classCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("classCheckItems");
+            assertEquals(classCheckMap.size(), 2);
+            Map<String, String> userCheckMap = (Map<String, String>) result
+                    .getModelAndView().getModel().get("userCheckItems");
+            assertEquals(userCheckMap.size(), 2);
+            
+            CourseForm courseForm = (CourseForm) result
+                    .getModelAndView().getModel().get("courseForm");
+            assertEquals(courseForm.getId(), "1");
+            assertEquals(courseForm.getName(), "コース１");
+            assertEquals(courseForm.getClassCheckedList().size(), 1);
+            assertEquals(courseForm.getClassCheckedList().get(0), "2");
+            assertEquals(courseForm.getUserCheckedList(), null);
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
 
     /**

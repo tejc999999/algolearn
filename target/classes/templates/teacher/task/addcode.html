@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
-<head th:replace="layout :: common_layout(title = '先生用課題登録画面', scripts = ~{::script}, links = ~{::link})">
+<head
+	th:replace="layout :: common_layout(title = '先生用課題登録画面', scripts = ~{::script}, links = ~{::link})">
 
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,7 +12,8 @@
 	href="http://maxcdn.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css"
 	th:href="@{/webjars/bootstrap/4.3.0/css/bootstrap.min.css}" />
 
-  <link href="../../css/learn.css" th:href="@{/css/learn.css}" rel="stylesheet"></link>
+<link href="../../css/learn.css" th:href="@{/css/learn.css}"
+	rel="stylesheet"></link>
 
 <script th:src="@{/webjars/jquery/3.4.0/jquery.slim.min.js}"
 	type="text/javascript" charset="utf-8"></script>
@@ -19,7 +21,8 @@
 <script th:src="@{/webjars/bootstrap/4.3.0/js/bootstrap.bundle.min.js}"
 	type="text/javascript" charset="utf-8"></script>
 
-<script th:src="@{/webjars/ace/1.3.3/src-noconflict/ace.js}" type="text/javascript" charset="utf-8"></script>
+<script th:src="@{/webjars/ace/1.3.3/src-noconflict/ace.js}"
+	type="text/javascript" charset="utf-8"></script>
 
 </head>
 <body>
@@ -27,17 +30,17 @@
 	<div th:replace="layout :: header"></div>
 
 	■課題登録
-	
+
 	<p th:text="${result}"></p>
-	
+
 	<div class="container-fluid no-gutters pb-5">
 
-		<form th:action="@{/teacher/task/add}"
-			th:object="${taskAddCodeForm}" method="post" id="taskAddCodeForm">
+		<form th:action="@{/teacher/task/add}" th:object="${taskAddCodeForm}"
+			method="post" id="taskAddCodeForm">
 
 			<div class="form-row">
 				<div class="form-group col-md-12">
-					<label for="editor1" class="col-form-label" >コード前部(学生操作不可)</label>
+					<label for="editor1" class="col-form-label">コード前部(学生操作不可)</label>
 				</div>
 				<div id="editor1" class="col-md-12"></div>
 			</div>
@@ -45,28 +48,29 @@
 			<div class="form-row">
 				<div class="form-group col-md-12">
 					<label for="editor2" class="col-form-label">コード中部(学生操作可)</label>
-    			</div>
+				</div>
 				<div id="editor2" class="col-md-12"></div>
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-12">
-					<label for="editor3" class="col-form-label" >コード後部(学生操作不可)</label>
+					<label for="editor3" class="col-form-label">コード後部(学生操作不可)</label>
 				</div>
 				<div id="editor3" class="col-md-12"></div>
 			</div>
 			<div class="form-row">
 				<div class="col-md-12">
-		        	<input type="button" class="btn btn-info btn-block" th:value="実行" onClick="setCode()"/> 
-		        </div>
-	       	</div>
-          <input type="hidden" name="frontCode" id="frontCode" />
-          <input type="hidden" name="middleCode" id="middleCode" />
-          <input type="hidden" name="backCode" id="backCode" />
-          <input type="hidden" name="languageId" id="languageId" value="002"/>
+					<input type="button" class="btn btn-info btn-block" th:value="実行"
+						onClick="setCode()" />
+				</div>
+			</div>
+			<input type="hidden" name="frontCode" id="frontCode" /> <input
+				type="hidden" name="middleCode" id="middleCode" /> <input
+				type="hidden" name="backCode" id="backCode" /> <input type="hidden"
+				name="languageId" id="languageId" value="002" />
 		</form>
 	</div>
 
-<script th:inline="javascript">
+	<script th:inline="javascript">
 
 window.addEventListener('DOMContentLoaded', function() {
 	 

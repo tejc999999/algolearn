@@ -153,21 +153,25 @@ public class StudentControllerTest {
                 .andExpect(view().name("teacher/student/list"))
                 .andReturn();
 
-        List<StudentForm> list
-                = (List<StudentForm>) result.getModelAndView().getModel().get("students");
-        assertEquals(list.size(), 2);
-        
-        StudentForm form1 = new StudentForm();
-        form1.setId("user01");
-        form1.setPassword("password");
-        form1.setName("テストユーザー１");
-
-        StudentForm form2 = new StudentForm();
-        form2.setId("user02");
-        form2.setPassword("password");
-        form2.setName("テストユーザー２");
-
-        assertThat(list, hasItems(form1, form2));
+        try {
+            List<StudentForm> list
+                    = (List<StudentForm>) result.getModelAndView().getModel().get("students");
+            assertEquals(list.size(), 2);
+            
+            StudentForm form1 = new StudentForm();
+            form1.setId("user01");
+            form1.setPassword("password");
+            form1.setName("テストユーザー１");
+    
+            StudentForm form2 = new StudentForm();
+            form2.setId("user02");
+            form2.setPassword("password");
+            form2.setName("テストユーザー２");
+    
+            assertThat(list, hasItems(form1, form2));
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
     
     /**
@@ -182,10 +186,14 @@ public class StudentControllerTest {
                 status().isOk()).andExpect(view().name("teacher/student/list"))
                 .andReturn();
 
-        List<StudentForm> list = (List<StudentForm>) result
-                .getModelAndView().getModel().get("students");
-        if (list != null) {
-            assertEquals(list.size(), 0);
+        try {
+            List<StudentForm> list = (List<StudentForm>) result
+                    .getModelAndView().getModel().get("students");
+            if (list != null) {
+                assertEquals(list.size(), 0);
+            }
+        } catch (NullPointerException e) {
+            throw new Exception(e);
         }
     }
 
@@ -251,13 +259,17 @@ public class StudentControllerTest {
                 .andExpect(view().name("teacher/student/edit"))
                 .andReturn();
 
-        StudentForm resultForm = (StudentForm) result.getModelAndView()
-                .getModel().get("studentForm");
-
-        assertEquals(resultForm.getId(), "user01");
-        assertEquals(resultForm.getPassword(), "password");
-        assertEquals(resultForm.getName(), "テストユーザー１");
-        assertEquals(resultForm.getRoleId(), RoleCode.ROLE_STUDENT.getId());
+        try {
+            StudentForm resultForm = (StudentForm) result.getModelAndView()
+                    .getModel().get("studentForm");
+    
+            assertEquals(resultForm.getId(), "user01");
+            assertEquals(resultForm.getPassword(), "password");
+            assertEquals(resultForm.getName(), "テストユーザー１");
+            assertEquals(resultForm.getRoleId(), RoleCode.ROLE_STUDENT.getId());
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
 
     /**
@@ -278,13 +290,17 @@ public class StudentControllerTest {
                 .andExpect(view().name("teacher/student/edit"))
                 .andReturn();
 
-        StudentForm resultForm = (StudentForm) result.getModelAndView()
-                .getModel().get("studentForm");
-
-        assertEquals(resultForm.getId(), "user01");
-        assertEquals(resultForm.getPassword(), "password");
-        assertEquals(resultForm.getName(), "テストユーザー１");
-        assertEquals(resultForm.getRoleId(), RoleCode.ROLE_STUDENT.getId());
+        try {
+            StudentForm resultForm = (StudentForm) result.getModelAndView()
+                    .getModel().get("studentForm");
+    
+            assertEquals(resultForm.getId(), "user01");
+            assertEquals(resultForm.getPassword(), "password");
+            assertEquals(resultForm.getName(), "テストユーザー１");
+            assertEquals(resultForm.getRoleId(), RoleCode.ROLE_STUDENT.getId());
+        } catch (NullPointerException e) {
+            throw new Exception(e);
+        }
     }
 
     /**
