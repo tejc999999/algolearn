@@ -37,7 +37,6 @@ public class TaskController {
     @GetMapping(path = "addlist")
     String addlist(Model model) {
 
-        // TODO:あとで作成者ごとに登録
         List<QuestionForm> list = taskService.findAll();
 
         model.addAttribute("questions", list);
