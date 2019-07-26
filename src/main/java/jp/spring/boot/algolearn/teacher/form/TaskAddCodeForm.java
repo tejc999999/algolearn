@@ -1,6 +1,7 @@
 package jp.spring.boot.algolearn.teacher.form;
 
 import java.util.List;
+import java.util.Map;
 
 import jp.spring.boot.algolearn.code.VariableType;
 import lombok.Data;
@@ -13,6 +14,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class TaskAddCodeForm {
+
+    /**
+     * 問題ID(question id).
+     */
+    private String questionId;
 
     /**
      * 問題タイトル(question title).
@@ -37,7 +43,12 @@ public class TaskAddCodeForm {
     /**
      * プログラム言語(programing language).
      */
-    private String languageId;
+    private String prgLanguageId;
+    
+    /**
+     * プログラム言語マップ（programing language map）.
+     */
+    private Map<String, String> prgLanguageMap;
     
     /**
      * コード前部(front code).

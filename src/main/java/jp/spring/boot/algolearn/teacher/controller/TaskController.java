@@ -69,41 +69,55 @@ public class TaskController {
      * 課題自動作成画面表示(question list page view for task add).
      * @return 課題自動作成ページビュー(auto create task page view)
      */
-    @PostMapping(path = "addauto")
-    public String addAuto(@Validated StudentForm form, BindingResult result,
+    @PostMapping(path = "addProcess")
+    public String addProcess(@Validated TaskAddCodeForm form, BindingResult result,
             Model model) {
 
+        taskService.save(form);
+        
 
         return addlist(model);
     }
 
     /**
-     * 学生登録処理(add process for student).
-     * @return 学生一覧ページリダイレクト(redirect student list page)
+     * 課題登録コード画面表示.
+     * @param taskAddCodeForm 課題登録コードForm
+     * @param result 
+     * @param model 
+     * @return 課題コード登録ページビュー
      */
     @PostMapping(path = "addcode")
-    public String addCode(@RequestParam String id, Model model) {
+    public String addCode(@Validated TaskAddCodeForm taskAddCodeForm, BindingResult result,
+            Model model) {
         
-        model.addAttribute("", "");
-
-        return "/teacher/task/addcode";
+        try {
+        
+            taskAddCodeForm = taskService.getTaskCode(taskAddCodeForm);
+            
+            model.addAttribute("taskAddCodeForm", taskAddCodeForm);
+            
+            return "/teacher/task/addcode";
+            
+        } catch (Exception e) {
+            
+            return addAuto(taskAddCodeForm.getQuestionId(), model);
+        }
     }
-    
+
+
     /**
-     * 課題登録処理(add process for task).
-     * @return 課題一覧ページリダイレクト(redirect task list page)
+     * 課題自動コード生成画面表示.
+     * @param id 問題ID
+     * @param model モデル(model)
+     * @return 課題自動コード生成ページビュー
      */
-    @PostMapping(path = "add")
-    public String addProcess(@Validated TaskAddCodeForm form,
-            BindingResult result, Model model) {
-
-        model.addAttribute("result", taskService.save(form));
-
-        return "/teacher/task/addcode";
-        // } else {
-        //
-        // return "/teacher/task/addcode";
-        // }
+    @PostMapping(path = "addauto")
+    public String addAuto(@RequestParam String id, Model model) {
+        
+        TaskAddCodeForm taskAddCodeForm = taskService.initAutoCodeData(id);
+        model.addAttribute("taskAddCodeForm", taskAddCodeForm);
+        
+        return "/teacher/task/addauto";
     }
 
     /**

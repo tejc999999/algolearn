@@ -1,31 +1,70 @@
 
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>課題登録画面</title>
-  <link rel="stylesheet"
-    href="http://maxcdn.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css"
-    th:href="@{/webjars/bootstrap/4.3.0/css/bootstrap.min.css}" />
-  <script th:src="@{/webjars/jquery/3.4.0/jquery.slim.min.js}" type="text/javascript" charset="utf-8"></script>
-  <script th:src="@{/webjars/bootstrap/4.3.0/js/bootstrap.bundle.min.js}" type="text/javascript" charset="utf-8"></script>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>課題登録画面</title>
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.0/css/bootstrap.min.css}" />
+<script th:src="@{/webjars/jquery/3.4.0/jquery.slim.min.js}"
+	type="text/javascript" charset="utf-8"></script>
+<script th:src="@{/webjars/bootstrap/4.3.0/js/bootstrap.bundle.min.js}"
+	type="text/javascript" charset="utf-8"></script>
 
 
- </head>
+</head>
 <body>
 
-<div th:replace="layout :: header"></div>
+	<div th:replace="layout :: header"></div>
 
-■課題登録ページ
+	■課題登録ページ
 
-<form>
+	<div class="container-fluid no-gutters pb-5">
+		<form th:action="@{/teacher/task/addcode}"
+			th:object="${taskAddCodeForm}" method="post">
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="questionDescription" class="col-form-label">問題説明</label>
+					<input type="text" class="form-control" name="questionDescription"
+						aria-label="問題の説明" th:value="*{questionDescription}" disabled />
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="title" class="col-form-label">タイトル</label> <input
+						type="text" class="form-control" name="title"
+						placeholder="課題のタイトル" aria-label="課題のタイトル" />
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="description" class="col-form-label">説明文</label>
+					<textarea class="form-control" name="description"
+						placeholder="課題の説明文" aria-label="課題の説明文"></textarea>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="prgLanguageId" class="control-label col-md-12">プログラミング言語</label>
+					<select class="form-control" name="prgLanguageId">
+						<option th:each="item : *{prgLanguageMap}" th:value="${item.key}"
+							th:text="${item.value}">pull down</option>
+					</select>
+				</div>
+			</div>
 
+			<div class="form-row">
+				<div class="col-md-12">
+					<input type="submit" class="btn btn-info btn-block" th:value="作成">
+				</div>
+			</div>
+		</form>
+	</div>
 
+	<div th:replace="layout :: footer"></div>
 
-</form>
- 
- <div th:replace="layout :: footer"></div>
- 
 </body>
 </html>

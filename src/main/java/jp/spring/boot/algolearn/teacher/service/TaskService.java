@@ -8,7 +8,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import jp.spring.boot.algolearn.bean.QuestionBean;
 import jp.spring.boot.algolearn.code.CcppCheckCodeFactory;
@@ -110,13 +112,17 @@ public class TaskService {
     public TaskAddCodeForm getTaskCode(TaskAddCodeForm form) throws Exception {
         
         CheckCodeFactory checkCodeFactory = null;
-        if (form.getLanguageId().equals(PrgLanguageCode.CCPP.getId())) {
+        if (form.getPrgLanguageId().equals(PrgLanguageCode.CCPP.getId())) {
+            
             checkCodeFactory = new CcppCheckCodeFactory();
-        } else if (form.getLanguageId().equals(PrgLanguageCode.JAVA.getId())) {
+        } else if (form.getPrgLanguageId().equals(PrgLanguageCode.JAVA.getId())) {
+            
             checkCodeFactory = new JavaCheckCodeFactory();
-        } else if (form.getLanguageId().equals(PrgLanguageCode.PYTHON.getId())) {
+        } else if (form.getPrgLanguageId().equals(PrgLanguageCode.PYTHON.getId())) {
+            
             checkCodeFactory = new PythonCheckCodeFactory();
         } else {
+            
             throw new Exception("プログラム言語コード取得失敗.");
         }
         CheckCode checkCode = checkCodeFactory.getInstance();
@@ -139,7 +145,7 @@ public class TaskService {
         String lineFeedCode = System.getProperty("line.separator");
         StringBuilder sb = codeCompileCheck(form.getFrontCode() + lineFeedCode
                 + form.getMiddleCode() + lineFeedCode + form.getBackCode(), form
-                        .getLanguageId());
+                        .getPrgLanguageId());
 
         // TaskBean taskBean = new TaskBean();
         // if (form.getId() != null && !form.getId().contentEquals("")) {
@@ -164,7 +170,63 @@ public class TaskService {
 
         return sb.toString();
     }
+
+    /**
+     * 課題登録時の初期データを設定する.
+     * @param id 問題ID(questionid).
+     * @return 課題登録コードForm(task add code form)
+     */
+    public TaskAddCodeForm initAutoCodeData(String id) {
+        
+        TaskAddCodeForm taskAddCodeForm = new TaskAddCodeForm();
+
+        taskAddCodeForm.setQuestionId(id);
+        
+        Optional<QuestionBean> opt = questionRepository.findById(Long.valueOf(id));
+        opt.ifPresent(questionBean -> {
+            taskAddCodeForm.setQuestionDescription(questionBean.getDescription());
+        });
+
+        HashMap<String, String> prgLanguageMap = new HashMap<String, String>();
+        prgLanguageMap.put(PrgLanguageCode.CCPP.getId(), PrgLanguageCode.CCPP.getName());
+        prgLanguageMap.put(PrgLanguageCode.JAVA.getId(), PrgLanguageCode.JAVA.getName());
+        prgLanguageMap.put(PrgLanguageCode.PYTHON.getId(), PrgLanguageCode.PYTHON.getName());
+        
+        taskAddCodeForm.setPrgLanguageMap(prgLanguageMap);
+
+        return taskAddCodeForm;
+    }
     
+
+    /**
+     * 課題登録時の初期データを設定する.
+     * @param taskAddCodeForm 課題登録コードForm(task add code form)
+     * @return 課題登録コードForm(task add code form)
+     */    public TaskAddCodeForm setDefaultCode(TaskAddCodeForm taskAddCodeForm) {
+
+        String prgLanguageId = taskAddCodeForm.getPrgLanguageId();
+        CheckCode checkCode = null;
+        if (PrgLanguageCode.CCPP.getId().equals(prgLanguageId)) {
+            
+            checkCode = new CcppCheckCodeFactory().getInstance();
+        } else if (PrgLanguageCode.JAVA.getId().equals(prgLanguageId)) {
+            
+            checkCode = new JavaCheckCodeFactory().getInstance();
+        } else if (PrgLanguageCode.PYTHON.getId().equals(prgLanguageId)) {
+            
+            checkCode = new PythonCheckCodeFactory().getInstance();
+        }
+
+        if (checkCode != null) {
+            
+            taskAddCodeForm.setBackCode(checkCode.getBackCode());
+            taskAddCodeForm.setMiddleCode(checkCode.getMiddleCode());
+            taskAddCodeForm.setFrontCode(checkCode.getFrontCode());
+        }
+        
+        return taskAddCodeForm;
+    }
+
     /**
      * プログラムコードのコンパイルエラーチェック.
      * @param code プログラムコード

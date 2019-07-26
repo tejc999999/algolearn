@@ -6,7 +6,7 @@ package jp.spring.boot.algolearn.config;
  */
 public enum PrgLanguageCode {
 
-    CCPP("001", "℃／Ｃ＋＋"),
+    CCPP("001", "Ｃ／Ｃ＋＋"),
     JAVA("002", "Ｊａｖａ"),
     PYTHON("003", "Ｐｙｔｈｏｎ")
     ;
