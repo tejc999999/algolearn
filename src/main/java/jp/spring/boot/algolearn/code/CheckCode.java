@@ -9,20 +9,16 @@ public interface CheckCode {
     public static final String LINE_FEED_CODE = System.getProperty("line.separator");
     
     /**
-     * コード前部を取得する.
+     * 確認用コードを取得する.
      * @return コード前部
      */
-    public abstract String getFrontCode();
+    public abstract String getCheckCode();
 
     /**
-     * コード中部を取得する.
-     * @return コード中部
+     * 課題用ダミーコードを取得する.
+     * @param codeMethod メソッド名
+     * @param codeReturn 戻り値
+     * @return コード前部
      */
-    public abstract String getMiddleCode();
-
-    /**
-     * コード後部を取得する.
-     * @return コード後部
-     */
-    public abstract String getBackCode();
+    public abstract String getDummyCode(String codeMethod, String codeReturn);
 }

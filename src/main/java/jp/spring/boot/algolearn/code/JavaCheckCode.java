@@ -8,37 +8,35 @@ package jp.spring.boot.algolearn.code;
 public class JavaCheckCode implements CheckCode {
 
     /**
-     * チェックコード前部取得.
+     * チェックコードを取得する.
      * @return チェックコード前部
      */
     @Override
-    public String getFrontCode() {
+    public String getCheckCode() {
         
         StringBuffer buff = new StringBuffer();
         buff.append("public class CheckClass {" + LINE_FEED_CODE);
         buff.append("    public static void main(String[] args) {" + LINE_FEED_CODE);
         buff.append("        System.out.println(\"TEST CHECK!!\");" + LINE_FEED_CODE);
+        buff.append("    }" + LINE_FEED_CODE);
+        buff.append("}" + LINE_FEED_CODE);
         
         return buff.toString();
     }
 
     /**
-     * チェックコード中部取得.
-     * @return チェックコード中部.
+     * 課題用ダミーコードを取得する.
+     * @param codeMethod メソッド名
+     * @param codeReturn 戻り値
+     * @return コード前部
      */
     @Override
-    public String getMiddleCode() {
+    public String getDummyCode(String codeMethod, String codeReturn) {
         
-        return "";
-    }
-
-    /**
-     * チェックコード後部取得.
-     * @return チェックコード後部
-     */
-    @Override
-    public String getBackCode() {
         StringBuffer buff = new StringBuffer();
+        buff.append("public class TaskClass {" + LINE_FEED_CODE);
+        buff.append("    " + codeMethod + " {" + LINE_FEED_CODE);
+        buff.append("        return " + codeReturn + ";" + LINE_FEED_CODE);
         buff.append("    }" + LINE_FEED_CODE);
         buff.append("}" + LINE_FEED_CODE);
         

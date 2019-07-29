@@ -8,33 +8,24 @@ package jp.spring.boot.algolearn.code;
 public class PythonCheckCode implements CheckCode {
 
     /**
-     * チェックコード前部取得.
+     * チェックコードを取得する.
      * @return チェックコード前部
      */
     @Override
-    public String getFrontCode() {
+    public String getCheckCode() {
         // TODO Auto-generated method stub
         return null;
     }
-
+    
     /**
-     * チェックコード中部取得.
-     * @return チェックコード中部.
+     * 課題用ダミーコードを取得する.
+     * @param codeMethod メソッド名
+     * @param codeReturn 戻り値
+     * @return コード前部
      */
     @Override
-    public String getMiddleCode() {
+    public String getDummyCode(String codeMethod, String codeReturn) {
         // TODO Auto-generated method stub
         return null;
     }
-
-    /**
-     * チェックコード後部取得.
-     * @return チェックコード後部
-     */
-    @Override
-    public String getBackCode() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

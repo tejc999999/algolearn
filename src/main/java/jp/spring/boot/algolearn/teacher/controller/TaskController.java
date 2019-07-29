@@ -68,7 +68,7 @@ public class TaskController {
      * 課題自動作成画面表示(question list page view for task add).
      * @return 課題自動作成ページビュー(auto create task page view)
      */
-    @PostMapping(path = "addProcess")
+    @PostMapping(path = "addprocess")
     public String addProcess(@Validated TaskAddCodeForm form, BindingResult result,
             Model model) {
 

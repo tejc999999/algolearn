@@ -60,22 +60,16 @@ public class TaskBean {
     private Long questionId;
 
     /**
-     * プログラムコード前部.
+     * メソッド部コード.
      */
-    @Column(name = "front_code")
-    private String frontCode;
+    @Column(name = "code_method")
+    private String codeMethod;
 
     /**
-     * プログラムコード中部.
+     * 戻り値部コード.
      */
-    @Column(name = "middle_code")
-    private String middleCode;
-
-    /**
-     * プログラムコード後部.
-     */
-    @Column(name = "back_code")
-    private String backCode;
+    @Column(name = "code_return")
+    private String codeReturn;
     
     /**
      * コンストラクタ.

@@ -31,6 +31,11 @@ public class TaskAddCodeForm {
     private String questionDescription;
 
     /**
+     * 課題ID(task id).
+     */
+    private String id;
+    
+    /**
      * 課題タイトル(task title).
      */
     private String title;
@@ -51,20 +56,20 @@ public class TaskAddCodeForm {
     private Map<String, String> prgLanguageMap;
     
     /**
-     * コード前部(front code).
+     * プログラムコード(program code).
      */
-    private String frontCode;
+    private String code;
 
     /**
-     * コード中部(middle code).
+     * 課題コードメソッド部(Task code method name part).
      */
-    private String middleCode;
+    private String codeMethod;
 
     /**
-     * コード後部(back code).
+     * 課題コード戻り値部(Task code return value part).
      */
-    private String backCode;
-    
+    private String codeReturn;
+
     /**
      * コード自動生成フラグ(code auto generate flg).
      */
