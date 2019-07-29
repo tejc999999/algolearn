@@ -94,5 +94,9 @@ public class TaskAddCodeForm {
      * プログラム採点コード用引数型リスト.
      */
     private List<VariableType> inputCodeTypeList;
-
+    
+    /**
+     * 検索ワード.
+     */
+    public String searchWord;
 }

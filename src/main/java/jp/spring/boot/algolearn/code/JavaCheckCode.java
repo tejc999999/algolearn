@@ -17,7 +17,8 @@ public class JavaCheckCode implements CheckCode {
         StringBuffer buff = new StringBuffer();
         buff.append("public class CheckClass {" + LINE_FEED_CODE);
         buff.append("    public static void main(String[] args) {" + LINE_FEED_CODE);
-        buff.append("        System.out.println(\"TEST CHECK!!\");" + LINE_FEED_CODE);
+        buff.append("        TaskClass taskClass = new TaskClass();" + LINE_FEED_CODE);
+        buff.append("        taskClass.taskMethod();" + LINE_FEED_CODE);
         buff.append("    }" + LINE_FEED_CODE);
         buff.append("}" + LINE_FEED_CODE);
         

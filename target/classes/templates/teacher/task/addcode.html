@@ -77,7 +77,10 @@
 				</div>
 			</div>
 			<input type="hidden" name="code" id="code" />
-			<input type="hidden" name="languageId" id="languageId" value="002" />
+			<input type="hidden" name="prgLanguageId" id="prgLanguageId" th:value="*{prgLanguageId}" />
+			<input type="hidden" name="title"  th:value="*{title}" />
+			<input type="hidden" name="description"  th:value="*{description}" />
+			<input type="hidden" name="questionDescription"  th:value="*{questionDescription}" />
 			<input type="hidden" name="questionId"  th:value="*{questionId}" />
 		</form>
 	</div>
@@ -88,7 +91,7 @@ window.addEventListener('DOMContentLoaded', function() {
 	 
     var editor = ace.edit("editor");
 
-    var languageId = document.getElementById('languageId').value;
+    var languageId = document.getElementById('prgLanguageId').value;
     if(languageId == "001") {
     	
         editor.session.setMode("ace/mode/c_cpp");
@@ -105,7 +108,7 @@ window.addEventListener('DOMContentLoaded', function() {
 	document.getElementById('editor').style.fontSize='12px';
  
 	/*<![CDATA[*/
-	  var code = /*[[${taskAddCodeForm.code}]]*/ "dummy";
+	  var code = /*[[${code}]]*/ "dummy";
 	/*]]>*/
 	  editor.setValue(code, 1);	
 })

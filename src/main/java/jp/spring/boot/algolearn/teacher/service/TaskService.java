@@ -105,11 +105,11 @@ public class TaskService {
     }
 
     /**
-     * プログラム採点用コードをFormにセットする.
+     * 課題確認用コードを取得する.
      * @param form 先生用課題登録時コード作成Form
-     * @return 先生用課題登録時コード作成Form
+     * @return 課題確認用コード
      */
-    public TaskAddCodeForm getTaskCode(TaskAddCodeForm form) throws Exception {
+    public String getCheckCode(TaskAddCodeForm form) throws Exception {
 
         CheckCodeFactory checkCodeFactory = null;
         if (form.getPrgLanguageId().equals(PrgLanguageCode.CCPP.getId())) {
@@ -129,10 +129,7 @@ public class TaskService {
         }
         CheckCode checkCode = checkCodeFactory.getInstance();
 
-        TaskAddCodeForm resultForm = new TaskAddCodeForm();
-        resultForm.setCode(checkCode.getCheckCode());
-
-        return resultForm;
+        return checkCode.getCheckCode();
     }
 
     /**
@@ -150,7 +147,8 @@ public class TaskService {
             taskBean.setId(Long.parseLong(taskId));
         }
         taskBean.setTitle(form.getTitle());
-        taskBean.setDescription(form.getPrgLanguageId());
+        taskBean.setDescription(form.getDescription());
+        taskBean.setLanguageId(form.getPrgLanguageId());
         taskBean.setQuestionId(Long.parseLong(form.getQuestionId()));
         taskBean.setCodeMethod(form.getCodeMethod());
         taskBean.setCodeReturn(form.getCodeReturn());
@@ -268,7 +266,7 @@ public class TaskService {
             String prgCodeId) {
 
         boolean resultFlg = false;
-        ;
+
 
         if (PrgLanguageCode.JAVA.getId().equals(prgCodeId)) {
             // Javaの場合

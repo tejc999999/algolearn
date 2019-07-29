@@ -3,9 +3,7 @@ package jp.spring.boot.algolearn.teacher.controller;
 import java.util.List;
 
 import jp.spring.boot.algolearn.teacher.form.QuestionForm;
-import jp.spring.boot.algolearn.teacher.form.StudentForm;
 import jp.spring.boot.algolearn.teacher.form.TaskAddCodeForm;
-import jp.spring.boot.algolearn.teacher.form.TaskAddSearchForm;
 import jp.spring.boot.algolearn.teacher.service.TaskService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +28,15 @@ public class TaskController {
     @Autowired
     TaskService taskService;
 
+    /**
+     * モデルにフォームをセットする(set form the model).
+     * @return 課題コード追加Form(task code add form)
+     */
+    @ModelAttribute
+    TaskAddCodeForm setupForm() {
+        return new TaskAddCodeForm();
+    }
+    
     /**
      * 課題登録用問題一覧ページ表示(show question list page for task add).
      * @param model 問題一覧保存用モデル(model to save question list)
@@ -46,13 +54,13 @@ public class TaskController {
     
     /**
      * 課題登録用問題検索(question search for task add).
-     * @param form 検索Form(serach form)
+     * @param form 課題コード追加Form(task code add form)
      * @param result エラーチェック結果(error validate result)
      * @param model 問題一覧保存用モデル(model to save question list)
      * @return 課題登録用問題一覧ページビュー(question list page view for task add)
      */
     @PostMapping(path = "addsearch")
-    public String addSearch(@Validated TaskAddSearchForm form, BindingResult result,
+    public String addSearch(@Validated TaskAddCodeForm form, BindingResult result,
             Model model) {
 
         // TODO:あとで作成者ごとに登録        
@@ -81,8 +89,8 @@ public class TaskController {
     /**
      * 課題登録コード画面表示.
      * @param taskAddCodeForm 課題登録コードForm
-     * @param result 
-     * @param model 
+     * @param result エラー検証結果
+     * @param model モデル(model)
      * @return 課題コード登録ページビュー
      */
     @PostMapping(path = "addcode")
@@ -91,9 +99,9 @@ public class TaskController {
         
         try {
         
-            taskAddCodeForm = taskService.getTaskCode(taskAddCodeForm);
+            String code = taskService.getCheckCode(taskAddCodeForm);
             
-            model.addAttribute("taskAddCodeForm", taskAddCodeForm);
+            model.addAttribute("code", code);
             
             return "/teacher/task/addcode";
             
@@ -137,33 +145,33 @@ public class TaskController {
         return "teacher/task/edit";
     }
 
-    /**
-     * 学生編集処理(edit process for student).
-     * @return 学生一覧ページリダイレクト(student list page redirect)
-     */
-    @PostMapping(path = "editprocess")
-    public String editProcess(StudentForm form, Model model) {
-
-        // UserBean bean = new UserBean();
-        // BeanUtils.copyProperties(form, bean);
-        //
-        // userRepository.save(bean);
-
-        return "redirect:/teacher/task";
-    }
-
-    /**
-     * 学生削除処理(delete student for question).
-     * @return 学生一覧ページリダイレクト(redirect student list page)
-     */
-    @PostMapping(path = "delete")
-    public String delete(@RequestParam String userId, Model model) {
-
-        // UserBean bean = new UserBean();
-        // bean.setUserId(userId);
-        //
-        // userRepository.delete(bean);
-
-        return "redirect:/teacher/task";
-    }
+//    /**
+//     * 学生編集処理(edit process for student).
+//     * @return 学生一覧ページリダイレクト(student list page redirect)
+//     */
+//    @PostMapping(path = "editprocess")
+//    public String editProcess(StudentForm form, Model model) {
+//
+//        // UserBean bean = new UserBean();
+//        // BeanUtils.copyProperties(form, bean);
+//        //
+//        // userRepository.save(bean);
+//
+//        return "redirect:/teacher/task";
+//    }
+//
+//    /**
+//     * 学生削除処理(delete student for question).
+//     * @return 学生一覧ページリダイレクト(redirect student list page)
+//     */
+//    @PostMapping(path = "delete")
+//    public String delete(@RequestParam String userId, Model model) {
+//
+//        // UserBean bean = new UserBean();
+//        // bean.setUserId(userId);
+//        //
+//        // userRepository.delete(bean);
+//
+//        return "redirect:/teacher/task";
+//    }
 }
