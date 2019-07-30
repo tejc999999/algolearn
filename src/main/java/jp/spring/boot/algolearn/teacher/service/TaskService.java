@@ -18,6 +18,7 @@ import jp.spring.boot.algolearn.bean.TaskBean;
 import jp.spring.boot.algolearn.code.CcppCheckCodeFactory;
 import jp.spring.boot.algolearn.code.CheckCode;
 import jp.spring.boot.algolearn.code.CheckCodeFactory;
+import jp.spring.boot.algolearn.code.ExecuteResult;
 import jp.spring.boot.algolearn.code.JavaCheckCodeFactory;
 import jp.spring.boot.algolearn.code.PythonCheckCodeFactory;
 import jp.spring.boot.algolearn.config.PrgLanguageCode;
@@ -135,9 +136,10 @@ public class TaskService {
     /**
      * プログラムコード登録.
      * @param form 課題追加コードForm
-     * @return 実行結果
+     * @return コマンド実行結果
+     * @throws IOException ファイル入出力例外
      */
-    public String save(TaskAddCodeForm form) {
+    public ExecuteResult save(TaskAddCodeForm form) throws IOException {
         // TaskAddCodeForm resultForm = new TaskAddCodeForm();
 
         // TODO: DB保存
@@ -156,51 +158,41 @@ public class TaskService {
         taskBean = taskRepository.save(taskBean);
         taskId = String.valueOf(taskBean.getId());
 
-        // TODO: 課題チェックプログラムファイル出力
-        StringBuilder sb = null;
-        if (fileOutputCheckCode(taskId, form.getCode(), form.getPrgLanguageId())
-                // TODO: 課題ダミープログラムファイル出力
-                && fileOutputTaskCode(taskId, form.getCodeMethod(), form
-                        .getCodeReturn(), form.getPrgLanguageId())) {
+        ExecuteResult executeResult = new ExecuteResult();
+        try {
+            // TODO: 課題チェックプログラムファイル出力
+            fileOutputCheckCode(taskId, form.getCode(), form.getPrgLanguageId());
+            
+            // TODO: 課題ダミープログラムファイル出力
+            fileOutputTaskCode(taskId, form.getCodeMethod(), form.getCodeReturn(),
+                    form.getPrgLanguageId());
+       
             // TODO: コンパイル実行
-            sb = codeCompileCheck(form.getPrgLanguageId(), taskId);
-
-        } else {
-            sb = new StringBuilder();
+            executeResult = codeBuildCheck(form.getPrgLanguageId(), taskId);
+            if (executeResult.getReturnCode() == ExecuteResult.RETURN_CODE_SUCCESS) {
+                
+                executeResult = codeExecuteCheck(form.getPrgLanguageId(), taskId);
+            }        
+            
+            // TODO: 戻り値を返す
+        } catch (IOException e) {
+            executeResult.setReturnCode(ExecuteResult.RETURN_CODE_ERROR);
+            throw e;
+        } finally {
+            if (executeResult.getReturnCode() == ExecuteResult.RETURN_CODE_ERROR) {
+                taskRepository.delete(taskBean);
+            }
         }
-        // TODO: 戻り値を返す
 
-        
-        // TaskBean taskBean = new TaskBean();
-        // if (form.getId() != null && !form.getId().contentEquals("")) {
-        // taskBean.setId(Long.valueOf(form.getId()));
-        // }
-        // taskBean.setTitle(form.getTitle());
-        // taskBean.setDescription(form.getDescription());
-        // taskBean.setLanguageId(form.getLanguageId());
-        // taskBean.setFrontCode(form.getFrontCode());
-        // taskBean.setMiddleCode(form.getMiddleCode());
-        // taskBean.setBackCode(form.getBackCode());
-        //
-        // taskBean = taskRepository.save(taskBean);
-        //
-        // resultForm.setId(String.valueOf(taskBean.getId()));
-        // resultForm.setTitle(taskBean.getTitle());
-        // resultForm.setDescription(taskBean.getDescription());
-        // resultForm.setLanguageId(taskBean.getLanguageId());
-        // resultForm.setFrontCode(taskBean.getFrontCode());
-        // resultForm.setMiddleCode(taskBean.getMiddleCode());
-        // resultForm.setBackCode(taskBean.getBackCode());
-
-        return sb.toString();
+        return executeResult;
     }
 
     /**
      * 課題登録時の初期データを設定する.
-     * @param id 問題ID(questionid).
+     * @param id 問題ID
      * @return 課題登録コードForm(task add code form)
      */
-    public TaskAddCodeForm initAutoCodeData(String id) {
+    public TaskAddCodeForm setQuestionData(String id) {
 
         TaskAddCodeForm taskAddCodeForm = new TaskAddCodeForm();
 
@@ -213,6 +205,16 @@ public class TaskService {
             taskAddCodeForm.setQuestionDescription(questionBean
                     .getDescription());
         });
+        
+        return taskAddCodeForm;
+    }
+    
+    /**
+     * プログラミング言語マップを設定する.
+     * @param taskAddCodeForm 課題登録コードForm(task add code form)
+     * @return 課題登録コードFOrm
+     */
+    public TaskAddCodeForm setPrgLanguageMap(TaskAddCodeForm taskAddCodeForm) {
 
         HashMap<String, String> prgLanguageMap = new HashMap<String, String>();
         prgLanguageMap.put(PrgLanguageCode.CCPP.getId(), PrgLanguageCode.CCPP
@@ -230,9 +232,9 @@ public class TaskService {
     /**
      * 課題登録時の初期データを設定する.
      * @param taskAddCodeForm 課題登録コードForm(task add code form)
-     * @return 課題登録コードForm(task add code form)
+     * @return 課題確認用コード
      */
-    public TaskAddCodeForm setDefaultCode(TaskAddCodeForm taskAddCodeForm) {
+    public String setDefaultCode(TaskAddCodeForm taskAddCodeForm) {
 
         String prgLanguageId = taskAddCodeForm.getPrgLanguageId();
         CheckCode checkCode = null;
@@ -247,12 +249,12 @@ public class TaskService {
             checkCode = new PythonCheckCodeFactory().getInstance();
         }
 
+        String resultStr = null;;
         if (checkCode != null) {
 
-            taskAddCodeForm.setCode(checkCode.getCheckCode());
+            resultStr = checkCode.getCheckCode();
         }
-
-        return taskAddCodeForm;
+        return resultStr;
     }
 
     /**
@@ -260,12 +262,10 @@ public class TaskService {
      * @param taskId 課題ID
      * @param code 課題チェック用コード
      * @param prgCodeId プログラミング言語ID
-     * @return 実行結果（true:成功、false:失敗）
+     * @throws IOException ファイル入出力例外
      */
-    private boolean fileOutputCheckCode(String taskId, String code,
-            String prgCodeId) {
-
-        boolean resultFlg = false;
+    private void fileOutputCheckCode(String taskId, String code,
+            String prgCodeId) throws IOException {
 
 
         if (PrgLanguageCode.JAVA.getId().equals(prgCodeId)) {
@@ -281,27 +281,40 @@ public class TaskService {
                 dir.mkdir();
             }
 
+            FileOutputStream fos = null;
+            OutputStreamWriter osw = null;
             try {
                 BufferedReader reader = new BufferedReader(new StringReader(code));
 
                 // ファイル書き込み処理を文字コード指定に変更
                 // close処理を正しくする
-                FileOutputStream fos = new FileOutputStream(prgLanguagePropertiesDetail
+                fos = new FileOutputStream(prgLanguagePropertiesDetail
                         .getWorkFolderPath() + java.io.File.separator + taskId
                         + java.io.File.separator + prgLanguagePropertiesDetail
                                 .getCheckFileName());
-                OutputStreamWriter osw = new OutputStreamWriter(fos, serverProperties
+                osw = new OutputStreamWriter(fos, serverProperties
                         .getCharacterCode());
                 String line2 = null;
                 while ((line2 = reader.readLine()) != null) {
                     osw.write(line2 + "\n");
                 }
-                osw.close();
-
-                resultFlg = true;
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            } finally {
+                if (osw != null) {
+                    try {
+                        osw.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
             }
 
         } else if (PrgLanguageCode.CCPP.toString().equals(prgCodeId)) {
@@ -310,8 +323,6 @@ public class TaskService {
         } else if (PrgLanguageCode.PYTHON.toString().equals(prgCodeId)) {
             // Pythonの場合
         }
-
-        return resultFlg;
     }
 
     /**
@@ -320,12 +331,9 @@ public class TaskService {
      * @param codeMethod メソッド名
      * @param codeRetrun 戻り値
      * @param prgLanguageId プログラミング言語ID
-     * @return 実行結果（true:成功、false:失敗）
      */
-    private boolean fileOutputTaskCode(String taskId, String codeMethod,
+    private void fileOutputTaskCode(String taskId, String codeMethod,
             String codeReturn, String prgLanguageId) {
-
-        boolean resultFlg = false;
 
         CheckCodeFactory checkCodeFactory = null;
         if (PrgLanguageCode.JAVA.getId().equals(prgLanguageId)) {
@@ -364,8 +372,6 @@ public class TaskService {
                 }
                 osw.close();
 
-                resultFlg = true;
-
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -384,8 +390,6 @@ public class TaskService {
             // CheckCode checkCode = checkCodeFactory.getInstance();
             // String code = checkCode.getDummyCode(codeMethod, codeReturn);
         }
-
-        return resultFlg;
     }
 
     /**
@@ -394,9 +398,11 @@ public class TaskService {
      * @param taskId 課題ID
      * @return
      */
-    private StringBuilder codeCompileCheck(String prgLanguageId,
+    private ExecuteResult codeBuildCheck(String prgLanguageId,
             String taskId) {
 
+        ExecuteResult executeResult = new ExecuteResult();
+        
         StringBuilder sb = new StringBuilder();
 
         String lineFeedCode = System.getProperty("line.separator");
@@ -422,8 +428,9 @@ public class TaskService {
                         + taskId + java.io.File.separator
                         + prgLanguagePropertiesDetail.getCheckFileName()
                         + "\"");
+
+                // 標準出力を取得する
                 InputStream is = p.getInputStream();
-                InputStream es = p.getErrorStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(is, serverProperties
                         .getCharacterCode()));
                 String line;
@@ -431,46 +438,22 @@ public class TaskService {
                     sb.append(line);
                     sb.append(lineFeedCode);
                 }
+                executeResult.setOutputString(sb.toString());
+                sb.setLength(0);
+                
+                // 標準エラー出力を取得する
+                InputStream es = p.getErrorStream();
                 br = new BufferedReader(new InputStreamReader(es, serverProperties
                         .getCharacterCode()));
                 while ((line = br.readLine()) != null) {
                     sb.append(line);
                     sb.append(lineFeedCode);
                 }
+                executeResult.setErrorOutputString(sb.toString());
 
-                p.waitFor(); // プロセスが終了するまで待機する
+                executeResult.setReturnCode(p.waitFor()); // プロセスが終了するまで待機する
                 p.destroy();
 
-                if (sb.toString() == null || sb.toString().equals("")) {
-                    // エラーが発生していない場合のみ、実行
-
-                    // 実行処理
-                    p = Runtime.getRuntime().exec("\""
-                            + prgLanguagePropertiesDetail.getExecuteCmdPath()
-                            + "\" -cp  \"" + prgLanguagePropertiesDetail
-                                    .getWorkFolderPath() + java.io.File.separator
-                            + taskId
-                            + "\" "
-                            + prgLanguagePropertiesDetail
-                                    .getBuildCheckFileName());
-                    is = p.getInputStream();
-                    es = p.getErrorStream();
-                    br = new BufferedReader(new InputStreamReader(is, serverProperties
-                            .getCharacterCode()));
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line);
-                        sb.append(lineFeedCode);
-                    }
-                    br = new BufferedReader(new InputStreamReader(es, serverProperties
-                            .getCharacterCode()));
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line);
-                        sb.append(lineFeedCode);
-                    }
-
-                    p.waitFor(); // プロセスが終了するまで待機する
-                    p.destroy();
-                }
             } catch (IOException ex) {
                 ex.printStackTrace();
             } catch (InterruptedException e) {
@@ -489,7 +472,81 @@ public class TaskService {
             sb.append("予期せぬエラーが発生しました。");
         }
 
-        return sb;
+        return executeResult;
+    }
+    
+    /**
+     * プログラムコードの実行エラーチェック.
+     * @param prgLanguageId プログラミング言語ID
+     * @param taskId 課題ID
+     * @return
+     */
+    private ExecuteResult codeExecuteCheck(String prgLanguageId,
+            String taskId) {
+        
+        ExecuteResult executeResult = new ExecuteResult();
+
+        StringBuilder sb = new StringBuilder();
+
+        String lineFeedCode = System.getProperty("line.separator");
+
+        if (PrgLanguageCode.JAVA.getId().equals(prgLanguageId)) {
+            // Javaの場合
+
+            PrgLanguagePropertiesDetail prgLanguagePropertiesDetail = prgLanguageProperties
+                    .getMap().get(PrgLanguageCode.JAVA.toString());
+
+            try {
+                // エラーが発生していない場合のみ、実行
+
+                // 実行処理
+                Process p = Runtime.getRuntime().exec("\"" + prgLanguagePropertiesDetail
+                        .getExecuteCmdPath() + "\" -cp  \""
+                        + prgLanguagePropertiesDetail.getWorkFolderPath()
+                        + java.io.File.separator + taskId + "\" "
+                        + prgLanguagePropertiesDetail.getBuildCheckFileName());
+                InputStream is = p.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(is, serverProperties
+                        .getCharacterCode()));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                    sb.append(lineFeedCode);
+                }
+                executeResult.setOutputString(sb.toString());
+                
+                sb.setLength(0);
+                InputStream es = p.getErrorStream();
+                br = new BufferedReader(new InputStreamReader(es, serverProperties
+                        .getCharacterCode()));
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                    sb.append(lineFeedCode);
+                }
+                executeResult.setErrorOutputString(sb.toString());
+
+                executeResult.setReturnCode(p.waitFor()); // プロセスが終了するまで待機する
+                p.destroy();
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            } catch (InterruptedException e) {
+
+                e.printStackTrace();
+            }
+
+        } else if (PrgLanguageCode.CCPP.toString().equals(prgLanguageId)) {
+            // Cの場合
+
+        } else if (PrgLanguageCode.PYTHON.toString().equals(prgLanguageId)) {
+            // Pythonの場合
+
+        } else {
+            // 登録されていないプログラミング言語の場合
+            sb.append("予期せぬエラーが発生しました。");
+        }
+
+        return executeResult;
     }
 
 }

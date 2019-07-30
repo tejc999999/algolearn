@@ -18,8 +18,8 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
 prglanguage: 
   java: 
-    fileName: TestClass.java
-    buildFileName: TestClass
+    fileName: TaskClass.java
+    buildFileName: TaskClass
     checkFileName: CheckClass.java
     buildCheckFileName: CheckClass
     buildCmdPath: F:\\dev\\AdoptOpenJDK\\jdk-8.0.202.08\\bin\\javac
@@ -38,7 +38,8 @@ prglanguage:
     executeCmdPath:
     workFolderPath:
 server:
-  charactercode: utf-8
+#  charactercode: utf-8
+  charactercode: SJIS
 logging:
   level:
     org:

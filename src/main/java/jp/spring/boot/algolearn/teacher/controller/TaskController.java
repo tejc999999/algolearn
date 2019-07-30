@@ -2,6 +2,7 @@ package jp.spring.boot.algolearn.teacher.controller;
 
 import java.util.List;
 
+import jp.spring.boot.algolearn.code.ExecuteResult;
 import jp.spring.boot.algolearn.teacher.form.QuestionForm;
 import jp.spring.boot.algolearn.teacher.form.TaskAddCodeForm;
 import jp.spring.boot.algolearn.teacher.service.TaskService;
@@ -63,7 +64,6 @@ public class TaskController {
     public String addSearch(@Validated TaskAddCodeForm form, BindingResult result,
             Model model) {
 
-        // TODO:あとで作成者ごとに登録        
         List<QuestionForm> list = taskService
                 .findByTitleLikeOrDescriptionLike("%" + form.getSearchWord() + "%");
        
@@ -73,19 +73,21 @@ public class TaskController {
     }
 
     /**
-     * 課題自動作成画面表示(question list page view for task add).
-     * @return 課題自動作成ページビュー(auto create task page view)
+     * 課題自動コード生成画面表示.
+     * @param id 問題ID
+     * @param model モデル(model)
+     * @return 課題自動コード生成ページビュー
      */
-    @PostMapping(path = "addprocess")
-    public String addProcess(@Validated TaskAddCodeForm form, BindingResult result,
-            Model model) {
-
-        taskService.save(form);
+    @PostMapping(path = "addauto")
+    public String addAuto(@RequestParam String id, Model model) {
         
-
-        return addlist(model);
+        TaskAddCodeForm taskAddCodeForm = taskService.setQuestionData(id);
+        taskAddCodeForm = taskService.setPrgLanguageMap(taskAddCodeForm);
+        model.addAttribute("taskAddCodeForm", taskAddCodeForm);
+        
+        return "/teacher/task/addauto";
     }
-
+    
     /**
      * 課題登録コード画面表示.
      * @param taskAddCodeForm 課題登録コードForm
@@ -97,54 +99,69 @@ public class TaskController {
     public String addCode(@Validated TaskAddCodeForm taskAddCodeForm, BindingResult result,
             Model model) {
         
+        taskAddCodeForm = taskService.setPrgLanguageMap(taskAddCodeForm);
+        if (taskAddCodeForm.getCode() == null) {
+            try {
+    
+                String code = taskService.getCheckCode(taskAddCodeForm);
+                taskAddCodeForm.setCode(code);
+            } catch (Exception e) {
+                
+                return addAuto(taskAddCodeForm.getQuestionId(), model);
+            }
+        }
+        return "/teacher/task/addcode";
+    }
+
+    /**
+     * 課題自動作成画面表示(question list page view for task add).
+     * @return 課題自動作成ページビュー(auto create task page view)
+     */
+    @PostMapping(path = "addprocess")
+    public String addProcess(@Validated TaskAddCodeForm taskAddCodeForm, BindingResult result,
+            Model model) {
+
+        ExecuteResult executeResult = null;
         try {
-        
-            String code = taskService.getCheckCode(taskAddCodeForm);
             
-            model.addAttribute("code", code);
-            
-            return "/teacher/task/addcode";
-            
+            executeResult = taskService.save(taskAddCodeForm);
         } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+        if (executeResult != null && executeResult
+                .getReturnCode() == ExecuteResult.RETURN_CODE_SUCCESS) {
+
+            return addlist(model);
+        } else {
             
-            return addAuto(taskAddCodeForm.getQuestionId(), model);
+            if (executeResult != null) {
+                model.addAttribute("result", executeResult.getErrorOutputString());
+            }
+            model.addAttribute("taskAddCodeForm", taskAddCodeForm);
+            
+            return addCode(taskAddCodeForm, result, model);
         }
     }
 
-
-    /**
-     * 課題自動コード生成画面表示.
-     * @param id 問題ID
-     * @param model モデル(model)
-     * @return 課題自動コード生成ページビュー
-     */
-    @PostMapping(path = "addauto")
-    public String addAuto(@RequestParam String id, Model model) {
-        
-        TaskAddCodeForm taskAddCodeForm = taskService.initAutoCodeData(id);
-        model.addAttribute("taskAddCodeForm", taskAddCodeForm);
-        
-        return "/teacher/task/addauto";
-    }
-
-    /**
-     * 学生編集ページ表示(show edit student page).
-     * @return 学生編集ページビュー(edit student page view)
-     */
-    @PostMapping(path = "edit")
-    public String edit(@RequestParam String id, Model model) {
-
-        // Optional<UserBean> opt = userRepository.findById(userId);
-        // opt.ifPresent(bean -> {
-        // StudentForm form = new StudentForm();
-        // BeanUtils.copyProperties(bean, form);
-        //
-        // model.addAttribute("studentForm", form);
-        // });
-
-        return "teacher/task/edit";
-    }
-
+//    /**
+//     * 学生編集ページ表示(show edit student page).
+//     * @return 学生編集ページビュー(edit student page view)
+//     */
+//    @PostMapping(path = "edit")
+//    public String edit(@RequestParam String id, Model model) {
+//
+//        // Optional<UserBean> opt = userRepository.findById(userId);
+//        // opt.ifPresent(bean -> {
+//        // StudentForm form = new StudentForm();
+//        // BeanUtils.copyProperties(bean, form);
+//        //
+//        // model.addAttribute("studentForm", form);
+//        // });
+//
+//        return "teacher/task/edit";
+//    }
+//
 //    /**
 //     * 学生編集処理(edit process for student).
 //     * @return 学生一覧ページリダイレクト(student list page redirect)

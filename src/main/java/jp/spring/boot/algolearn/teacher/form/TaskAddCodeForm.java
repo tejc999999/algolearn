@@ -98,5 +98,5 @@ public class TaskAddCodeForm {
     /**
      * 検索ワード.
      */
-    public String searchWord;
+    private String searchWord;
 }

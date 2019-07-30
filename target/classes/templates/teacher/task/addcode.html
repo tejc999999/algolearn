@@ -30,13 +30,42 @@
 	<div th:replace="layout :: header"></div>
 
 	■課題登録
-
-	<p th:text="${result}"></p>
-
 	<div class="container-fluid no-gutters pb-5">
 
-		<form th:action="@{/teacher/task/addprocess}" th:object="${taskAddCodeForm}"
-			method="post" id="taskAddCodeForm">
+		<form th:action="@{/teacher/task/addprocess}"
+			th:object="${taskAddCodeForm}" method="post" id="taskAddCodeForm">
+
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="questionDescription" class="col-form-label">問題説明</label>
+					<input type="text" class="form-control" name="questionDescription"
+						aria-label="問題の説明" th:value="*{questionDescription}" disabled />
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="title" class="col-form-label">タイトル</label> <input
+						type="text" class="form-control" name="title" aria-label="課題のタイトル"
+						th:value="*{title}" disabled />
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="description" class="col-form-label">説明文</label>
+					<textarea class="form-control" name="description" id="description"
+						aria-label="課題の説明文" disabled></textarea>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="prgLanguageId" class="control-label col-md-12">プログラミング言語</label>
+					<select class="form-control" name="prgLanguageId" disabled >
+						<option th:each="item : *{prgLanguageMap}" th:value="${item.key}"
+							th:text="${item.value}"
+							th:selected="${item.key} == *{prgLanguageId}">pull down</option>
+					</select>
+				</div>
+			</div>
 
 			<div class="form-row">
 				<div class="form-group col-md-12">
@@ -44,20 +73,21 @@
 				</div>
 				<div id="editor" class="col-md-12"></div>
 			</div>
-			
+
 			<div class="form-row">
 				<div class="form-group col-md-12">
 					<label for="editor" class="col-form-label">課題用コード（メソッド部)</label>
 				</div>
 				<div id="editor" class="col-md-12"></div>
 			</div>
-			
+
 
 			<div class="form-row">
 				<div class="form-group col-md-12">
 					<label for="title" class="col-form-label">課題用コード（メソッド名）</label> <input
 						type="text" class="form-control" name="codeMethod"
-						placeholder="public void taskMethod()" aria-label="メソッド名" />
+						placeholder="public void taskMethod()" aria-label="メソッド名" 
+						th:value="*{codeMethod}"/>
 				</div>
 			</div>
 
@@ -65,62 +95,90 @@
 				<div class="form-group col-md-12">
 					<label for="title" class="col-form-label">課題用コード（戻り値）</label> <input
 						type="text" class="form-control" name="codeReturn"
-						placeholder="null" aria-label="戻り値" />
+						placeholder="null" aria-label="戻り値" th:value="*{codeReturn}" />
 				</div>
 			</div>
-
 			
 			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="editor_result" class="col-form-label">課題確認用コード実行結果</label>
+				</div>
+				<div id="editor_result" class="col-md-12"></div>
+			</div>
+
+			<div class="form-row">
 				<div class="col-md-12">
-					<input type="button" class="btn btn-info btn-block" th:value="実行"
+					<input type="button" class="btn btn-info btn-block" th:value="保存"
 						onClick="setCode()" />
 				</div>
 			</div>
-			<input type="hidden" name="code" id="code" />
-			<input type="hidden" name="prgLanguageId" id="prgLanguageId" th:value="*{prgLanguageId}" />
-			<input type="hidden" name="title"  th:value="*{title}" />
-			<input type="hidden" name="description"  th:value="*{description}" />
-			<input type="hidden" name="questionDescription"  th:value="*{questionDescription}" />
-			<input type="hidden" name="questionId"  th:value="*{questionId}" />
+			<input type="hidden" name="questionDescription"
+				th:value="*{questionDescription}" />
+				<input type="hidden" name="title" th:value="*{title}" />
+				<input type="hidden" name="description" th:value="*{description}" />
+				<input type="hidden" name="prgLanguageId" id="prgLanguageId" th:value="*{prgLanguageId}" />
+				<input type="hidden" name="questionId" th:value="*{questionId}" />
+				<input type="hidden" name="code" id="code" />
 		</form>
 	</div>
 
 	<script th:inline="javascript">
 
-window.addEventListener('DOMContentLoaded', function() {
-	 
-    var editor = ace.edit("editor");
 
-    var languageId = document.getElementById('prgLanguageId').value;
-    if(languageId == "001") {
-    	
-        editor.session.setMode("ace/mode/c_cpp");
-    } else if(languageId = "002") {
-    	
-        editor.session.setMode("ace/mode/java");
-    } else if(languageId = "003") {
-    	
-        editor.session.setMode("ace/mode/python");
-	}
-    
-    editor.setTheme("ace/theme/eclipse");
+		window.addEventListener('DOMContentLoaded', function() {
 
-	document.getElementById('editor').style.fontSize='12px';
- 
-	/*<![CDATA[*/
-	  var code = /*[[${code}]]*/ "dummy";
-	/*]]>*/
-	  editor.setValue(code, 1);	
-})
+			var editor = ace.edit("editor");
 
-function setCode() {
-	var editor = ace.edit("editor");
-	document.getElementById("code").value = editor.getValue();
-	
-    var form = document.getElementById('taskAddCodeForm'); 
-    form.submit();
-}
-	  
-</script>
+			var languageId = document.getElementById('prgLanguageId').value;
+			if (languageId == "001") {
+
+				editor.session.setMode("ace/mode/c_cpp");
+			} else if (languageId = "002") {
+
+				editor.session.setMode("ace/mode/java");
+			} else if (languageId = "003") {
+
+				editor.session.setMode("ace/mode/python");
+			}
+			
+			editor.setTheme("ace/theme/eclipse");
+			document.getElementById('editor').style.fontSize = '12px';
+
+			/*<![CDATA[*/
+			var code = /*[[${taskAddCodeForm.code}]]*/"dummy";
+			/*]]>*/
+			editor.setValue(code, 1);
+			
+			
+			var editor_result = ace.edit("editor_result");
+			editor_result.setTheme("ace/theme/twilight");
+			editor_result.session.setMode("ace/mode/html");
+			editor_result.setAutoScrollEditorIntoView(true);
+			editor_result.setOption("minLines", 10);
+			editor_result.setHighlightActiveLine(false);
+			editor_result.setReadOnly(true); 
+			editor_result.renderer.setShowGutter(false);
+			
+			/*<![CDATA[*/
+			var result = /*[[${result}]]*/"dummy";
+			/*]]>*/
+			if(result != null) {
+				editor_result.setValue(result, 1);			
+			}
+			/*<![CDATA[*/
+			var description = /*[[${taskAddCodeForm.description}]]*/"dummy";
+			/*]]>*/
+			document.getElementById('description').value = description;
+
+		})
+
+		function setCode() {
+			var editor = ace.edit("editor");
+			document.getElementById("code").value = editor.getValue();
+
+			var form = document.getElementById('taskAddCodeForm');
+			form.submit();
+		}
+	</script>
 </body>
 </html>
