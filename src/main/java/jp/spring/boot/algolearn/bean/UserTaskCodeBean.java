@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * ユーザー、課題・連関エンティティ兼コードBean.
+ * ユーザー、課題・連関エンティティ兼コードBean(user/task : Intersection Entity bean).
  * @author tejc999999
  *
  */
@@ -22,25 +22,40 @@ import lombok.Setter;
 public class UserTaskCodeBean {
 
     /**
-     * サロゲートキー.
+     * サロゲートキー(surrogate key).
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
+    /**
+     * ユーザーID(user id).
+     */
     @Column(name = "user_id")
     private String userId;
 
+    /**
+     * コースID(course id).
+     */
     @Column(name = "course_id")
     private Long courseId;
 
+    /**
+     * 課題ID(task id).
+     */
     @Column(name = "task_id")
     private Long taskId;
 
+    /**
+     * 進捗状況(progress)l.
+     */
     @Column(name = "status")
     private byte status;
     
+    /**
+     * プログラムコード(program code).
+     */
     @Column(name = "code")
     private String code;
 }

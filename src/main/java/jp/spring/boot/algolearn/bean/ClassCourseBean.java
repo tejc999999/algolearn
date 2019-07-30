@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * クラス、コース・連関エンティティBean.
+ * クラス、コース・連関エンティティBean(class, course : Intersection Entity bean).
  * @author tejc999999
  *
  */
@@ -22,7 +22,7 @@ import lombok.Setter;
 public class ClassCourseBean {
     
     /**
-     * サロゲートキー.
+     * サロゲートキー(surrogate key).
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,13 +30,13 @@ public class ClassCourseBean {
     private Long id;
 
     /**
-     * クラスID.
+     * クラスID(class id).
      */
     @Column(name = "class_id")
     private Long classId;
 
     /**
-     * コースID.
+     * コースID(course id).
      */
     @Column(name = "course_id")
     private Long courseId;    

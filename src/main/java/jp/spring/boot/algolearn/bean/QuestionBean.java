@@ -56,7 +56,7 @@ public class QuestionBean {
     private byte inputNum;
 
     /**
-     * コンストラクタ.
+     * コンストラクタ(constructor).
      */
     public QuestionBean() {
         taskQuestionBeans = new HashSet<>();

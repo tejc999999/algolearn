@@ -44,7 +44,7 @@ public class CourseBean {
     private String name;
     
     /**
-     * コンストラクタ.
+     * コンストラクタ(constructor).
      */
     public CourseBean() {
         userCourseBeans = new HashSet<>();
@@ -90,38 +90,38 @@ public class CourseBean {
     Set<UserTaskCodeBean> userTaskCodeBeans;
 
     /**
-     * ユーザ・コース情報クリア.
+     * ユーザ・コース情報クリア(clear info(user/course)).
      */
     public void clearUserCourseBean() {
         userCourseBeans.clear();
     }
     
     /**
-     * クラス・コース情報クリア.
+     * クラス・コース情報クリア(clear info(class/course)).
      */
     public void clearClassCourseBean() {
         classCourseBeans.clear();
     }
 
     /**
-     * ユーザー・コース情報を追加する.
-     * @param userCourseBean ユーザー・コースBean
+     * ユーザー・コース情報を追加する(add an info(user/course)).
+     * @param userCourseBean ユーザー・コースBean(user/course bean)
      */
     public void addUserCourseBean(UserCourseBean userCourseBean) {
         userCourseBeans.add(userCourseBean);
     }
     
     /**
-     * クラス・コース情報を追加する.
-     * @param classCourseBean クラス・コースBean
+     * クラス・コース情報を追加する(add an info(class/course)).
+     * @param classCourseBean クラス・コースBean(class/course bean)
      */
     public void addClassCourseBean(ClassCourseBean classCourseBean) {
         classCourseBeans.add(classCourseBean);
     }
     
     /**
-     * コースに紐づくユーザーIDリストを取得する.
-     * @return ユーザーIDリスト
+     * コースに紐づくユーザーIDリストを取得する(get the user id list linked to the course).
+     * @return ユーザーIDリスト(user id list)
      */
     public List<String> getUserIdList() {
         List<String> list = new ArrayList<>();
@@ -132,8 +132,8 @@ public class CourseBean {
     }
     
     /**
-     * コースに紐づくクラスIDリストを取得する.
-     * @return クラスIDリスト
+     * コースに紐づくクラスIDリストを取得する(get the class id list linked to the course).
+     * @return クラスIDリスト(class id list)
      */
     public List<String> getClassIdList() {
         List<String> list = new ArrayList<>();

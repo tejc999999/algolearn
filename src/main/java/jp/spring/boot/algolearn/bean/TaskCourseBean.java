@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 課題、コース・連関エンティティBean.
+ * 課題、コース・連関エンティティBean(task/course : Intersection Entity bean).
  * @author tejc999999
  *
  */
@@ -22,7 +22,7 @@ import lombok.Setter;
 public class TaskCourseBean {
 
     /**
-     * サロゲートキー.
+     * サロゲートキー(surrogate key).
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * 管理者用Controllerクラス.
+ * 管理者用Controllerクラス（Controller class for administrator）.
  * @author tejc999999
  */
 @Controller

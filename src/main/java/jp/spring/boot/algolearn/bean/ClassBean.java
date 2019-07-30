@@ -44,7 +44,7 @@ public class ClassBean {
     private String name;
     
     /**
-     * コンストラクタ.
+     * コンストラクタ（constructor）.
      */
     public ClassBean() {
         userClassBeans = new HashSet<>();
@@ -70,7 +70,7 @@ public class ClassBean {
     private Set<ClassCourseBean> classCourseBeans;
     
     /**
-     * ユーザー所属クラス：相互参照オブジェクトを追加する.
+     * ユーザー所属クラス：相互参照オブジェクトを追加する(add an object(class belonging course)).
      * @param userClassBean ユーザ所属クラスBean
      */
     public void addUserClassBean(UserClassBean userClassBean) {
@@ -78,15 +78,15 @@ public class ClassBean {
     }
 
     /**
-     * ユーザー所属クラス：相互参照オブジェクトを削除する.
+     * ユーザー所属クラス：相互参照オブジェクトを削除する(delete an object(class belonging course)).
      */
     public void clearUserClassBean() {
         userClassBeans.clear();
     }
     
     /**
-     * ユーザIDリストを取得する.
-     * @return ユーザIDリスト
+     * ユーザIDリストを取得する(get user id list).
+     * @return ユーザIDリスト(user id list)
      */
     public List<String> getUserIdList() {
         List<String> list = new ArrayList<>();
@@ -97,23 +97,23 @@ public class ClassBean {
     }
 
     /**
-     * コース所属クラス：相互参照オブジェクトを追加する.
-     * @param classCourseBean コース所属クラスBean
+     * コース所属クラス：相互参照オブジェクトを追加する(add an object(course affiliation class)).
+     * @param classCourseBean コース所属クラスBean(course affiliation class bean)
      */
     public void addClassCourseBean(ClassCourseBean classCourseBean) {
         classCourseBeans.add(classCourseBean);
     }
 
     /**
-     * コース所属クラス：相互参照オブジェクトを削除する.
+     * コース所属クラス：相互参照オブジェクトを削除する(delete an object(course affiliation class)).
      */
     public void clearClassCourseBean() {
         classCourseBeans.clear();
     }
 
     /**
-     * コースIDリストを取得する.
-     * @return コースIDリスト
+     * コースIDリストを取得する(get course id list).
+     * @return コースIDリスト(course id list)
      */
     public List<String> getCourseIdList() {
         List<String> list = new ArrayList<>();

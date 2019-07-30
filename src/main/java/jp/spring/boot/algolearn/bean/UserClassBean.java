@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * ユーザー、クラス・連関エンティティBean.
+ * ユーザー、クラス・連関エンティティBean(user/class : Intersection Entity bean).
  * @author tejc999999
  *
  */
@@ -22,7 +22,7 @@ import lombok.Setter;
 public class UserClassBean {
     
     /**
-     * サロゲートキー.
+     * サロゲートキー(surrogate key).
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,13 +30,13 @@ public class UserClassBean {
     private Long id;
     
     /**
-     * ユーザーID.
+     * ユーザーID(user id).
      */
     @Column(name = "user_id")
     private String userId;
     
     /**
-     * クラスID.
+     * クラスID(class id).
      */
     @Column(name = "class_id")
     private Long classId;

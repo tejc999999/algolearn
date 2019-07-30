@@ -36,13 +36,13 @@ public class TaskBean {
     private Long id;
 
     /**
-     * 課題タイトル.
+     * 課題タイトル(task title).
      */
     @Column(name = "title")
     private String title;
 
     /**
-     * 課題説明文.
+     * 課題説明文(task description).
      */
     @Column(name = "description")
     private String description;
@@ -60,19 +60,19 @@ public class TaskBean {
     private Long questionId;
 
     /**
-     * メソッド部コード.
+     * メソッド部コード(method part code).
      */
     @Column(name = "code_method")
     private String codeMethod;
 
     /**
-     * 戻り値部コード.
+     * 戻り値部コード(return part code).
      */
     @Column(name = "code_return")
     private String codeReturn;
     
     /**
-     * コンストラクタ.
+     * コンストラクタ(constructor).
      */
     public TaskBean() {
         taskCourseBeans = new HashSet<>();

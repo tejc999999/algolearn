@@ -80,7 +80,7 @@ public class UserBean {
     private Set<UserTaskCodeBean> userTaskCodeBeans;
 
     /**
-     * コンストラクタ.
+     * コンストラクタ(constructor).
      */
     public UserBean() {
         userClassBeans = new HashSet<>();
@@ -89,8 +89,8 @@ public class UserBean {
     }
     
     /**
-     * クラスIDリストを取得する.
-     * @return クラスIDリスト
+     * クラスIDリストを取得する(get class id list).
+     * @return クラスIDリスト(class id list)
      */
     public List<String> getClassIdList() {
         List<String> list = new ArrayList<>();
@@ -101,8 +101,8 @@ public class UserBean {
     }
     
     /**
-     * コースIDリストを取得する.
-     * @return コースIDリスト
+     * コースIDリストを取得する(get course id list).
+     * @return コースIDリスト(course id list)
      */
     public List<String> getCourseIdList() {
         List<String> list = new ArrayList<>();
